@@ -1,54 +1,12 @@
 version: '3.8'
 
 services:
-  service:
-    image: tae4an/smart_office_service:latest
+  smartoffice:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "80:8080"
     environment:
-      - JAVA_OPTS=-Xmx512m -Xms256m
-      - SPRING_PROFILES_ACTIVE=dev
-      - JASYPT_SECRET_KEY=/run/secrets/jasypt_key
-    volumes:
-      - ./service/logs:/usr/local/tomcat/logs
-    secrets:
-      - jasypt_key
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/service-springboot/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  admin:
-    image: tae4an/smart_office_admin:latest
-    ports:
-      - "81:8080"
-    environment:
-      - JAVA_OPTS=-Xmx512m -Xms256m
-      - SPRING_PROFILES_ACTIVE=dev
-      - JASYPT_SECRET_KEY=/run/secrets/jasypt_key
-    volumes:
-      - ./admin/logs:/usr/local/tomcat/logs
-    secrets:
-      - jasypt_key
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/admin-springboot/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-secrets:
-  jasypt_key:
-    external: true
-
-volumes:
-  service_logs:
-  admin_logs:
+      JASYPT_SECRET_KEY: ${JASYPT_SECRET_KEY}
+    restart: unless-stopped

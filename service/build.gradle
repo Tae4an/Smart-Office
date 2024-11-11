@@ -32,6 +32,12 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
     // Properties Encryption
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
 
@@ -44,6 +50,10 @@ dependencies {
     // logback SQL
     implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
     implementation 'com.mysql:mysql-connector-j:8.0.33'
+
+    // GCS
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter', version: '1.2.5.RELEASE'
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-storage', version: '1.2.5.RELEASE'
 }
 
 tasks.named('test') {

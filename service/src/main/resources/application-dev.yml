@@ -26,11 +26,22 @@ spring:
     show-sql: true  # SQL 로그를 보고 싶은 경우
     open-in-view: false  # 경고 메시지 제거를 위해
 
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: classpath:credentials.json
+        project-id: ENC(RGD0LCqXa8dSZzNwqwhc53WR6ITm8YlTFPRzf+StzN8Hh+Ts3ZRXLQ==)
+        bucket: smart-office
+
 logging:
   level:
     root: info
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql: trace
+    com.google.cloud.storage: DEBUG
+    com.google.api.client: DEBUG
+    com.office: DEBUG
 
 app:
   dir:
