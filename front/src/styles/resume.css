@@ -1,0 +1,176 @@
+/* Common Styles */
+.card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    border: none;
+    overflow: hidden;
+  }
+  
+  .card-body {
+    padding: 2rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+  
+  /* Education Styles */
+  .education {
+    margin-bottom: 4rem;
+  }
+  
+  .education-item {
+    margin-bottom: 1.5rem;
+  }
+  
+  .timeline-info {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .period {
+    font-weight: 700;
+    padding: 1rem;
+    background-color: var(--light);
+    border-radius: 0.5rem;
+    min-width: 150px;
+    text-align: center;
+  }
+  
+  .school-info,
+  .job-info {
+    padding: 0 1.5rem;
+  }
+  
+  .school,
+  .position {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  
+  .location {
+    color: var(--dark);
+    opacity: 0.7;
+    font-size: 0.875rem;
+  }
+  
+  .description {
+    color: var(--dark);
+    line-height: 1.7;
+    margin: 0;
+  }
+  
+  /* Experience Styles */
+  .experience {
+    margin-bottom: 4rem;
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .download-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .experience-item {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Skills Styles */
+  .skills-container {
+    margin-bottom: 4rem;
+  }
+  
+  .skills-section {
+    margin-bottom: 2rem;
+  }
+  
+  .skills-section:last-child {
+    margin-bottom: 0;
+  }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .icon-box {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient);
+    color: white;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+  }
+  
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  .skill-item {
+    background-color: var(--light);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    min-height: 4rem;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 992px) {
+    .timeline-info {
+      flex-direction: column;
+    }
+  
+    .period {
+      margin-bottom: 1rem;
+    }
+  
+    .school-info,
+    .job-info {
+      padding: 0;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .section-header {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .download-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .skills-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .card-body {
+      padding: 1.5rem;
+    }
+  
+    .section-title {
+      font-size: 1.75rem;
+    }
+  }

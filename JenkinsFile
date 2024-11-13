@@ -1,0 +1,109 @@
+pipeline {
+    agent any
+
+    tools {
+        jdk 'jdk17'
+        gradle 'gradle'
+        nodejs 'node'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Spring Boot') {
+            steps {
+                dir('service') {
+                    sh 'gradle clean bootJar'
+                }
+            }
+        }
+
+
+        stage('Build Docker Images') {
+            steps {
+                script {
+                    try {
+                        sh "docker build -t tae4an/smartoffice-service:${BUILD_NUMBER} ./service"
+                    } catch (Exception e) {
+                        error "Docker build failed: ${e.message}"
+                    }
+                }
+            }
+        }
+
+        stage('Check Docker Images') {
+            steps {
+                script {
+                    try {
+                        sh "docker images tae4an/smartoffice-service:${BUILD_NUMBER}"
+                    } catch (Exception e) {
+                        error "Failed to check Docker images: ${e.message}"
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    script {
+                        try {
+                            sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                            sh "docker push tae4an/smartoffice-service:${BUILD_NUMBER}"
+                        } catch (Exception e) {
+                            error "Failed to push Docker images: ${e.message}"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    try {
+                        sh 'docker-compose down'
+                        withCredentials([string(credentialsId: 'jasypt-secret-key', variable: 'JASYPT_SECRET_KEY')]) {
+                            sh '''
+                                export JASYPT_SECRET_KEY="$JASYPT_SECRET_KEY"
+                                /usr/local/bin/docker-compose up -d --build
+                            '''
+                        }
+                    } catch (Exception e) {
+                        error "Deployment failed: ${e.message}"
+                    }
+                }
+            }
+        }
+
+        stage('Check Logs') {
+            steps {
+                script {
+                    try {
+                        sh 'sleep 30'
+                        sh 'docker logs smartoffice-pipeline_service_1'
+                    } catch (Exception e) {
+                        echo "Warning: Failed to retrieve logs: ${e.message}"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up...'
+            sh 'docker system prune -f'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}

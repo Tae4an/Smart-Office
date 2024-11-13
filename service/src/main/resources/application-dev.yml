@@ -16,21 +16,39 @@ spring:
       minimum-idle: 5
       connection-timeout: 30000
 
+  web:
+    resources:
+      static-locations: classpath:/static/
+      add-mappings: true
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
+      cache:
+        period: 0
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  thymeleaf:
+    cache: false
+
   jpa:
     hibernate:
-      ddl-auto: update  # 필요에 따라 create, create-drop, validate, none으로 변경
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-    show-sql: true  # SQL 로그를 보고 싶은 경우
-    open-in-view: false  # 경고 메시지 제거를 위해
+    show-sql: true
+    open-in-view: false
 
   cloud:
     gcp:
       storage:
         credentials:
-          location: classpath:credentials.json
+          location: ${GOOGLE_APPLICATION_CREDENTIALS}
         project-id: ENC(RGD0LCqXa8dSZzNwqwhc53WR6ITm8YlTFPRzf+StzN8Hh+Ts3ZRXLQ==)
         bucket: smart-office
 
@@ -42,11 +60,13 @@ logging:
     com.google.cloud.storage: DEBUG
     com.google.api.client: DEBUG
     com.office: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.resource: TRACE
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
 
 app:
   dir:
-    imgdir: file:///C:/SmartOffice/imgs/  # 화면 출력 용
-    uploadimgdir: C:/SmartOffice/imgs/    # 파일 Write 용
+    imgdir: file:///C:/SmartOffice/imgs/
+    uploadimgdir: C:/SmartOffice/imgs/
     logdir: file:///C:/SmartOffice/logs/
     readLogDir: C:/SmartOffice/logs/
-

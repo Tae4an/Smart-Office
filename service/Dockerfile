@@ -1,11 +1,11 @@
-# Base image
-FROM openjdk:17-jdk-alpine
+# Use the official OpenJDK 17 base image
+FROM openjdk:17-jdk-slim
 
-# Set working directory
-WORKDIR /service
+# Set the working directory in the container
+WORKDIR /app
 
-# Copy the jar file from the target directory to the container
-COPY ./build/libs/service-0.0.1-SNAPSHOT-plain.jar service.jar
+# Copy the jar file from the target directory to the working directory
+COPY build/libs/*.jar service.jar
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "service.jar"]
+# Run the jar file
+ENTRYPOINT ["java","-jar", "/app/service.jar"]

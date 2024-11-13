@@ -1,7 +1,8 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.12-SNAPSHOT'
+    id 'org.springframework.boot' version '3.2.11'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'com.github.node-gradle.node' version '2.2.4'
 }
 
 group = 'com.office'
@@ -54,11 +55,52 @@ dependencies {
     // GCS
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter', version: '1.2.5.RELEASE'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-storage', version: '1.2.5.RELEASE'
+
+    // WebFlux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
-tasks.named('test') {
+node {
+    version = '22.11.0'
+    download = true
+    workDir = file("${project.buildDir}/nodejs")
+    npmWorkDir = file("${project.buildDir}/npm")
+    nodeModulesDir = file("${project.projectDir}/../front")
+}
+
+def frontDir = "$projectDir/../front"
+
+tasks.register('installReactDeps', NpmTask) {
+    workingDir = file(frontDir)
+    args = ['install']
+}
+
+tasks.register('buildReact', NpmTask) {
+    dependsOn installReactDeps
+    workingDir = file(frontDir)
+    args = ['run', 'build']
+}
+
+tasks.register('copyReactBuild', Copy) {
+    dependsOn buildReact
+    from("${frontDir}/build") {
+        include "**/*"
+    }
+    into "${projectDir}/src/main/resources/static"
+}
+
+processResources {
+    dependsOn copyReactBuild
+}
+
+bootJar {
+    dependsOn copyReactBuild
+}
+
+test {
     useJUnitPlatform()
 }
-configurations.all {
+
+configurations.configureEach {
     exclude group: 'commons-logging', module: 'commons-logging'
 }

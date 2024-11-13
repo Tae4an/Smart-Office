@@ -30,7 +30,7 @@ public class GCSService {
     private String bucketName;
 
     // GCS 인증 키 파일 위치를 application 설정에서 주입
-    @Value("${spring.cloud.gcp.storage.credentials.location}")
+    @Value("${GOOGLE_APPLICATION_CREDENTIALS}")
     private String keyFileName;
 
     private Storage storage;

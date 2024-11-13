@@ -1,0 +1,155 @@
+/* Common Page Styles */
+.page {
+    min-height: calc(100vh - 150px); /* Adjust based on header/footer height */
+    padding-top: 80px; /* Adjust based on header height */
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Home Page Specific Styles */
+  .home-page {
+    background-color: var(--light);
+  }
+  
+  .cta-section {
+    background: var(--gradient);
+    color: white;
+    padding: 5rem 0;
+    text-align: center;
+  }
+  
+  .cta-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+  
+  .cta-button {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    border: 2px solid white;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background: white;
+    color: var(--primary);
+  }
+  
+  /* Resume Page Specific Styles */
+  .resume-page {
+    background-color: white;
+  }
+  
+  .resume-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  
+  .resume-title {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+  
+  .resume-content {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  /* Contact Page Specific Styles */
+  .contact-page {
+    background-color: var(--light);
+  }
+  
+  .contact-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 1rem;
+    padding: 3rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 992px) {
+    .container {
+      padding: 0 2rem;
+    }
+  
+    .cta-section h2 {
+      font-size: 2rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .page {
+      padding-top: 60px;
+    }
+  
+    .resume-title,
+    .cta-section h2 {
+      font-size: 1.75rem;
+    }
+  
+    .contact-container {
+      padding: 2rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .container {
+      padding: 0 1rem;
+    }
+  
+    .contact-container {
+      padding: 1.5rem;
+    }
+  
+    .cta-button {
+      padding: 0.875rem 2rem;
+    }
+  }
+  
+  /* Animation for page transitions */
+  .page {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Utility Classes */
+  .text-gradient {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .bg-gradient {
+    background: var(--gradient);
+  }
+  
+  .rounded-4 {
+    border-radius: 1rem;
+  }
+  
+  .shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }

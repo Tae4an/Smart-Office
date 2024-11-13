@@ -1,0 +1,236 @@
+/* Hero Styles */
+.hero {
+    padding: 5rem 0;
+    overflow: hidden;
+  }
+  
+  .hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .hero-content {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+  }
+  
+  .hero-text {
+    flex: 1;
+  }
+  
+  .badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--gradient);
+    color: white;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.5rem;
+    color: var(--dark);
+    opacity: 0.7;
+    margin-bottom: 1rem;
+  }
+  
+  .title {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+  }
+  
+  .gradient-text {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary {
+    background: var(--gradient);
+    color: white;
+  }
+  
+  .btn-outline {
+    border: 2px solid var(--dark);
+    color: var(--dark);
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-outline:hover {
+    background: var(--dark);
+    color: white;
+  }
+  
+  /* Profile Styles */
+  .hero-profile {
+    flex: 1;
+  }
+  
+  .profile {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    border-radius: 2rem;
+    background: var(--gradient);
+  }
+  
+  .profile-img {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 90%;
+    height: auto;
+  }
+  
+  .dots {
+    position: absolute;
+    width: 2rem;
+  }
+  
+  .dots svg {
+    width: 100%;
+    height: auto;
+  }
+  
+  .dots-1 { top: 1rem; right: 1rem; }
+  .dots-2 { top: 2rem; right: -1rem; }
+  .dots-3 { bottom: 2rem; left: 1rem; }
+  .dots-4 { bottom: 1rem; left: -1rem; }
+  
+  /* About Section Styles */
+  .about {
+    padding: 5rem 0;
+    background-color: var(--light);
+  }
+  
+  .about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .about-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .about-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+  }
+  
+  .about-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  
+  .about-description {
+    font-size: 1.125rem;
+    color: var(--dark);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+  
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  .social-link {
+    font-size: 1.5rem;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+  }
+  
+  .social-link:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 992px) {
+    .hero-content {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .title {
+      font-size: 3rem;
+    }
+  
+    .hero-buttons {
+      justify-content: center;
+    }
+  
+    .profile {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .title {
+      font-size: 2.5rem;
+    }
+  
+    .subtitle {
+      font-size: 1.25rem;
+    }
+  
+    .about-title {
+      font-size: 2.5rem;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .hero {
+      padding: 3rem 0;
+    }
+  
+    .badge {
+      font-size: 0.75rem;
+    }
+  
+    .title {
+      font-size: 2rem;
+    }
+  
+    .hero-buttons {
+      flex-direction: column;
+    }
+  
+    .btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
