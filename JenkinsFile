@@ -4,7 +4,6 @@ pipeline {
     tools {
         jdk 'jdk17'
         gradle 'gradle'
-        nodejs 'node'
     }
 
     stages {
