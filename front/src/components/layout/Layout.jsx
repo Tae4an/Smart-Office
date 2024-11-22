@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types';
 import Header from './Header';
-import Sidebar from './Sidebar';
-import BottomNav from './BottomNav';
 import Footer from './Footer';
-import { useEffect, useState } from 'react';
 import '../../styles/layout.css';
+import { useEffect, useState } from 'react';
 
 const Layout = ({ children }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,6 +13,7 @@ const Layout = ({ children }) => {
         } else {
             document.body.style.overflow = 'visible';
         }
+
         return () => {
             document.body.style.overflow = 'visible';
         };
@@ -22,14 +21,12 @@ const Layout = ({ children }) => {
 
     return(
         <div className="layout">
-            <Header setIsMenuOpen={setIsMenuOpen} />
-            <Sidebar isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
-            <main className="main-content">
+            <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen}/>
+            <main className={`main-content ${isMenuOpen ? 'menu-open' : ''}`}>
                 <div className="page-container">
                     {children}
                 </div>
             </main>
-            <BottomNav />
             <Footer />
         </div>
     );
