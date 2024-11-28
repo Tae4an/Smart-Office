@@ -26,49 +26,64 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot Web Starter: 웹 애플리케이션 개발을 위한 기본 의존성
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Lombok: 반복적인 코드를 줄이기 위한 어노테이션 기반 라이브러리
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // Spring Security:  보안 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // Spring Boot DevTools: 개발 생산성 향상을 위한 도구
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // Spring Boot Test: 스프링 부트 애플리케이션 테스트를 위한 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // JUnit Platform Launcher: JUnit 테스트 실행을 위한 런타임 의존성
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    // Spring Boot Validation: 데이터 유효성 검사를 위한 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // Spring Security Test: 보안 관련 테스트를 위한 의존성
     testImplementation 'org.springframework.security:spring-security-test'
 
-    // WebSocket
+    // WebSocket: 실시간 양방향 통신을 위한 의존성
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.webjars:webjars-locator-core'
     implementation 'org.webjars:sockjs-client:1.5.1'
     implementation 'org.webjars:stomp-websocket:2.3.4'
 
-    // Jackson
+    // Jackson: JSON 처리를 위한 라이브러리
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
-    // Properties Encryption
+    // Jasypt: 설정 파일 암호화를 위한 라이브러리
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
 
-    // spring-dotenv(ENV)
+    // Spring Dotenv: .env 파일을 사용한 환경 변수 관리
     implementation 'me.paulschwarz:spring-dotenv:2.5.4'
 
-    // JPA
+    // JPA: 자바 ORM 기술 표준
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // logback SQL
+    // Log4jdbc: SQL 로깅을 위한 라이브러리
     implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
+    // MySQL Connector: MySQL 데이터베이스 연결을 위한 드라이버
     implementation 'com.mysql:mysql-connector-j:8.0.33'
 
-    // GCS
+    // Google Cloud Storage: GCS 사용을 위한 의존성
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-starter', version: '1.2.5.RELEASE'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-gcp-storage', version: '1.2.5.RELEASE'
 
-    // WebFlux
+    // WebFlux: 리액티브 웹 애플리케이션 개발을 위한 의존성
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-    // Swagger
+    // Swagger: API 문서화를 위한 도구
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-
 }
 
 node {

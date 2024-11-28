@@ -2,9 +2,11 @@
 import {Routes, Route, Navigate} from 'react-router-dom';
 import {lazy} from 'react';
 import Layout from './components/layout/Layout';
+import PrivateRoute from './components/auth/PrivateRoute';
 
 // Lazy load pages
 const Login = lazy(() => import('./components/login/LoginForm'));
+const PasswordChange = lazy(() => import('./components/login/PasswordChangeForm'));
 const Home = lazy(() => import('./pages/Home'));
 const Resume = lazy(() => import('./pages/Resume'));
 const Projects = lazy(() => import('./pages/Projects'));
@@ -22,7 +24,8 @@ const AppRoutes = () => {
     return (
         <Routes>
             {/* Public routes */}
-            <Route path="/" element={<Login/>}/>
+            <Route path="/" element={<Login />} />
+            <Route path="/password-change" element={<PasswordChange />} />
 
             {/* Protected routes with Layout */}
             {/* <Route element={<PrivateRoute />}>
