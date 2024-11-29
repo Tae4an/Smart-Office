@@ -8,31 +8,50 @@ server:
 spring:
   mvc:
     view:
-      prefix: /views/
+      prefix: /WEB-INF/views/
       suffix: .jsp
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: ENC(qFiE9I4v2CXLqZzWNCl7UuJ94DBprPFYECuhR9FpnOn74MinXXgixIHMizfikAUIpC6g9cah12z4z2gjNGtGfLXFwhOc+34dDC681dQfgp4mkHkUfuZRxQ==)
     username: ENC(a0E+w5V96368ZbbGuQA1Kg==)
     password: ENC(pj2nIfjYWFQnQmWpcwEgx3+G834oNjX5bXl3cVDSzCg=)
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+#  security:
+#    user:
+#      name: admin
+#      password: ENC(initialAdminPassword)
+#      roles: ADMIN
 
-mybatis:
-  type-aliases-package: com.office.app.dto
-  mapper-locations: classpath:/mapper/*.xml
-  configuration:
-    map-underscore-to-camel-case: true
-
+logging:
   level:
     root: info
+    com.office: debug
+    jdbc.sqlonly: debug
+    jdbc.audit: off
+    jdbc.resultset: off
+    jdbc.connection: off
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.view: TRACE
+    org.springframework.web.servlet.handler: TRACE
+    org.springframework.web.servlet: TRACE
 
-app:
+admin:
   url:
-    server-url: ${SERVER_URL}
-
-  dir:
-    imgdir: file:///C:/SmartOffice/imgs/  # 화면 출력 용
-    uploadimgdir: C:/SmartOffice/imgs/    # 파일 Write 용
-    logdir: file:///C:/SmartOffice/logs/
-    readLogDir: C:/SmartOffice/logs/
-  key:
-    algo: PBEWithMD5AndDES
+    service-url: http://localhost:80    # 서비스 모듈 URL
+  security:
+    password-policy:
+      min-length: 8
+      require-special-chars: true
+      require-numbers: true
+      require-uppercase: true
+    login:
+      max-attempts: 5
+      lock-duration: 30m
+  jasypt:
+    key:
+      algo: PBEWithMD5AndDES

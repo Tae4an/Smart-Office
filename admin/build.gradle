@@ -1,17 +1,15 @@
 plugins {
-    id 'java'
     id 'war'
-    id 'org.springframework.boot' version '3.2.12-SNAPSHOT'
+    id 'org.springframework.boot' version '3.2.11'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
 }
 
-group = 'edu.sm'
+group = 'com.company'
 version = '0.0.1-SNAPSHOT'
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    sourceCompatibility = '17'
 }
 
 configurations {
@@ -22,59 +20,46 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.projectlombok:lombok'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-
-    // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // JSON
-    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-
-    //openCsv 라이브러리
-    implementation 'com.opencsv:opencsv:5.5.2'
-
-    // Properties Encryption
-    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
-
-
-    // MyBatis & MySQL Driver
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    // logback SQL
-    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
-    // Mysql handler
-    implementation 'org.mybatis:mybatis-typehandlers-jsr310:1.0.2'
-    //tomcat
+    // JSP 관련 의존성
     implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
     implementation 'jakarta.servlet:jakarta.servlet-api'
     implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api'
     implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
 
-    // test
-    testImplementation 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 데이터베이스
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // 테스트
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.security:spring-security-test'
 
-    // pageing
-    implementation 'com.github.pagehelper:pagehelper-spring-boot-starter:1.4.6'
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 
-    //websocket
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.webjars:webjars-locator-core'
-    implementation 'org.webjars:sockjs-client:1.0.2'
-    implementation 'org.webjars:stomp-websocket:2.3.3'
-    implementation 'org.webjars:bootstrap:3.3.7'
+    // Jasypt: 설정 파일 암호화를 위한 라이브러리
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
+    implementation 'org.springframework.security:spring-security-taglibs'
+
+    // Swagger UI
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+    // Apache Tiles
+    implementation 'org.apache.tiles:tiles-jsp:3.0.8'
+    implementation 'org.apache.tiles:tiles-servlet:3.0.8'
+    implementation 'org.apache.tiles:tiles-core:3.0.8'
+    implementation 'org.apache.tiles:tiles-el:3.0.8'
 }
 
 tasks.named('test') {
