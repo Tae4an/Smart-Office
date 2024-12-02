@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';  // axios import 추가
 import {
     TextField,
     Button,
@@ -72,18 +73,7 @@ const PasswordChange = () => {
         if (Object.keys(newErrors).length === 0) {
             setIsLoading(true);
             try {
-                const response = await fetch('/api/change-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData),
-                });
-
-                if (!response.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || '비밀번호 변경에 실패했습니다');
-                }
+                const response = await axios.post('/change-password', formData);
 
                 // 성공 메시지 표시 후 메인 페이지로 리다이렉트
                 setErrors({ success: '비밀번호가 성공적으로 변경되었습니다.' });
@@ -93,7 +83,9 @@ const PasswordChange = () => {
 
             } catch (error) {
                 console.error('Password change failed:', error);
-                setErrors({ submit: error.message });
+                setErrors({
+                    submit: error.response?.data?.message || error.message || '비밀번호 변경에 실패했습니다'
+                });
             } finally {
                 setIsLoading(false);
             }
@@ -101,6 +93,8 @@ const PasswordChange = () => {
             setErrors(newErrors);
         }
     };
+
+
 
     return (
         <div className="login-container">

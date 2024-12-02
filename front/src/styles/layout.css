@@ -32,6 +32,39 @@
     justify-content: space-between;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    background: transparent;
+    border: 1px solid var(--light);
+    border-radius: var(--border-radius);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+    background-color: var(--light);
+    color: var(--primary);
+}
+
+.logout-btn i {
+    font-size: 1rem;
+}
+
+.logout-btn span {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
 .menu-toggle {
     display: none;
     background: none;
@@ -43,6 +76,14 @@
 @media (max-width: 991px) {
     .menu-toggle {
         display: block;
+    }
+
+    .logout-btn span {
+        display: none;
+    }
+
+    .lotgout-btn {
+        padding: var(--spacing-2);
     }
 }
 

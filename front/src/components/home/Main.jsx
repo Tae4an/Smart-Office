@@ -1,21 +1,68 @@
-import React from 'react';
-import profileImage from '../../assets/profile1.png';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import defaultProfileImage from '../../assets/profile1.png';
 import '../../styles/home.css';
 
 const Main = () => {
-    const user = {
-        name: "이은범",
-        position: "프론트엔드 개발자",
-        team: "5팀(취업시켜조)",
-        tasks: 5,
-        messages: 3,
-        meetings: 2,
-        profileImage: profileImage
-    };
+    const [user, setUser] = useState({
+        name: "",
+        position: "",
+        department: "",
+        employeeId: "",
+        email: "",
+        profileImage: defaultProfileImage
+    });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get('/api/user/me');
+                const userData = response.data;
+
+                setUser({
+                    name: userData.name,
+                    position: userData.position,
+                    department: userData.department,
+                    employeeId: userData.employeeId,
+                    email: userData.email,
+                    profileImage: defaultProfileImage // 프로필 이미지는 현재 기본 이미지 사용
+                });
+
+                // 비밀번호 변경이 필요한 경우
+                if (userData.passwordChangeRequired) {
+                    // 비밀번호 변경 페이지로 리다이렉트
+                    window.location.href = '/password-change';
+                }
+            } catch (error) {
+                console.error('Failed to fetch user data:', error);
+                setError('사용자 정보를 불러오는데 실패했습니다.');
+                if (error.response?.status === 401) {
+                    window.location.href = '/';  // 인증되지 않은 경우 로그인 페이지로
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    if (loading) {
+        return <div className="dashboard-content container">
+            <div className="loading">Loading...</div>
+        </div>;
+    }
+
+    if (error) {
+        return <div className="dashboard-content container">
+            <div className="error">{error}</div>
+        </div>;
+    }
 
     return (
         <section className="dashboard-content container">
-            {/* 유저 환영 섹션 */}
             <div className="welcome-section">
                 <div className="welcome-header">
                     <div className="welcome-info">
@@ -25,11 +72,14 @@ const Main = () => {
                                     src={user.profileImage}
                                     alt="Profile"
                                     className="profile-image"
+                                    onError={(e) => {
+                                        e.target.src = defaultProfileImage;
+                                    }}
                                 />
                             </div>
                             <div className="user-info">
                                 <h1>안녕하세요, <span className="gradient-text">{user.name}</span>님</h1>
-                                <p className="position-text">{user.team} · {user.position}</p>
+                                <p className="position-text">{user.department} · {user.position}</p>
                             </div>
                         </div>
                     </div>
@@ -39,14 +89,14 @@ const Main = () => {
                 </div>
             </div>
 
-            {/* 상태 카드 */}
+            {/* 상태 카드는 추후 해당 API 구현 후 추가 예정 */}
             <div className="status-grid">
                 <div className="status-card">
                     <div className="status-content">
                         <i className="fas fa-tasks text-primary"></i>
                         <div className="status-info">
                             <h3>할 일</h3>
-                            <p className="text-primary">{user.tasks}개</p>
+                            <p className="text-primary">-</p>
                         </div>
                     </div>
                 </div>
@@ -55,7 +105,7 @@ const Main = () => {
                         <i className="fas fa-envelope text-success"></i>
                         <div className="status-info">
                             <h3>새 메시지</h3>
-                            <p className="text-success">{user.messages}개</p>
+                            <p className="text-success">-</p>
                         </div>
                     </div>
                 </div>
@@ -64,7 +114,7 @@ const Main = () => {
                         <i className="fas fa-video text-secondary"></i>
                         <div className="status-info">
                             <h3>오늘 회의</h3>
-                            <p className="text-secondary">{user.meetings}개</p>
+                            <p className="text-secondary">-</p>
                         </div>
                     </div>
                 </div>

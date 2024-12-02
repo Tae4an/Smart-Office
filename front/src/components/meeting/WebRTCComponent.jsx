@@ -23,6 +23,8 @@ import {
 } from '@mui/icons-material';
 import { checkWebRTCSupport } from '../../utils/webrtc';
 import ChatComponent from './ChatComponent.jsx';
+import {api} from "../../utils/api";
+import {useNavigate} from "react-router-dom";
 
 
 const WebRTCComponent = ({ roomId }) => {
@@ -40,6 +42,7 @@ const WebRTCComponent = ({ roomId }) => {
   const remoteVideoRef = useRef(null);
   const peerConnection = useRef(null);
   const websocket = useRef(null);
+  const navigate = useNavigate();
 
   const configuration = {
     iceServers: [
@@ -197,6 +200,8 @@ const WebRTCComponent = ({ roomId }) => {
       console.log('Closing WebSocket');
       websocket.current.close();
     }
+    // 방 나가기 API 호출
+    api.leaveRoom(roomId).catch(console.error);
   };
 
   const sendSignalingMessage = (message) => {

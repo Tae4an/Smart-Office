@@ -10,6 +10,8 @@ import com.office.exception.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,27 +20,30 @@ import java.util.UUID;
 public class MeetingRoomService {
     private final MeetingRoomRepository roomRepository;
     private final RoomParticipantRepository participantRepository;
-    
+
     @Transactional
     public MeetingRoomDto createRoom(CreateRoomRequest request, String hostId) {
         MeetingRoom room = MeetingRoom.builder()
-            .roomId(UUID.randomUUID().toString())
-            .roomName(request.getRoomName())
-            .hostId(hostId)
-            .maxParticipants(request.getMaxParticipants())
-            .password(request.getPassword())
-            .build();
-            
+                .roomId(UUID.randomUUID().toString())
+                .roomName(request.getRoomName())
+                .description(request.getDescription())
+                .hostId(hostId)
+                .maxParticipants(request.getMaxParticipants())
+                .password(request.getPassword())
+                .createdAt(LocalDateTime.now())
+                .status(RoomStatus.ACTIVE)
+                .build();
+
         room = roomRepository.save(room);
-        
+
         // Add host as first participant
         RoomParticipant host = RoomParticipant.builder()
-            .id(new RoomParticipantId(hostId, room.getRoomId()))
-            .role(ParticipantRole.HOST)
-            .build();
-            
+                .id(new RoomParticipantId(hostId, room.getRoomId()))
+                .role(ParticipantRole.HOST)
+                .build();
+
         participantRepository.save(host);
-        
+
         return convertToDto(room);
     }
     
@@ -99,22 +104,22 @@ public class MeetingRoomService {
             roomRepository.save(room);
         }
     }
-    
+
     private MeetingRoomDto convertToDto(MeetingRoom room) {
         long currentParticipants = participantRepository.countParticipantsByRoomId(room.getRoomId());
-        
+
         return MeetingRoomDto.builder()
-            .roomId(room.getRoomId())
-            .roomName(room.getRoomName())
-            .hostId(room.getHostId())
-            .maxParticipants(room.getMaxParticipants())
-            .createdAt(room.getCreatedAt())
-            .status(room.getStatus())
-            .currentParticipants((int) currentParticipants)
-            .hasPassword(room.getPassword() != null)
-            .build();
+                .roomId(room.getRoomId())
+                .roomName(room.getRoomName())
+                .description(room.getDescription())
+                .hostId(room.getHostId())
+                .maxParticipants(room.getMaxParticipants())
+                .currentParticipants((int) currentParticipants)
+                .createdAt(room.getCreatedAt())
+                .status(room.getStatus())
+                .hasPassword(room.getPassword() != null)
+                .build();
     }
-    
     private String generateToken(String roomId, String participantId) {
         // TODO: Implement proper token generation
         return UUID.randomUUID().toString();

@@ -1,73 +1,128 @@
 // utils/api.js
+import axios from 'axios';
+
 const API_BASE_URL = '/api';
 
-// 기본 HTTP 헤더 설정
-const defaultHeaders = {
-    'Content-Type': 'application/json',
-    'X-User-Id': localStorage.getItem('userId') || 'temp-user-id', // 실제 구현시 사용자 인증 시스템에 맞게 수정
-};
-
-// 에러 처리 함수
-const handleResponse = async (response) => {
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'API request failed');
+// axios 인스턴스 생성
+const axiosInstance = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+        'X-User-Id': localStorage.getItem('userId') || 'temp-user-id'
     }
-    return response.json();
-};
+});
+
+// 요청 인터셉터 추가 - 디버깅용
+axiosInstance.interceptors.request.use(
+    config => {
+        console.log('Request:', config);
+        return config;
+    },
+    error => {
+        console.error('Request Error:', error);
+        return Promise.reject(error);
+    }
+);
+
+// 응답 인터셉터 추가 - 디버깅 및 에러 처리
+axiosInstance.interceptors.response.use(
+    response => {
+        console.log('Response:', response);
+        return response.data;
+    },
+    error => {
+        console.error('Response Error:', error.response || error);
+        const message = error.response?.data?.message ||
+            error.message ||
+            'API request failed';
+        throw new Error(message);
+    }
+);
 
 export const api = {
     // 회의실 목록 조회
-    getRooms: async () => {
-        const response = await fetch(`${API_BASE_URL}/rooms`, {
-            headers: defaultHeaders,
-        });
-        return handleResponse(response);
+    async getRooms() {
+        try {
+            return await axiosInstance.get('/rooms');
+        } catch (error) {
+            console.error('Failed to fetch rooms:', error);
+            throw error;
+        }
     },
 
     // 회의실 생성
-    createRoom: async (data) => {
-        const response = await fetch(`${API_BASE_URL}/rooms`, {
-            method: 'POST',
-            headers: defaultHeaders,
-            body: JSON.stringify(data),
-        });
-        return handleResponse(response);
+    async createRoom(roomData) {
+        try {
+            console.log('Creating room with data:', roomData);
+            const response = await axiosInstance.post('/rooms', {
+                roomName: roomData.roomName,
+                description: roomData.description,
+                maxParticipants: roomData.maxParticipants,
+                password: roomData.password
+            });
+            console.log('Room created:', response);
+            return response;
+        } catch (error) {
+            console.error('Failed to create room:', error);
+            throw error;
+        }
     },
 
     // 회의실 참여
-    joinRoom: async (roomId, data) => {
-        const response = await fetch(`${API_BASE_URL}/rooms/${roomId}/join`, {
-            method: 'POST',
-            headers: defaultHeaders,
-            body: JSON.stringify(data),
-        });
-        return handleResponse(response);
+    async joinRoom(roomId, joinData) {
+        try {
+            console.log('Joining room:', { roomId, joinData });  // 디버깅용 로그
+            return await axiosInstance.post(`/rooms/${roomId}/join`, {
+                roomId: roomId,
+                password: joinData?.password
+            });
+        } catch (error) {
+            console.error('Failed to join room:', error);
+            throw error;
+        }
     },
 
     // 회의실 나가기
-    leaveRoom: async (roomId) => {
-        const response = await fetch(`${API_BASE_URL}/rooms/${roomId}/leave`, {
-            method: 'POST',
-            headers: defaultHeaders,
-        });
-        return handleResponse(response);
+    async leaveRoom(roomId) {
+        try {
+            return await axiosInstance.post(`/rooms/${roomId}/leave`);
+        } catch (error) {
+            console.error('Failed to leave room:', error);
+            throw error;
+        }
     },
 
     // 회의실 종료 (방장만 가능)
-    closeRoom: async (roomId) => {
-        const response = await fetch(`${API_BASE_URL}/rooms/${roomId}/close`, {
-            method: 'POST',
-            headers: defaultHeaders,
-        });
-        return handleResponse(response);
+    async closeRoom(roomId) {
+        try {
+            return await axiosInstance.post(`/rooms/${roomId}/close`);
+        } catch (error) {
+            console.error('Failed to close room:', error);
+            throw error;
+        }
     },
 
     // 회의실 상세 정보 조회
-    getRoomDetails: async (roomId) => {
-        const response = await fetch(`${API_BASE_URL}/rooms/${roomId}`, {
-            headers: defaultHeaders,
-        });
-        return handleResponse(response);
+    async getRoomDetails(roomId) {
+        try {
+            return await axiosInstance.get(`/rooms/${roomId}`);
+        } catch (error) {
+            console.error('Failed to get room details:', error);
+            throw error;
+        }
+    },
+
+    // 회의실 접근 권한 확인
+    async verifyRoomAccess(roomId) {
+        try {
+            const response = await axiosInstance.get(`/rooms/${roomId}/access`);
+            return {
+                hasAccess: response.hasAccess,
+                message: response.message
+            };
+        } catch (error) {
+            console.error('Failed to verify room access:', error);
+            throw error;
+        }
     }
 };

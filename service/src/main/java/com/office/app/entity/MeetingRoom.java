@@ -2,6 +2,9 @@ package com.office.app.entity;
 
 import com.office.app.domain.RoomStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -19,21 +22,25 @@ import java.time.LocalDateTime;
 public class MeetingRoom {
     @Id
     private String roomId;
-    
-    @Column(nullable = false)
+
+    @NotNull
     private String roomName;
-    
+
+    private String description;  // 추가
+
+    @NotNull
     private String hostId;
-    
-    @Builder.Default
-    private int maxParticipants = 2;
-    
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
-    
+
+    @Min(2)
+    @Max(6)
+    private int maxParticipants;
+
+    private String password;
+
+    @NotNull
+    private LocalDateTime createdAt;
+
     @Enumerated(EnumType.STRING)
-    @Builder.Default
     private RoomStatus status = RoomStatus.ACTIVE;
-    
-    private String password; // Optional room password
+
 }

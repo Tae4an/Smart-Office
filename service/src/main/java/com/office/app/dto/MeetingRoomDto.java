@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 public class MeetingRoomDto {
     private String roomId;
     private String roomName;
+    private String description;
     private String hostId;
     private int maxParticipants;
     private LocalDateTime createdAt;

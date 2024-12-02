@@ -1,63 +1,95 @@
 package com.office.config;
 
+import com.office.app.security.*;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
+    private final CustomUserDetailsService userDetailsService;
+    private final AuthenticationSuccessHandlerImpl authenticationSuccessHandler;
+    private final AuthenticationFailureHandlerImpl authenticationFailureHandler;
+    private final LogoutSuccessHandlerImpl logoutSuccessHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())  // CSRF 보호 비활성화 (개발 환경)
                 .authorizeHttpRequests(auth -> {
-                    // 항상 허용할 경로
+                    // 정적 리소스와 공개 경로 설정
                     auth.requestMatchers(
-                            "/",
-                            "/static/**",
-                            "/error",
-                            "/index.html",
-                            "/login",
-                            "/ws/**"
-                    ).permitAll();
+                                    "/",
+                                    "/static/**",
+                                    "/error",
+                                    "/index.html",
+                                    "/login",
+                                    "/manifest.json",
+                                    "/favicon.ico"
+                            ).permitAll()
+                            // WebSocket과 API 요청은 인증 필요
+                            .requestMatchers("/ws/**").authenticated()
+                            .requestMatchers("/api/**").authenticated();
 
-                    // 개발 환경에서만 Swagger UI 접근 허용
+                    // 개발 환경에서 Swagger UI 접근 허용
                     if ("dev".equals(activeProfile)) {
                         auth.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll();
                     }
 
-                    // 나머지 모든 요청은 인증 필요
-                    auth.anyRequest().authenticated();
+                    auth.anyRequest().permitAll();
                 })
+                .userDetailsService(userDetailsService)
+                // 세션 관리 설정
+                .sessionManagement(session -> {
+                    session
+                            .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                            .invalidSessionUrl("/")
+                            .maximumSessions(1)  // 동시 세션 제한
+                            .maxSessionsPreventsLogin(true)  // 중복 로그인 방지
+                            .expiredUrl("/");
+                    session.sessionFixation().newSession();  // 세션 고정 공격 방지
+                })
+                // 로그인 설정
                 .formLogin(form -> {
                     form
-                            .loginPage("/")  // 커스텀 로그인 페이지 경로 지정
-                            .loginProcessingUrl("/login")  // 로그인 처리 URL
-                            .usernameParameter("employeeId")  // 사용자 ID 파라미터명 변경
-                            .passwordParameter("password")   // 비밀번호 파라미터명 변경
-                            .defaultSuccessUrl("/home")
-                            .failureUrl("/?error=true")
+                            .loginPage("/")
+                            .loginProcessingUrl("/login")
+                            .usernameParameter("employeeId")
+                            .passwordParameter("password")
+                            .successHandler(authenticationSuccessHandler)
+                            .failureHandler(authenticationFailureHandler)
                             .permitAll();
                 })
-                .sessionManagement(session -> {
-                    session.maximumSessions(1)
-                            .maxSessionsPreventsLogin(true);
-                    session.sessionFixation().changeSessionId();
-                })
+                // 로그아웃 설정
                 .logout(logout -> {
-                    logout.logoutSuccessUrl("/")
+                    logout
+                            .logoutUrl("/logout")
+                            .logoutSuccessUrl("/")
+                            .deleteCookies("JSESSIONID")
                             .invalidateHttpSession(true)
-                            .deleteCookies("JSESSIONID");
+                            .logoutSuccessHandler(logoutSuccessHandler);
+                })
+                // 예외 처리 설정
+                .exceptionHandling(handling -> {
+                    handling
+                            .authenticationEntryPoint(authenticationEntryPoint)
+                            .accessDeniedHandler(accessDeniedHandler);
                 });
 
         return http.build();

@@ -15,15 +15,16 @@ public class LoginResponse {
     private String name;
     private String department;
     private String position;
+    private String email;
     private boolean passwordChangeRequired;
     
-    // User 엔티티로부터 DTO를 생성하는 정적 팩토리 메서드
     public static LoginResponse from(User user) {
         return LoginResponse.builder()
                 .employeeId(user.getEmployeeId())
                 .name(user.getName())
                 .department(user.getDepartment())
                 .position(user.getPosition())
+                .email(user.getEmail())
                 .passwordChangeRequired(user.isPasswordChangeRequired())
                 .build();
     }

@@ -1,0 +1,192 @@
+/* Calendar Container styles */
+.calendar-container {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Calendar Header Styles */
+.rbc-toolbar {
+    margin-bottom: var(--spacing-4);
+    padding: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+}
+
+.rbc-toolbar-label {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--dark);
+}
+
+.rbc-btn-group {
+    display: flex;
+    gap: var(--spacing-1);
+}
+
+.rbc-btn-group button {
+    background: white;
+    border: 1px solid var(--gray);
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark);
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.rbc-btn-group button:hover {
+    background: var(--light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.rbc-btn-group button.rbc-active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Calendar Grid Styles */
+.rbc-month-view {
+    border: 1px solid var(--light);
+    border-radius: var(--border-radius);
+}
+
+.rbc-header {
+    padding: var(--spacing-2);
+    font-weight: 600;
+    background-color: var(--light);
+    border-bottom: 1px solid var(--gray);
+}
+
+.rbc-header + .rbc-header {
+    border-left: 1px solid var(--gray);
+}
+
+.rbc-date-cell {
+    padding: var(--spacing-2);
+    font-size: 0.9rem;
+    color: var(--dark);
+}
+
+.rbc-off-range-bg {
+    background-color: var(--light);
+}
+
+/* Today Highlight */
+.rbc-today {
+    background-color: rgba(30, 48, 243, 0.05);
+}
+
+
+/* Event Styles */
+.rbc-event {
+    background: var(--gradient);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: var(--spacing-1) var(--spacing-2);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.rbc-event.rbc-selected {
+    background: var(--secondary);
+}
+
+.rbc-event-label {
+    font-size: 0.8rem;
+}
+
+.rbc-event-content {
+    font-size: 0.9rem;
+}
+
+/* Time Grid Styles */
+.rbc-time-view {
+    border: 1px solid var(--light);
+    border-radius: var(--border-radius);
+}
+
+.rbc-time-header {
+    background-color: var(--light);
+    border-bottom: 1px solid var(--gray);
+}
+
+.rbc-time-content {
+    border-top: 1px solid var(--gray);
+}
+
+.rbc-timeslot-group {
+    border-bottom: 1px solid var(--light);
+}
+
+/* Time Slots */
+.rbc-time-slot {
+    font-size: 0.86rem;
+    color: var(--gray)
+}
+
+/* DnD Styles */
+.rbc-addons-dnd .rbc-event {
+    cursor: move;
+}
+
+.rbc-addons-dnd .rbc-event:active {
+    opacity: 0.8;
+}
+
+/* Resposive Adjustments */
+@media (max-width: 768px) {
+    .rbc-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .rbc-toolbar-label {
+        text-align: center;
+    }
+
+    .rbc-btn-group {
+        justify-content: center;
+    }
+
+    .rbc-event {
+        padding: var(--spacing-1);
+        font-size: 0.8rem;
+    }
+}
+
+/* Selection Styles */
+.rbc-selection-bg {
+    background-color: rgba(30, 40, 243, 0.1);
+}
+
+.rbc-day-bg.rbc-selected-cell {
+    background-color: rgba(30, 40, 243, 0.05);
+}
+
+/* Month View Additional Styles */
+.rbc-row-content {
+    z-index: 0;
+}
+
+.rbc-month-row + .rbc-month-row {
+    border-top: 1px solid var(--light);
+}
+
+
+/* Hover Effects */
+.rbc-date-cell:hover {
+    background-color: var(--light);
+    cursor: pointer;
+}
+
+.rbc-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

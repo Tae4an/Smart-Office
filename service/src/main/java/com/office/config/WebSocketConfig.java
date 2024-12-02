@@ -20,13 +20,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(
-                        new WebRTCSignalingHandler(objectMapper, meetingRoomService),
-                        "/ws/signaling"
-                )
-                .setAllowedOrigins("*")
-                .addHandler(webRTCSignalingHandler(), "/ws/signaling")
-                .addInterceptors(new WebSocketHandshakeInterceptor());
+        registry.addHandler(webRTCSignalingHandler(), "/ws/signaling")
+                .addInterceptors(new WebSocketHandshakeInterceptor())
+                .setAllowedOrigins("*"); // 프로덕션 환경에서는 구체적인 오리진을 지정
     }
 
     @Bean

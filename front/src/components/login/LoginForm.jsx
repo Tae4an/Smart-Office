@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import {
   TextField,
   Button,
@@ -12,6 +13,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import '../../styles/login.css'
+
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -32,7 +34,6 @@ const Login = () => {
     }
     return newErrors;
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -46,7 +47,6 @@ const Login = () => {
       }));
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
@@ -54,25 +54,25 @@ const Login = () => {
     if (Object.keys(newErrors).length === 0) {
       setIsLoading(true);
       try {
-        const response = await fetch('/login', {
-          method: 'POST',
+        const params = new URLSearchParams();
+        params.append('employeeId', formData.employeeId.trim());
+        params.append('password', formData.password);
+
+        const response = await axios.post('/login', params, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: new URLSearchParams({
-            username: formData.employeeId,
-            password: formData.password,
-          }),
+          withCredentials: true
         });
 
-        if (!response.ok) {
-          throw new Error('로그인에 실패했습니다.');
+        if (response.status === 200) {
+          navigate('/home');
         }
-
-        navigate('/home');
       } catch (error) {
-        console.error('Login failed:', error);
-        setErrors({ submit: '사번 또는 비밀번호가 올바르지 않습니다.' });
+        console.error('Login failed:', error.response?.data);
+        setErrors({
+          submit: error.response?.data?.error || '로그인에 실패했습니다. 다시 시도해주세요.'
+        });
       } finally {
         setIsLoading(false);
       }
@@ -80,6 +80,7 @@ const Login = () => {
       setErrors(newErrors);
     }
   };
+
   return (
       <div className="login-container">
         <div className="login-wrapper">
@@ -91,9 +92,6 @@ const Login = () => {
                   <h1>Smart Office</h1>
                   <p>사내 업무 관리 시스템</p>
                 </div>
-                <button className="read-more-btn">
-                  자세히 보기
-                </button>
               </div>
               {/* Decorative circles */}
               <div className="decorative-circles">
@@ -207,10 +205,6 @@ const Login = () => {
                 >
                   {isLoading ? '로그인 중...' : '로그인'}
                 </button>
-
-                <div className="forgot-password">
-                  <button type="button">비밀번호를 잊으셨나요?</button>
-                </div>
               </form>
             </div>
           </div>

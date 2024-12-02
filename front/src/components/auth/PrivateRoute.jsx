@@ -1,6 +1,6 @@
-// src/components/auth/PrivateRoute.jsx
 import { Navigate, Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const PrivateRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -9,15 +9,13 @@ const PrivateRoute = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/user/me');
-        if (!response.ok) {
-          throw new Error('인증 실패');
-        }
-        const userData = await response.json();
+        const response = await axios.get('/api/user/me', {
+          withCredentials: true  // 쿠키 전송을 위해 필수
+        });
+
         setIsAuthenticated(true);
 
-        // 비밀번호 변경이 필요한 경우
-        if (userData.passwordChangeRequired) {
+        if (response.data.passwordChangeRequired) {
           window.location.href = '/password-change';
           return;
         }
@@ -32,10 +30,9 @@ const PrivateRoute = () => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>; // 또는 로딩 스피너 컴포넌트
+    return <div>Loading...</div>;
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
 };
-
 export default PrivateRoute;
