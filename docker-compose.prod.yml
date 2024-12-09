@@ -8,6 +8,8 @@ services:
       - '80:80'
     environment:
       JASYPT_SECRET_KEY: ${JASYPT_SECRET_KEY}
+      SERVER_URL: ${SERVER_URL}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
       SPRING_PROFILES_ACTIVE: dev
       LOG_LEVEL: INFO
       GOOGLE_APPLICATION_CREDENTIALS: /app/credentials.json

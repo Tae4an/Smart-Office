@@ -23,27 +23,27 @@ const Main = () => {
     const mockStats = {
         attendanceStats: {
             title: '근태 현황',
+            mainStat: { value: '15', unit: '일', label: '정상 출근' },
             stats: [
-                { label: '정상 출근', value: '15일' },
-                { label: '지각', value: '1일' },
-                { label: '조퇴', value: '0일' },
-                { label: '결근', value: '0일' }
+                { label: '지각', value: '1', unit: '회' },
+                { label: '조퇴', value: '0', unit: '회' },
+                { label: '결근', value: '0', unit: '회' }
             ]
         },
         leaveStats: {
             title: '휴가 현황',
+            mainStat: { value: '10', unit: '일', label: '잔여 휴가' },
             stats: [
-                { label: '총 휴가', value: '15일' },
-                { label: '사용 휴가', value: '5일' },
-                { label: '잔여 휴가', value: '10일' }
+                { label: '총 휴가', value: '15', unit: '일' },
+                { label: '사용 휴가', value: '5', unit: '일' }
             ]
         },
         overtimeStats: {
             title: '초과근무 현황',
+            mainStat: { value: '12', unit: '시간', label: '이번달 초과근무' },
             stats: [
-                { label: '이번달 초과근무', value: '12시간' },
-                { label: '승인된 초과근무', value: '10시간' },
-                { label: '수당 지급 예정', value: '10시간' }
+                { label: '승인됨', value: '10', unit: '시간' },
+                { label: '수당 지급 예정', value: '10', unit: '시간' }
             ]
         }
     };
