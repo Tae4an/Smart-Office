@@ -177,6 +177,12 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
         </Drawer>
     );
 };
-
+ChatComponent.propTypes = {
+    roomId: PropTypes.string.isRequired,
+    websocket: PropTypes.object.isRequired,
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    messages: PropTypes.array.isRequired
+};
 
 export default ChatComponent;

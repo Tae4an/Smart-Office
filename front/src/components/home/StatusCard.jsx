@@ -1,6 +1,6 @@
 // StatusCard.jsx
 import React from 'react';
-import '../../styles/home.css';
+import '../../styles/dashboard.css';
 
 const StatusCard = ({ title, mainStat, stats }) => {
     return (

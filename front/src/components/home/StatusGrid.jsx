@@ -1,7 +1,7 @@
 // StatusGrid.jsx
 import React from 'react';
 import StatusCard from './StatusCard';
-import '../../styles/home.css';
+import '../../styles/dashboard.css';
 
 const StatusGrid = ({ stats }) => {
     const { attendanceStats, leaveStats, overtimeStats } = stats;

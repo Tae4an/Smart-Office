@@ -11,7 +11,7 @@ const Messenger = () => {
         </h1>
       </div>
       <div className="msg-container">
-        <MessengerForm />
+        <MessengerForm isWidget={false}/>
       </div>
     </div>
   );

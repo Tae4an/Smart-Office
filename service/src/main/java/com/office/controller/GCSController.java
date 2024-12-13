@@ -56,7 +56,7 @@ public class GCSController {
             @ModelAttribute GCSRequest gcsRequest,
             @Parameter(description = "업로드하는 사용자 ID", required = true)
             @RequestHeader("X-User-Id") String employeeId) throws GCSException {
-        return ResponseEntity.ok(gcsService.uploadObject(gcsRequest, employeeId));
+        return ResponseEntity.ok(gcsService.uploadObject(gcsRequest, employeeId, false));
     }
 
     @Operation(summary = "파일 다운로드", description = "GCS에서 파일을 다운로드합니다.")

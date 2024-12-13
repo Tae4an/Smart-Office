@@ -18,6 +18,11 @@
     --font-family-sans-serif: 'Plus Jakarta Sans', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     
+    /* Layout & Spacing */
+    --container-max-width: 1200px;
+    --page-padding: 5rem;
+    --section-spacing: 4rem;
+
     /* Spacing */
     --spacing-1: 0.25rem;
     --spacing-2: 0.5rem;
@@ -29,6 +34,11 @@
     --border-radius: 0.375rem;
     --border-radius-lg: 0.5rem;
     --border-radius-xl: 1rem;
+
+    /* Header & Footer Heights */
+    --header-height: 60px;
+    --footer-height: 60px;
+    --sidebar-width: 250px;
   }
 
   /* Loading Spinner Styles */
@@ -174,12 +184,9 @@
   
   /* Container */
   .container {
-    width: 100%;
-    padding-right: var(--spacing-3);
-    padding-left: var(--spacing-3);
-    margin-right: auto;
-    margin-left: auto;
     max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1rem;
   }
   
   /* Grid System */
@@ -201,18 +208,33 @@
   
   /* Responsive Breakpoints */
   @media (min-width: 576px) {
+    :root {
+      --page-padding: 2rem;
+      --section-spacing: 1rem;
+    }
+
     .container {
       max-width: 540px;
     }
   }
   
   @media (min-width: 768px) {
+    :root {
+      --page-padding: 3rem;
+      --section-spacing: 2rem;
+    }
+
     .container {
       max-width: 720px;
     }
   }
   
   @media (min-width: 992px) {
+    :root {
+      --page-padding: 4rem;
+      --section-spacing: 3rem;
+    }
+
     .container {
       max-width: 960px;
     }

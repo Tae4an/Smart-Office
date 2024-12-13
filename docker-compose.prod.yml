@@ -10,6 +10,7 @@ services:
       JASYPT_SECRET_KEY: ${JASYPT_SECRET_KEY}
       SERVER_URL: ${SERVER_URL}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      FAST_API_SERVER_URL: ${FAST_API_SERVER_URL}
       SPRING_PROFILES_ACTIVE: dev
       LOG_LEVEL: INFO
       GOOGLE_APPLICATION_CREDENTIALS: /app/credentials.json
@@ -17,6 +18,8 @@ services:
       REACT_APP_TURN_SERVER_URL: ${TURN_SERVER_URL}
       REACT_APP_TURN_USERNAME: ${TURN_USERNAME}
       REACT_APP_TURN_PASSWORD: ${TURN_PASSWORD}
+      REACT_APP_KAKAO_MAP_API_KEY: ${KAKAO_MAP_API_KEY}
+      REACT_APP_WEATHER_API_KEY: ${WEATHER_API_KEY}
     volumes:
       - /home/tae4an/gcs/gcs-credentials.json:/app/credentials.json
     healthcheck:

@@ -1,0 +1,648 @@
+/* ==========================================================================
+   Dashboard Layout
+   ========================================================================== */
+   .dashboard-content {
+    padding: var(--spacing-4);
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: var(--spacing-4);
+  }
+  
+  .dashboard-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+  }
+  
+  /* ==========================================================================
+     Profile Section
+     ========================================================================== */
+  .welcome-info {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+  }
+  
+  .profile-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-image-wrapper {
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--gradient);
+    padding: 2px;
+  }
+  
+  .profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid white;
+  }
+  
+  .user-info {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .position-text {
+    color: var(--gray);
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+  }
+  
+  /* ==========================================================================
+     Grid Layout
+     ========================================================================== */
+  .grid-layout {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-4);
+  }
+  
+  .grid-cell {
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px dashed var(--light);
+    border-radius: var(--border-radius-lg);
+    height: fit-content;
+    min-height: 300px;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .grid-cell.occupied {
+    border: none;
+    background: white;
+  }
+
+  .status-grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-4);
+    max-width: 100%;
+  }
+  
+  /* Empty Cell 스타일 */
+  .empty-cell {
+    background: white;
+    border: 2px dashed var(--light);
+    border-radius: var(--border-radius-lg);
+    min-height: 300px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .empty-cell:hover {
+    border-color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.05);
+  }
+  
+  .empty-cell .text-3xl {
+    font-size: 2rem;
+    font-weight: 300;
+  }
+  
+  /* ==========================================================================
+     Widget Base
+     ========================================================================== */
+  .widget-container {
+    height: fit-content;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+    position: relative;
+  }
+  
+  .widget-container:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-3);
+    border-bottom: 1px solid var(--light);
+    position: relative;
+  }
+  
+  .widget-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--dark);
+  }
+  
+  .widget-content {
+    flex: 1;
+    overflow: auto;
+    padding: var(--spacing-4);
+  }
+  
+  .widget-controls {
+    position: absolute;
+    top: var(--spacing-2);
+    right: var(--spacing-2);
+    display: flex;
+    gap: var(--spacing-2);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--light);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .widget-controls button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    color: var(--gray);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  .widget-controls button:hover {
+    color: var(--danger);
+    background-color: rgba(255, 59, 48, 0.1);
+    border-radius: var(--border-radius);
+  }
+  
+  /* ==========================================================================
+     Modal
+     ========================================================================== */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  }
+  
+  .modal-header {
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--dark);
+  }
+  
+  .modal-body {
+    padding: var(--spacing-4);
+  }
+  
+  .close-button {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: var(--spacing-2);
+    color: var(--gray);
+    transition: color 0.2s;
+  }
+  
+  .close-button:hover {
+    color: var(--danger);
+  }
+  
+  /* ==========================================================================
+     Widget Options
+     ========================================================================== */
+  .widget-option {
+    width: 100%;
+    text-align: left;
+    padding: var(--spacing-4);
+    border: 1px solid var(--light);
+    border-radius: var(--border-radius);
+    background: transparent;
+    cursor: pointer;
+    margin-bottom: var(--spacing-3);
+    transition: all 0.2s;
+  }
+  
+  .widget-option:hover {
+    border-color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.05);
+  }
+  
+  .widget-option h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--dark);
+  }
+  
+  .widget-option p {
+    margin: var(--spacing-2) 0 0;
+    font-size: 0.875rem;
+    color: var(--gray);
+  }
+  
+  /* ==========================================================================
+     Activity Widget
+     ========================================================================== */
+  .activity-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+  }
+  
+  .activity-item {
+    padding: var(--spacing-3);
+    border-radius: var(--border-radius);
+    background: var(--light);
+    transition: all 0.2s ease;
+  }
+  
+  .activity-item:hover {
+    background: #f0f0f5;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  /* ==========================================================================
+     Status Widget
+     ========================================================================== */
+  .status-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-3);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    min-width: 0;
+    max-width: 100%;
+    max-height: 400px;
+  }
+  
+  .status-card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray);
+    margin-bottom: var(--spacing-1);
+  }
+  
+  .main-stat {
+    text-align: center;
+    padding: var(--spacing-1) 0;
+  }
+  
+  .main-stat-value {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--spacing-1);
+  }
+  
+  .main-stat-value .value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  
+  .main-stat-value .unit {
+    font-size: 0.875rem;
+    color: var(--gray);
+    margin-left: var(--spacing-1);
+  }
+  
+  .main-stat-label {
+    display: block;
+    color: var(--gray);
+    font-size: 0.75rem;
+    margin-top: var(--spacing-1);
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-2);
+    padding-top: var(--spacing-2);
+    border-top: 1px solid var(--light);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--gray);
+  }
+
+  .stat-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--dark);
+  }
+
+  .stat-unit {
+    font-size: 0.75rem;
+    color: var(--gray);
+    margin-left: 0.25rem;
+  }
+  
+  /* ==========================================================================
+     Map Widget
+     ========================================================================== */
+  .map-widget {
+    height: auto;
+    width: 100%;
+    min-height: 500px;
+    position: relative;
+  }
+  
+  .map-widget-container {
+    width: 100% !important;
+    height: 450px !important;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+  }
+  
+  .map-widget-container > div {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  /* ==========================================================================
+     Weather Widget
+     ========================================================================== */
+  .weather-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .weather-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    align-items: center;
+    padding: var(--spacing-2);
+  }
+  
+  .weather-location {
+    font-size: 1rem;
+    color: var(--gray);
+  }
+  
+  .weather-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+  
+  .weather-info .temperature {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  
+  .weather-info .condition {
+    font-size: 1.1rem;
+    color: var(--dark);
+  }
+  
+  /* ==========================================================================
+     Message Widget
+     ========================================================================== */
+  .messenger-widget-container {
+    height: 400px;
+    border-radius: var(--border-radius-lg);
+    background: white;
+    overflow: hidden;
+    display: flex;
+  }
+  
+  .messenger-widget-container .messenger-container {
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .messenger-widget-container .chat-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .messenger-widget-container .chat-list {
+    width: 280px;
+    min-width: 280px;
+    transition: all 0.3s ease;
+  }
+
+  .messenger-widget-container .messenger-container.has-selected-chat .chat-list {
+    display: none;
+  }
+  
+  .messenger-widget-container .chat-list-header {
+    padding: var(--spacing-2) var(--spacing-3);
+  }
+  
+  .messenger-widget-container .messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-3);
+    height: auto;
+    min-height: 0;
+  }
+  
+  .messenger-widget-container .input-container {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid var(--light);
+  }
+  
+  /* ==========================================================================
+     Refresh Indicator
+     ========================================================================== */
+  .mini-calendar-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .mini-calendar-card .card-title {
+    margin: 0 0 var(--spacing-3);
+    font-size: 1.1rem;
+    color: var(--dark);
+  }
+  
+  
+  /* ==========================================================================
+     Animations
+     ========================================================================== */
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+  
+  .refresh-indicator {
+    color: var(--primary);
+    font-size: 16px;
+    margin-right: var(--spacing-2);
+    animation: spin 1s linear infinite;
+  }
+  
+  /* ==========================================================================
+     Responsive
+     ========================================================================== */
+  @media (max-width: 1200px) {
+    .dashboard-grid {
+      grid-template-columns: 300px 1fr;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .status-grid-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-content {
+      padding: var(--spacing-3);
+    }
+  
+    .grid-layout {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(4, minmax(300px, 1fr));
+    }
+  
+    .empty-cell {
+      min-height: 250px;
+    }
+  
+    .activity-item {
+      flex-direction: column;
+      gap: var(--spacing-2);
+    }
+  
+    .map-widget,
+    .map-widget-container {
+      height: 300px !important;
+    }
+  
+    .messenger-widget-container {
+      height: 300px;
+    }
+
+    .messenger-widget-container .chat-list {
+      width: 240px;
+      min-width: 240px;
+    }
+
+    .messenger-widget-container .messages-container {
+      height: calc(100% - 50px);
+      padding: var(--spacing-2);
+    }
+  
+    .profile-container {
+      flex-direction: column;
+      gap: var(--spacing-4);
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .dashboard-content {
+      padding: var(--spacing-2);
+    }
+  
+    .dashboard-column {
+      gap: var(--spacing-3);
+    }
+  
+    .map-widget {
+      height: 250px;
+    }
+
+    .status-grid-container {
+      grid-template-columns: 1fr;
+    }
+
+    .messenger-widget-container .chat-list {
+      width: 200px;
+      min-width: 200px;
+    }
+  }

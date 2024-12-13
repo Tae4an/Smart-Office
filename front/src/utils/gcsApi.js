@@ -108,3 +108,33 @@ export const getUserFileList = () => {
     const userId = getUserId();
     return gcsApi.get(`/user/${userId}`);
 };
+export const uploadOCRFile = async (file) => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await axios.post('/api/ocr/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'X-User-Id': getUserId()
+            },
+            onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                return percentCompleted;
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            console.error('Error response:', error.response.data);
+            throw new Error(error.response.data.message || 'OCR 처리에 실패했습니다.');
+        } else if (error.request) {
+            console.error('Error request:', error.request);
+            throw new Error('서버에서 응답을 받지 못했습니다.');
+        } else {
+            console.error('Error:', error.message);
+            throw new Error('요청 중 오류가 발생했습니다.');
+        }
+    }
+};

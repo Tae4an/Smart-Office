@@ -3,11 +3,11 @@ import '../../styles/layout.css';
 
 const BottomNav = () => {
     const menuItems = [
-        { path: "/", label: "Home", icon: "fas fa-home" },
-        { path: "/projects", label: "Projects", icon: "fas fa-folder-open" },
-        { path: "/messenger", label: "Messages", icon: "fas fa-comment" },
+        { path: "/home", label: "Home", icon: "fas fa-home" },
         { path: "/calendar", label: "Calendar", icon: "fas fa-calendar" },
-        { path: "/profile", label: "Profile", icon: "fas fa-user" }
+        { path: "/messenger", label: "Messages", icon: "fas fa-comment" },
+        { path: "/meeting", label: "Meeing", icon: "fas fa-video" },
+        { path: "/file", label: "File", icon: "fas fa-file" }
     ];
 
     return (

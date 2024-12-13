@@ -10,4 +10,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class GCSRequest {
     private String name;  // 업로드할 파일의 이름
     private MultipartFile file;   // 업로드할 파일 데이터를 담은 MultipartFile 객체
+    private boolean isOCRUpload;
 }

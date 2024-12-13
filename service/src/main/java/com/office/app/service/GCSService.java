@@ -74,9 +74,9 @@ public class GCSService {
      * 2. GCS에 파일 업로드
      * 3. FileInfo 엔티티에 원본 파일명 포함하여 저장
      */
-    public GCSResponse uploadObject(GCSRequest request, String employeeId) throws GCSException {
+    public GCSResponse uploadObject(GCSRequest request, String employeeId, boolean isOCRUpload) throws GCSException {
         validateUploadRequest(request);
-        fileValidator.validateFile(request.getFile());
+        fileValidator.validateFile(request.getFile(),isOCRUpload);
 
         try {
             User uploader = userRepository.findById(employeeId)
@@ -84,7 +84,7 @@ public class GCSService {
 
             MultipartFile file = request.getFile();
             String originalFileName = file.getOriginalFilename();
-            String storedFileName = generateUniqueFileName(originalFileName);
+            String storedFileName = generateUniqueFileName(originalFileName, isOCRUpload);
 
             // Content Type 설정 추가
             BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, storedFileName)
@@ -257,9 +257,15 @@ public class GCSService {
         }
     }
 
-    private String generateUniqueFileName(String originalFileName) {
+    private String generateUniqueFileName(String originalFileName, boolean isOCRUpload) {
         String extension = StringUtils.getFilenameExtension(originalFileName);
-        return UUID.randomUUID().toString() + (extension != null ? "." + extension : "");
+        String uuid = UUID.randomUUID().toString();
+
+        // OCR 업로드인 경우 img/ 폴더에 저장
+        if (isOCRUpload) {
+            return "img/" + uuid + (extension != null ? "." + extension : "");
+        }
+        return uuid + (extension != null ? "." + extension : "");
     }
 
     /**

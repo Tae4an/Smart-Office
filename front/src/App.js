@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import AppRoutes from './Routes';
+import ChatWidget from './components/ai/ChatWidget';
 import './styles/global.css';
 import './styles/pages.css';
 
@@ -25,6 +26,7 @@ function App() {
                 </div>
             }>
                 <AppRoutes />
+                <ChatWidget />
             </Suspense>
         </ThemeProvider>
     );

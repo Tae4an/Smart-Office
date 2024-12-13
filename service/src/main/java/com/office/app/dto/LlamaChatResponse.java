@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class LlamaChatResponse {
     private String response;
     private String status;
+    private String error;
 }

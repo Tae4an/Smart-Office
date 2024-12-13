@@ -1,45 +1,120 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { calendarApi } from '../utils/calendarApi';
 
-const CalendarContext = createContext();
+// Context 생성
+const CalendarContext = createContext(null);
 
+// Provider 컴포넌트
 export const CalendarProvider = ({ children }) => {
-    // LocalStorage에서 저장된 이벤트를 불러오거나, 없으면 빈 배열로 시작
+    const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState(() => {
         const savedEvents = localStorage.getItem('calendar-events');
         return savedEvents ? JSON.parse(savedEvents) : [];
     });
 
-    // events가 변경될 때마다 LocalStorage에 저장
     useEffect(() => {
-        localStorage.setItem('calendar-events', JSON.stringify(events));
-    }, [events]);
+        const fetchEvents = async () => {
+            // userInfo가 있을 때만 API 호출
+            const userInfoStr = sessionStorage.getItem('userInfo');
+            if (!userInfoStr) {
+                setLoading(false);
+                return;
+            }
 
-    const addEvent = (newEvent) => {
-        setEvents(prev => [...prev, newEvent]);
+            try {
+                const response = await calendarApi.get();
+                const dbEvents = response.data;
+
+                const mergedEvents = [...events, ...dbEvents.filter(dbEvent =>
+                    !events.some(event => event.id === dbEvent.id)
+                )];
+
+                setEvents(mergedEvents);
+                localStorage.setItem('calendar-events', JSON.stringify(mergedEvents));
+            } catch (error) {
+                console.error('Failed to fetch events:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEvents();
+    }, []);
+
+    const addEvent = async (newEvent) => {
+        try {
+            const response = await calendarApi.post('', newEvent);
+            const savedEvent = response.data;
+
+            const updatedEvents = [...events, savedEvent];
+            setEvents(updatedEvents);
+            localStorage.setItem('calendar-events', JSON.stringify(updatedEvents));
+
+            return savedEvent;
+        } catch (error) {
+            console.error('Failed to add event:', error);
+            throw error;
+        }
     };
 
-    const updateEvent = (updatedEvent) => {
-        setEvents(prev => prev.map(event =>
-            event.id === updatedEvent.id ? updatedEvent : event
-        ));
+    const updateEvent = async (updatedEvent) => {
+        try {
+            const response = await calendarApi.put(`/${updatedEvent.id}`, updatedEvent);
+            const savedEvent = response.data;
+
+            const updatedEvents = events.map(event =>
+                event.id === savedEvent.id ? savedEvent : event
+            );
+            setEvents(updatedEvents);
+            localStorage.setItem('calendar-events', JSON.stringify(updatedEvents));
+
+            return savedEvent;
+        } catch (error) {
+            console.error('Failed to update event:', error);
+            throw error;
+        }
     };
 
-    const deleteEvent = (eventId) => {
-        setEvents(prev => prev.filter(event => event.id !== eventId));
+    const deleteEvent = async (eventId) => {
+        try {
+            await calendarApi.delete(`/${eventId}`);
+
+            const filteredEvents = events.filter(event => event.id !== eventId);
+            setEvents(filteredEvents);
+            localStorage.setItem('calendar-events', JSON.stringify(filteredEvents));
+        } catch (error) {
+            console.error('Failed to delete event:', error);
+            throw error;
+        }
     };
 
-    const resetEvent = () => {
-        setEvents([]);
-        localStorage.removeItem('calendar-events');
+    const resetEvent = async () => {
+        try {
+            await calendarApi.delete('');
+
+            setEvents([]);
+            localStorage.removeItem('calendar-events');
+        } catch (error) {
+            console.error('Failed to reset events:', error);
+            throw error;
+        }
     };
 
     return (
-        <CalendarContext.Provider value={{ events, addEvent, updateEvent, deleteEvent, resetEvent }}> {/* event -> events */}
+        <CalendarContext.Provider value={{
+            events,
+            loading,
+            addEvent,
+            updateEvent,
+            deleteEvent,
+            resetEvent
+        }}>
             {children}
         </CalendarContext.Provider>
     );
 };
 
+// Hook 생성
 export const useCalendar = () => {
     const context = useContext(CalendarContext);
     if (!context) {

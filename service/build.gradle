@@ -111,10 +111,20 @@ dependencies {
     // Spring AOP (AspectJ)
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+    // Spring Retry 라이브러리
+    // 선언적 재시도 지원 및 RetryTemplate 등의 기능 제공
+    implementation 'org.springframework.retry:spring-retry'
+
+    // Spring AOP 지원 라이브러리
+    // @Retryable 어노테이션 사용을 위한 AOP 기능 제공
+    implementation 'org.springframework:spring-aspects'
+
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.awaitility:awaitility:4.2.0'
+
+
 }
 
 node {

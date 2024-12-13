@@ -1,15 +1,91 @@
-// 실제 코드용 Main.jsx 파일
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import defaultProfileImage from '../../assets/profile1.png';
 import ProfileSection from './ProfileSection';
 import StatusGrid from './StatusGrid';
 import ActivityCard from './ActivityCard';
 import CalendarForm from '../calendar/CalendarForm';
-import defaultProfileImage from '../../assets/profile1.png';
-import '../../styles/home.css';
+import MapWidget from './MapWidget';
+import MsgWidget from './MsgWidget';
+import WeatherWidget from './WeatherWidget';
+import WidgetSelector from './WidgetSelector';
+import { mockUser, mockStats, mockActivities } from '../../mock/mockData';
+import '../../styles/dashboard.css';
+
+// 위젯 구성 객체
+const WIDGET_CONFIG = {
+    status: {
+        id: 'status',
+        title: '근태 현황',
+        description: '출근, 퇴근, 휴가 등 근태 현황을 확인할 수 있습니다.',
+        component: StatusGrid,
+        props: (data) => ({ stats: data.stats })
+    },
+    activity: {
+        id: 'activity',
+        title: '최근 활동',
+        description: '최근 업무 활동과 진행 상황을 확인할 수 있습니다.',
+        component: ActivityCard,
+        props: (data) => ({ activities: data.activities })
+    },
+    map: {
+        id: 'map',
+        title: '지도',
+        description: '회사 주변 또는 원하는 장소를 지도에서 확인하고 관리할 수 있습니다.',
+        component: MapWidget,
+        props: () => ({})
+    },
+    message: {
+        id: 'message',
+        title: '메시지',
+        description: '팀원들과의 메시지를 주고받을 수 있습니다.',
+        component: MsgWidget,
+        props: () => ({})
+    }
+};
+
+// EmptyCell 컴포넌트
+const EmptyCell = ({ onAddWidget, availableWidgets }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <>
+            <div className="empty-cell" onClick={() => setIsOpen(true)}>
+                <div className="flex flex-col items-center justify-center h-full text-gray-400 hover:text-primary">
+                    <span className="text-3xl mb-2">+</span>
+                    <span>위젯 추가하기</span>
+                </div>
+            </div>
+            <WidgetSelector
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+                onSelectWidget={onAddWidget}
+                availableWidgets={availableWidgets}
+            />
+        </>
+    );
+};
+
+// Widget 컴포넌트
+const Widget = ({ widgetId, data, onRemove }) => {
+    const config = WIDGET_CONFIG[widgetId];
+    const WidgetComponent = config.component;
+
+    return (
+        <div className="widget-container">
+            <div className="widget-header">
+                <h3>{config.title}</h3>
+                <div className="widget-controls">
+                    <button onClick={onRemove} title="위젯 제거">✕</button>
+                </div>
+            </div>
+            <div className="widget-content">
+                <WidgetComponent {...config.props(data)} />
+            </div>
+        </div>
+    );
+};
 
 const Main = () => {
-
     const [user, setUser] = useState({
         name: "",
         position: "",
@@ -19,7 +95,7 @@ const Main = () => {
         profileImage: defaultProfileImage
     });
 
-    // // 목업 통계 데이터
+    // 목업 데이터
     const mockStats = {
         attendanceStats: {
             title: '근태 현황',
@@ -48,76 +124,27 @@ const Main = () => {
         }
     };
 
-    // // 목업 활동 데이터
-    const mockActivities = [
-        {
-            id: 1,
-            type: '휴가',
-            title: '연차 휴가 신청',
-            status: '승인완료',
-            date: '2024-12-05',
-            description: '12월 5일 연차 휴가'
-        },
-        {
-            id: 2,
-            type: '초과근무',
-            title: '초과근무 신청',
-            status: '승인대기',
-            date: '2024-12-03',
-            description: '프로젝트 마감으로 인한 초과근무 2시간'
-        },
-        {
-            id: 3,
-            type: '근태',
-            title: '지각 사유서',
-            status: '제출완료',
-            date: '2024-12-02',
-            description: '교통 체증으로 인한 지각'
-        },
-        {
-            id: 4,
-            type: '휴가',
-            title: '반차 신청',
-            status: '승인완료',
-            date: '2024-12-01',
-            description: '오후 반차'
-        },
-        {
-            id: 5,
-            type: '초과근무',
-            title: '초과근무 신청',
-            status: '승인완료',
-            date: '2024-11-30',
-            description: '긴급 장애 대응으로 인한 초과근무 3시간'
-        }
-    ];
-    
-    // const [user, setUser] = useState(mockUser);
-    const [stats, setStats] = useState(mockStats); // 나중에 이 mockStats 실제 데이터로 가져오기
+    const [stats, setStats] = useState(mockStats);
     const [activities, setActivities] = useState(mockActivities);
-    {/* 테스트 정보 */}
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [gridCells, setGridCells] = useState(Array(4).fill(null));
 
-
-    {/* 실제 기능 */}
     useEffect(() => {
         const getUserFromSession = () => {
             try {
                 const userInfoStr = sessionStorage.getItem('userInfo');
-
                 const userData = JSON.parse(userInfoStr);
+                
                 setUser({
                     name: userData.name,
                     position: userData.position,
                     department: userData.department,
                     employeeId: userData.employeeId,
                     email: userData.email,
-                    profileImage: defaultProfileImage // 프로필 이미지는 현재 기본 이미지 사용
+                    profileImage: defaultProfileImage
                 });
 
-                // 비밀번호 변경이 필요한 경우
                 if (userData.passwordChangeRequired) {
                     window.location.href = '/password-change';
                 }
@@ -130,28 +157,45 @@ const Main = () => {
             }
         };
 
+        const savedWidgets = localStorage.getItem('gridWidgets');
+        if (savedWidgets) {
+            setGridCells(JSON.parse(savedWidgets));
+        }
+
         getUserFromSession();
     }, []);
-    {/* 실제 기능 */}
 
-    if (loading) {
-        return <div className="dashboard-content container">
-            <div className="loading">Loading...</div>
-        </div>;
-    }
+    const getAvailableWidgets = () => {
+        return Object.values(WIDGET_CONFIG).filter(
+            widget => !gridCells.includes(widget.id)
+        );
+    };
 
-    if (error) {
-        return <div className="dashboard-content container">
-            <div className="error">{error}</div>
-        </div>;
-    }
+    const handleAddWidget = (index, widgetId) => {
+        const newGridCells = [...gridCells];
+        newGridCells[index] = widgetId;
+        setGridCells(newGridCells);
+        localStorage.setItem('gridWidgets', JSON.stringify(newGridCells));
+    };
+
+    const handleRemoveWidget = (index) => {
+        const newGridCells = [...gridCells];
+        newGridCells[index] = null;
+        setGridCells(newGridCells);
+        localStorage.setItem('gridWidgets', JSON.stringify(newGridCells));
+    };
+
+    if (loading) return <div className="dashboard-content container"><div className="loading">Loading...</div></div>;
+    if (error) return <div className="dashboard-content container"><div className="error">{error}</div></div>;
+
+    const widgetData = { stats, activities };
 
     return (
         <div className="dashboard-content container">
             <div className="dashboard-grid">
                 {/* Left Column */}
                 <div className="dashboard-column">
-                    <div className="status-card">
+                    <div className="profile-card">
                         <ProfileSection user={user} />
                     </div>
                     <div className="mini-calendar-card">
@@ -160,16 +204,34 @@ const Main = () => {
                             <CalendarForm height="100%" minimode={true} />
                         </div>
                     </div>
+                    <div className="weather-card">
+                        <WeatherWidget />
+                    </div>
                 </div>
 
-                {/* Right Column */}
+                {/* Right Column - Grid Layout */}
                 <div className="dashboard-column">
-                    <StatusGrid stats={stats} />
-                    <ActivityCard activities={activities} />
+                    <div className="grid-layout">
+                        {gridCells.map((widgetId, index) => (
+                            <div key={index} className={`grid-cell ${widgetId ? 'occupied' : ''}`}>
+                                {widgetId ? (
+                                    <Widget
+                                        widgetId={widgetId}
+                                        data={widgetData}
+                                        onRemove={() => handleRemoveWidget(index)}
+                                    />
+                                ) : (
+                                    <EmptyCell
+                                        onAddWidget={(widgetId) => handleAddWidget(index, widgetId)}
+                                        availableWidgets={getAvailableWidgets()}
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
-
     );
 };
 

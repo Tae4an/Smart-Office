@@ -1,11 +1,10 @@
 // ActivityCard.jsx
 import React from 'react';
-import '../../styles/home.css';
+import '../../styles/dashboard.css';
 
 const ActivityCard = ({ activities }) => {
     return (
         <div className="activity-card p-4 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">최근 활동</h3>
             <div className="activity-list">
                 {activities.map((activity) => (
                     <div key={activity.id} className="activity-item p-3 mb-2 rounded">

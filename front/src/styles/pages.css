@@ -1,20 +1,13 @@
 /* Commen Page Styles */
-:root {
-  --page-padding: 5rem;
-  --section-spacing: 4rem;
-  --container-max-width: 1200px;
-  --border-radius: 1rem;
-}
-
 .page {
   min-height: calc(100vh - var(--header-height) - var(--footer-height));
   animation: fadeIn 0.3s ease-in;
 }
 
 .container {
-  max-width: var(--container-max-width);
-  margin: 0 auto;
-  padding: 0 var(--container-padding);
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 1rem;
 }
 
 .cta-title {
@@ -44,14 +37,8 @@
 }
 
 /* Container */
-.resume-container,
-.projects-container,
 .calendar-container,
-.ai-container,
-.hub-container,
 .meeting-container,
-.emp-container,
-.doc-container,
 .map-container {
   max-width: 1200px;
   margin: 3rem auto;
@@ -59,8 +46,13 @@
 }
 
 .msg-container {
-  max-width: auto;
+  max-width: 100%;
+  margin: 1rem auto;
+  padding: 0 1rem;
+  height: calc(100vh - 200px);
+  min-height: 600px;
 }
+
 /* Page Headers */
 .page-header {
   padding: var(--section-spacing);
@@ -156,11 +148,6 @@
 
 /* Responsive Styles */
 @media (max-width: 992px) {
-  :root {
-    --page-padding: 4rem;
-    --section-spacing: 3rem;
-  }
-
   .page-title {
     font-size: 2.5rem;
   }
@@ -171,23 +158,26 @@
 }
 
 @media (max-width: 768px) {
-  :root {
-    --page-padding: 3rem;
-    --section-spacing: 2rem;
-  }
-
   .page-title {
     font-size: 2rem;
+  }
+
+  .msg-container {
+    height: calc(100vh - 120px);
+    min-height: 500px;
+    margin: 1rem auto;
+    padding: 0 0.5rem;
   }
 }
 
 @media (max-width: 576px) {
-  :root {
-    --page-padding: 2rem;
-    --section-spacing: 1rem;
-  }
-
   .page-title {
     font-size: 1.5rem;
+  }
+
+  .msg-container {
+    height: calc(100vh - 100px);
+    margin: 0.5rem auto;
+    padding: 0;
   }
 }

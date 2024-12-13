@@ -1,6 +1,6 @@
 // ProfileSection.jsx
 import React from 'react';
-import '../../styles/home.css';
+import '../../styles/dashboard.css';
 
 const ProfileSection = ({ user }) => {
     return (

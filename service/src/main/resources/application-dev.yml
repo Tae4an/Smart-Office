@@ -113,3 +113,7 @@ file:
     application/zip,
     application/x-zip-compressed,
     application/x-rar-compressed
+
+fast-api:
+  api:
+    base-url: ${FAST_API_SERVER_URL}
