@@ -63,6 +63,43 @@
     border-bottom: 1px solid var(--gray);
 }
 
+/* 일요일 스타일 (첫번째 열) */
+.rbc-header:first-child {
+    color: #ff0000;
+}
+
+/* 토요일 스타일 (마지막 열) */
+.rbc-header:last-child {
+    color: #0000ff;
+}
+
+/* 일요일 날짜 스타일 */
+.rbc-row-content .rbc-row .rbc-date-cell:first-child {
+    color: #ff0000;
+}
+
+/* 토요일 날짜 스타일 */
+.rbc-row-content .rbc-row .rbc-date-cell:last-child {
+    color: #0000ff;
+}
+
+/* Weekend Cell Styles */
+.rbc-row-content .rbc-row .rbc-date-cell:first-child {
+    color: #ff0000;
+    background-color: rgba(255, 0, 0, 0.03);
+}
+
+.rbc-row-content .rbc-row .rbc-date-cell:last-child {
+    color: #0000ff;
+    background-color: rgba(0, 0, 255, 0.03);
+}
+
+/* Hover effect for weekend cells */
+.rbc-row-content .rbc-row .rbc-date-cell:first-child:hover,
+.rbc-row-content .rbc-row .rbc-date-cell:last-child:hover {
+    background-color: var(--light);
+}
+
 .rbc-header + .rbc-header {
     border-left: 1px solid var(--gray);
 }

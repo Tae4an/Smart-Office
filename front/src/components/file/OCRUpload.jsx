@@ -1,14 +1,22 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Image as ImageIcon } from 'lucide-react';
-import {uploadOCRFile} from "../../utils/gcsApi";
+import { Image as ImageIcon, ToggleLeft, ToggleRight, Save } from 'lucide-react';
+import { uploadOCRFile } from "../../utils/gcsApi";
+import OCRResultList from './OCRResultList';
+import '../../styles/ocrUpload.css';
+import {saveOCRResult} from "../../utils/ocrApi";
 
 const OCRUpload = ({ onUploadSuccess }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [error, setError] = useState('');
-    const [ocrResult, setOcrResult] = useState(null); // OCR 결과 상태 추가
-    const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
+    const [ocrResult, setOcrResult] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [showAnalysis, setShowAnalysis] = useState(false);
+    const [saveOptions, setSaveOptions] = useState({
+        saveOCR: false,
+        saveAnalysis: false
+    });
 
     const formatFileSize = (bytes) => {
         if (bytes === 0) return '0 Bytes';
@@ -28,7 +36,6 @@ const OCRUpload = ({ onUploadSuccess }) => {
             setSelectedFile(file);
             setError('');
 
-            // 이미지 파일인 경우에만 미리보기 생성
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onloadend = () => {
@@ -36,7 +43,7 @@ const OCRUpload = ({ onUploadSuccess }) => {
                 };
                 reader.readAsDataURL(file);
             } else if (file.type === 'application/pdf') {
-                setPreviewUrl(null); // PDF는 미리보기 없음
+                setPreviewUrl(null);
             }
         }
     }, []);
@@ -72,17 +79,47 @@ const OCRUpload = ({ onUploadSuccess }) => {
         }
     };
 
+    const handleSave = async () => {
+        try {
+            setIsLoading(true);
+            const saveData = {
+                fileName: selectedFile.name,
+                ocrText: saveOptions.saveOCR ? ocrResult.data.text : null,
+                analysisText: saveOptions.saveAnalysis ? ocrResult.analysis : null,
+                confidence: ocrResult.data.confidence
+            };
+
+            // API 호출
+            const response = await saveOCRResult(saveData);
+
+            if (response.success) {
+                alert('저장되었습니다.');
+                // 결과 리스트 새로고침
+                if (window.ocrResultList) {
+                    window.ocrResultList.fetchResults();
+                }
+            }
+        } catch (error) {
+            setError('저장 중 오류가 발생했습니다.');
+            console.error('Save failed:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const handleReset = () => {
         setSelectedFile(null);
         setPreviewUrl(null);
         setError('');
         setOcrResult(null);
+        setSaveOptions({
+            saveOCR: false,
+            saveAnalysis: false
+        });
     };
 
-    const handleCancel = () => {
-        setSelectedFile(null);
-        setPreviewUrl(null);
-        setError('');
+    const handleToggleView = () => {
+        setShowAnalysis(!showAnalysis);
     };
 
     useEffect(() => {
@@ -144,22 +181,89 @@ const OCRUpload = ({ onUploadSuccess }) => {
 
                     {ocrResult?.status === 'success' && (
                         <div className="file-section">
-                            <h3>OCR 결과</h3>
+                            <div className="result-header">
+                                <h3>분석 결과</h3>
+                                <div className="result-actions">
+                                    {/* 저장 옵션 */}
+                                    <div className="save-options">
+                                        <label className="save-option">
+                                            <input
+                                                type="checkbox"
+                                                checked={saveOptions.saveOCR}
+                                                onChange={(e) => setSaveOptions({
+                                                    ...saveOptions,
+                                                    saveOCR: e.target.checked
+                                                })}
+                                            />
+                                            <span>OCR 텍스트 저장</span>
+                                        </label>
+                                        <label className="save-option">
+                                            <input
+                                                type="checkbox"
+                                                checked={saveOptions.saveAnalysis}
+                                                onChange={(e) => setSaveOptions({
+                                                    ...saveOptions,
+                                                    saveAnalysis: e.target.checked
+                                                })}
+                                            />
+                                            <span>AI 분석 저장</span>
+                                        </label>
+                                        <button
+                                            className="save-button"
+                                            onClick={handleSave}
+                                            disabled={!saveOptions.saveOCR && !saveOptions.saveAnalysis || isLoading}
+                                        >
+                                            <Save size={16} />
+                                            {isLoading ? '저장 중...' : '저장하기'}
+                                        </button>
+                                    </div>
+
+                                    {/* 토글 버튼 */}
+                                    <button
+                                        onClick={handleToggleView}
+                                        className="toggle-button"
+                                    >
+                                        {showAnalysis ? (
+                                            <>
+                                                <ToggleRight className="toggle-icon" />
+                                                OCR 텍스트 보기
+                                            </>
+                                        ) : (
+                                            <>
+                                                <ToggleLeft className="toggle-icon" />
+                                                AI 분석 보기
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
                             <div className="upload-section">
-                                <div className="file-info">
-                                    <span className="file-name">신뢰도:</span>
-                                    <span>{(ocrResult?.data?.confidence * 100)?.toFixed(2)}%</span>
+                                <div className="result-section">
+                                    {!showAnalysis ? (
+                                        // OCR 텍스트 결과
+                                        <>
+                                            <h4 className="section-title">OCR 텍스트 추출</h4>
+                                            <div className="file-info">
+                                                <span className="file-name">신뢰도:</span>
+                                                <span>{(ocrResult?.data?.confidence * 100)?.toFixed(2)}%</span>
+                                            </div>
+                                            <div className="text-content">
+                                                {ocrResult?.data?.text}
+                                            </div>
+                                        </>
+                                    ) : (
+                                        // AI 분석 결과
+                                        <>
+                                            <h4 className="section-title">AI 문서 분석</h4>
+                                            <div className="analysis-content">
+                                               <pre className="analysis-text">
+                                                   {ocrResult?.analysis}
+                                               </pre>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
-                                <div style={{
-                                    fontFamily: 'monospace',
-                                    whiteSpace: 'pre-wrap',
-                                    background: 'var(--light)',
-                                    padding: '1rem',
-                                    borderRadius: 'var(--border-radius)',
-                                    marginTop: '1rem'
-                                }}>
-                                    {ocrResult?.data?.text}
-                                </div>
+
                                 <button
                                     onClick={handleReset}
                                     className="upload-btn"
@@ -173,6 +277,9 @@ const OCRUpload = ({ onUploadSuccess }) => {
                 </div>
             )}
             {error && <div className="error-message">{error}</div>}
+
+            {/* OCR 결과 리스트 */}
+            <OCRResultList />
         </div>
     );
 };

@@ -6,32 +6,30 @@
 <div class="container-fluid px-4">
     <h1 class="mt-4">관리자 관리</h1>
 
-    <!-- 검색 영역 -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <form id="searchForm" class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">검색어</label>
-                    <input type="text" class="form-control" name="keyword" placeholder="사번, 이름, 부서">
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">권한</label>
-                    <select class="form-select" name="role">
-                        <option value="">전체</option>
-                        <option value="SUPER_ADMIN">슈퍼관리자</option>
-                        <option value="ADMIN">일반관리자</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">&nbsp;</label>
-                    <button type="submit" class="btn btn-primary d-block">검색</button>
-                </div>
-            </form>
-        </div>
+    <!-- 검색 영역 수정 -->
+    <div class="search-section">
+        <form id="searchForm" class="row g-3" method="get">
+            <div class="col-md-3">
+                <label class="form-label">검색어</label>
+                <input type="text" class="form-control" name="keyword" value="${param.keyword}" placeholder="사번, 이름, 부서">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">권한</label>
+                <select class="form-select" name="role">
+                    <option value="">전체</option>
+                    <option value="SUPER_ADMIN" ${param.role eq 'SUPER_ADMIN' ? 'selected' : ''}>슈퍼관리자</option>
+                    <option value="ADMIN" ${param.role eq 'ADMIN' ? 'selected' : ''}>일반관리자</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary d-block">검색</button>
+            </div>
+        </form>
     </div>
 
     <!-- 관리자 목록 -->
-    <div class="card mb-4">
+    <div class="card admin-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div>
                 <i class="fas fa-table me-1"></i>
@@ -42,7 +40,7 @@
             </button>
         </div>
         <div class="card-body">
-            <table class="table table-striped table-bordered">
+            <table class="table table-custom">
                 <thead>
                 <tr>
                     <th>사번</th>
@@ -80,29 +78,30 @@
                 </tbody>
             </table>
 
-            <!-- 페이징 -->
+            <!-- 페이징 부분 수정 -->
             <nav aria-label="Page navigation" class="mt-3">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item ${adminList.first ? 'disabled' : ''}">
-                        <a class="page-link" href="?page=0">처음</a>
-                    </li>
-                    <li class="page-item ${adminList.first ? 'disabled' : ''}">
-                        <a class="page-link" href="?page=${adminList.number-1}">이전</a>
-                    </li>
-                    <c:if test="${not empty adminList.content}">
-                        <c:forEach begin="${Math.max(0, adminList.number-2)}"
-                                   end="${Math.min(Math.max(0, adminList.totalPages-1), adminList.number+2)}" var="i">
+                    <c:if test="${adminList.totalElements > 0}">
+                        <li class="page-item ${adminList.first ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=0&keyword=${param.keyword}&role=${param.role}">처음</a>
+                        </li>
+                        <li class="page-item ${adminList.first ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${adminList.number-1}&keyword=${param.keyword}&role=${param.role}">이전</a>
+                        </li>
+                        
+                        <c:forEach begin="0" end="${adminList.totalPages-1}" var="i">
                             <li class="page-item ${adminList.number == i ? 'active' : ''}">
-                                <a class="page-link" href="?page=${i}">${i+1}</a>
+                                <a class="page-link" href="?page=${i}&keyword=${param.keyword}&role=${param.role}">${i+1}</a>
                             </li>
                         </c:forEach>
+                        
+                        <li class="page-item ${adminList.last ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${adminList.number+1}&keyword=${param.keyword}&role=${param.role}">다음</a>
+                        </li>
+                        <li class="page-item ${adminList.last ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${adminList.totalPages-1}&keyword=${param.keyword}&role=${param.role}">마지막</a>
+                        </li>
                     </c:if>
-                    <li class="page-item ${adminList.last ? 'disabled' : ''}">
-                        <a class="page-link" href="?page=${adminList.number+1}">다음</a>
-                    </li>
-                    <li class="page-item ${adminList.last ? 'disabled' : ''}">
-                        <a class="page-link" href="?page=${adminList.totalPages-1}">마지막</a>
-                    </li>
                 </ul>
             </nav>
         </div>
@@ -370,11 +369,153 @@
         }
     }
 
-    // 검색 폼 제출
+    // 검색 폼 제출 이벤트 수정
     document.getElementById('searchForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
-        const params = new URLSearchParams(formData);
-        location.href = `?${params.toString()}`;
+        const searchParams = new URLSearchParams();
+        
+        // 빈 값이 아닌 파라미터만 추가
+        for (let [key, value] of formData.entries()) {
+            if (value) {
+                searchParams.append(key, value);
+            }
+        }
+        
+        // page 파라미터를 0으로 설정 (검색 시 첫 페이지로)
+        searchParams.append('page', '0');
+        
+        location.href = '?' + searchParams.toString();
     });
 </script>
+
+<style>
+.search-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.admin-card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.admin-card .card-header {
+    background-color: #fff;
+    border-bottom: 2px solid #f0f0f0;
+    padding: 15px 20px;
+}
+
+.table-custom {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-custom thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    padding: 12px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table-custom tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.badge {
+    padding: 6px 10px;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.badge.bg-danger {
+    background-color: #FF5252 !important;
+}
+
+.badge.bg-primary {
+    background-color: #2196F3 !important;
+}
+
+.btn {
+    padding: 6px 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: #2196F3;
+    border-color: #2196F3;
+}
+
+.btn-info {
+    background-color: #00BCD4;
+    border-color: #00BCD4;
+    color: white;
+}
+
+.btn-warning {
+    background-color: #FFC107;
+    border-color: #FFC107;
+    color: #000;
+}
+
+.btn-danger {
+    background-color: #F44336;
+    border-color: #F44336;
+}
+
+.modal-content {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+dl.row {
+    margin-bottom: 0;
+}
+
+dl.row dt {
+    font-weight: 600;
+    color: #495057;
+}
+
+dl.row dd {
+    color: #6c757d;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.page-link {
+    color: #2196F3;
+    padding: 8px 16px;
+}
+
+.page-item.active .page-link {
+    background-color: #2196F3;
+    border-color: #2196F3;
+}
+</style>

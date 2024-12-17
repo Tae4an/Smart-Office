@@ -46,12 +46,18 @@
 
 .notification-badge {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 8px;
-    height: 8px;
+    top: -3px;
+    right: -3px;
+    width: 16px;  /* 크기 증가 */
+    height: 16px; /* 크기 증가 */
     background-color: #ff4d4f;
     border-radius: 50%;
+    display: flex;           /* 추가 */
+    justify-content: center; /* 추가 */
+    align-items: center;     /* 추가 */
+    font-size: 10px;        /* 추가 */
+    color: white;           /* 추가 */
+    border: 2px solid white; /* 추가: 테두리 추가 */
 }
 
 .notification-modal {
@@ -342,21 +348,29 @@
 
 .footer-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--spacing-3);
-}
-
-.copyright {
-    color: var(--gray);
-    font-size: 0.875rem;
+    flex-direction: row;  /* 가로 방향으로 변경 */
+    align-items: center;  /* 세로 중앙 정렬 */
+    gap: var(--spacing-4); /* 간격 조정 */
 }
 
 .footer-links {
     display: flex;
     align-items: center;
     gap: var(--spacing-3);
+    margin-top: -5px;        /* 위쪽 간격 조정 */
+}
+
+.copyright {
+    color: var(--gray);
+    font-size: 0.875rem;
+    margin: 0;  /* 기존 마진 제거 */
+}
+
+.footer-links {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin: 0;  /* 기존 마진 제거 */
 }
 
 .footer-link {
@@ -533,6 +547,7 @@
     padding: var(--spacing-2);
     border-bottom: 1px solid var(--light);
     transition: background-color 0.2s ease;
+    position: relative;  /* 추가 */
 }
 
 .result-item:hover {
@@ -614,4 +629,180 @@
     border-color: var(--primary);
     background-color: white;
     box-shadow: 0 0 0 3px rgba(30, 48, 243, 0.1);
+}
+
+/* Weather Info Mini Styles */
+.weather-info-mini {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--light);
+    border-radius: var(--border-radius);
+    margin-right: var(--spacing-2);
+}
+
+.weather-temp {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.weather-desc {
+    font-size: 0.875rem;
+    color: var(--gray);
+}
+
+@media (max-width: 768px) {
+    .weather-info-mini {
+        display: none;
+    }
+}
+
+/* Search Profile Card Styles (이름 변경) */
+.search-profile-card {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 250px;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: var(--spacing-3);
+    z-index: 1010;
+    margin-left: var(--spacing-2);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.result-item:hover .search-profile-card {
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-profile-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    margin-bottom: var(--spacing-3);
+}
+
+.search-profile-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-profile-image i {
+    font-size: 1.5rem;
+    color: var(--gray);
+}
+
+.search-profile-info h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--dark);
+}
+
+.search-profile-info p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--gray);
+}
+
+.search-profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.search-profile-detail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: 0.875rem;
+}
+
+.search-profile-detail-item i {
+    width: 16px;
+    color: var(--gray);
+}
+
+/* Search Profile Modal Styles */
+.search-profile-modal {
+    position: fixed;
+    z-index: 1100;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: var(--spacing-3);
+    width: 300px;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.search-profile-modal.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-profile-modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+/* 게시판 메뉴 스타일 */
+.board-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.board-arrow {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.board-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.board-submenu.open {
+    max-height: 500px; /* 충분한 높이 */
+}
+
+.board-submenu-item {
+    padding-left: 2.5rem;
+}
+
+.board-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.board-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.board-link.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--primary);
+}
+
+/* 로딩 스타일 */
+.board-submenu-item.loading {
+    text-align: center;
+    padding: 1rem;
 }

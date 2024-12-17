@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
 import defaultProfileImage from '../../assets/profile1.png';
+import React, { useState, useEffect, useRef } from 'react';
 import ProfileSection from './ProfileSection';
 import StatusGrid from './StatusGrid';
 import ActivityCard from './ActivityCard';
 import CalendarForm from '../calendar/CalendarForm';
 import MapWidget from './MapWidget';
 import MsgWidget from './MsgWidget';
-import WeatherWidget from './WeatherWidget';
 import WidgetSelector from './WidgetSelector';
-import { mockUser, mockStats, mockActivities } from '../../mock/mockData';
+import { mockStats, mockActivities } from '../../mock/mockData';
 import '../../styles/dashboard.css';
+import { Cloud, Sun, CloudRain } from 'lucide-react';
+import { fetchWeatherData } from '../../utils/WeatherUtils';
 
 // 위젯 구성 객체
 const WIDGET_CONFIG = {
@@ -43,7 +44,6 @@ const WIDGET_CONFIG = {
     }
 };
 
-// EmptyCell 컴포넌트
 const EmptyCell = ({ onAddWidget, availableWidgets }) => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -65,22 +65,72 @@ const EmptyCell = ({ onAddWidget, availableWidgets }) => {
     );
 };
 
-// Widget 컴포넌트
-const Widget = ({ widgetId, data, onRemove }) => {
+const Widget = ({ widgetId, data, onRemove, getAvailableWidgets, handleAddWidget, gridCells }) => {
+    const [showMenu, setShowMenu] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const menuRef = useRef(null);
     const config = WIDGET_CONFIG[widgetId];
     const WidgetComponent = config.component;
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setShowMenu(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     return (
         <div className="widget-container">
             <div className="widget-header">
                 <h3>{config.title}</h3>
-                <div className="widget-controls">
-                    <button onClick={onRemove} title="위젯 제거">✕</button>
+                <div className="widget-controls" ref={menuRef}>
+                    <button
+                        className="widget-control-button"
+                        onClick={() => setShowMenu(!showMenu)}
+                    >
+                        <span>•••</span>
+                    </button>
+                    {showMenu && (
+                        <div className="widget-control-menu">
+                            <button onClick={() => {
+                                setIsOpen(true);
+                                setShowMenu(false);
+                            }}>
+                                <span>위젯 변경</span>
+                            </button>
+                            <button
+                                className="danger"
+                                onClick={() => {
+                                    onRemove();
+                                    setShowMenu(false);
+                                }}
+                            >
+                                <span>위젯 삭제</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="widget-content">
                 <WidgetComponent {...config.props(data)} />
             </div>
+            <WidgetSelector
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+                onSelectWidget={(newWidgetId) => {
+                    onRemove();
+                    handleAddWidget(gridCells.indexOf(widgetId), newWidgetId);
+                    setIsOpen(false);
+                }}
+                availableWidgets={[
+                    ...getAvailableWidgets(),
+                    WIDGET_CONFIG[widgetId]
+                ]}
+            />
         </div>
     );
 };
@@ -94,48 +144,24 @@ const Main = () => {
         email: "",
         profileImage: defaultProfileImage
     });
-
-    // 목업 데이터
-    const mockStats = {
-        attendanceStats: {
-            title: '근태 현황',
-            mainStat: { value: '15', unit: '일', label: '정상 출근' },
-            stats: [
-                { label: '지각', value: '1', unit: '회' },
-                { label: '조퇴', value: '0', unit: '회' },
-                { label: '결근', value: '0', unit: '회' }
-            ]
-        },
-        leaveStats: {
-            title: '휴가 현황',
-            mainStat: { value: '10', unit: '일', label: '잔여 휴가' },
-            stats: [
-                { label: '총 휴가', value: '15', unit: '일' },
-                { label: '사용 휴가', value: '5', unit: '일' }
-            ]
-        },
-        overtimeStats: {
-            title: '초과근무 현황',
-            mainStat: { value: '12', unit: '시간', label: '이번달 초과근무' },
-            stats: [
-                { label: '승인됨', value: '10', unit: '시간' },
-                { label: '수당 지급 예정', value: '10', unit: '시간' }
-            ]
-        }
-    };
-
     const [stats, setStats] = useState(mockStats);
     const [activities, setActivities] = useState(mockActivities);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [gridCells, setGridCells] = useState(Array(4).fill(null));
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const [weather, setWeather] = useState(null);
+
+    const handleNavigate = (date) => {
+        setCurrentDate(date);
+    };
 
     useEffect(() => {
-        const getUserFromSession = () => {
+        const getUserFromSession = async () => {
             try {
                 const userInfoStr = sessionStorage.getItem('userInfo');
                 const userData = JSON.parse(userInfoStr);
-                
+
                 setUser({
                     name: userData.name,
                     position: userData.position,
@@ -148,21 +174,39 @@ const Main = () => {
                 if (userData.passwordChangeRequired) {
                     window.location.href = '/password-change';
                 }
+
+                setStats(mockStats);
+                setActivities(mockActivities);
+                setLoading(false);
             } catch (error) {
                 console.error('Failed to get user data from session:', error);
                 setError('사용자 정보를 불러오는데 실패했습니다.');
                 window.location.href = '/';
-            } finally {
-                setLoading(false);
             }
         };
 
+        // 저장된 위젯 설정 불러오기
         const savedWidgets = localStorage.getItem('gridWidgets');
         if (savedWidgets) {
             setGridCells(JSON.parse(savedWidgets));
         }
 
         getUserFromSession();
+
+        // 날씨 정보 가져오기
+        const getWeather = async (position) => {
+            try {
+                const { latitude, longitude } = position.coords;
+                const weatherData = await fetchWeatherData(latitude, longitude);
+                setWeather(weatherData);
+            } catch (error) {
+                console.error('날씨 정보를 가져오는데 실패했습니다:', error);
+            }
+        };
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(getWeather);
+        }
     }, []);
 
     const getAvailableWidgets = () => {
@@ -185,6 +229,20 @@ const Main = () => {
         localStorage.setItem('gridWidgets', JSON.stringify(newGridCells));
     };
 
+    const getWeatherIcon = (sky, precipitation) => {
+        if (precipitation !== '없음') return <CloudRain className="text-blue-500" size={20} />;
+        switch (sky) {
+            case '맑음': return <Sun className="text-yellow-500" size={20} />;
+            case '구름많음':
+            case '흐림': return <Cloud className="text-gray-500" size={20} />;
+            default: return <Sun className="text-yellow-500" size={20} />;
+        }
+    };
+
+    const getActiveWidgetCount = () => {
+        return gridCells.filter(cell => cell !== null).length;
+    };
+
     if (loading) return <div className="dashboard-content container"><div className="loading">Loading...</div></div>;
     if (error) return <div className="dashboard-content container"><div className="error">{error}</div></div>;
 
@@ -193,41 +251,58 @@ const Main = () => {
     return (
         <div className="dashboard-content container">
             <div className="dashboard-grid">
-                {/* Left Column */}
                 <div className="dashboard-column">
                     <div className="profile-card">
-                        <ProfileSection user={user} />
+                        <ProfileSection user={user} stats={stats} />
                     </div>
                     <div className="mini-calendar-card">
-                        <h2 className="card-title">일정</h2>
-                        <div style={{ height: '400px' }}>
-                            <CalendarForm height="100%" minimode={true} />
+                        <div className="card-title flex items-center justify-between mb-0"
+                             style={{ paddingLeft: '16px', paddingRight: '16px' }}>
+                            <span className="text-gray-600 text-base font-medium">
+                                {currentDate.getFullYear()}.{currentDate.getMonth() + 1}.{currentDate.getDate()}
+                            </span>
+                            {weather && (
+                                <span className="flex items-center gap-1.5 text-lg font-semibold" style={{ color: '#4b5563' }}>
+                                    {getWeatherIcon(weather.sky, weather.precipitation)}
+                                    {weather.temperature}°
+                                </span>
+                            )}
                         </div>
-                    </div>
-                    <div className="weather-card">
-                        <WeatherWidget />
+                        <div style={{ height: '400px', padding: '0 var(--spacing-2) var(--spacing-2)' }}>
+                            <CalendarForm
+                                height="100%"
+                                minimode={true}
+                                onNavigate={handleNavigate}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {/* Right Column - Grid Layout */}
                 <div className="dashboard-column">
                     <div className="grid-layout">
-                        {gridCells.map((widgetId, index) => (
-                            <div key={index} className={`grid-cell ${widgetId ? 'occupied' : ''}`}>
-                                {widgetId ? (
-                                    <Widget
-                                        widgetId={widgetId}
-                                        data={widgetData}
-                                        onRemove={() => handleRemoveWidget(index)}
-                                    />
-                                ) : (
-                                    <EmptyCell
-                                        onAddWidget={(widgetId) => handleAddWidget(index, widgetId)}
-                                        availableWidgets={getAvailableWidgets()}
-                                    />
-                                )}
-                            </div>
-                        ))}
+                        {gridCells.map((widgetId, index) => {
+                            if (index > getActiveWidgetCount() && !widgetId) return null;
+                            return (
+                                <div key={index}
+                                     className={`grid-cell ${widgetId ? 'occupied' : ''}`}>
+                                    {widgetId ? (
+                                        <Widget
+                                            widgetId={widgetId}
+                                            data={widgetData}
+                                            onRemove={() => handleRemoveWidget(index)}
+                                            getAvailableWidgets={getAvailableWidgets}
+                                            handleAddWidget={handleAddWidget}
+                                            gridCells={gridCells}
+                                        />
+                                    ) : (
+                                        <EmptyCell
+                                            onAddWidget={(widgetId) => handleAddWidget(index, widgetId)}
+                                            availableWidgets={getAvailableWidgets()}
+                                        />
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>

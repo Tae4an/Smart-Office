@@ -1,0 +1,85 @@
+.settings-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.settings-content {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.settings-sidebar {
+    width: 250px;
+    padding: 1.5rem;
+    border-right: 1px solid var(--light);
+}
+
+.settings-tab {
+    width: 100%;
+    padding: 1rem;
+    text-align: left;
+    background: none;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.settings-tab:hover {
+    background-color: var(--light);
+}
+
+.settings-tab.active {
+    background-color: var(--primary);
+    color: white;
+}
+
+.settings-main {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+.settings-section {
+    max-width: 600px;
+}
+
+.settings-section h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.settings-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--light);
+}
+
+.settings-option label {
+    font-weight: 500;
+}
+
+.settings-option select {
+    padding: 0.5rem;
+    border: 1px solid var(--light);
+    border-radius: var(--border-radius);
+    min-width: 150px;
+}
+
+@media (max-width: 768px) {
+    .settings-content {
+        flex-direction: column;
+    }
+
+    .settings-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--light);
+    }
+}

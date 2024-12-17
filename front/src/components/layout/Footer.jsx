@@ -7,21 +7,18 @@ const Footer = () => {
             <div className="footer-container">
                 <div className="footer-content">
                     <div className="copyright">
-                        Copyright @ Your Website 2024
+                        Copyright @ Smart-Office
                     </div>
 
                     <div className="footer-links">
-                        <Link to="/primary" className="footer-link">
-                            Primary
-                        </Link>
-                        <span className="separator">·</span>
-                        <Link to="/terms" className="footer-link">
-                            Terms
-                        </Link>
-                        <span className="separator">·</span>
-                        <Link to="/contact" className="footer-link">
-                            Contact
-                        </Link>
+                        <a 
+                            href="https://github.com/Tae4an/Smart-Office" 
+                            className="footer-link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            GitHub
+                        </a>
                     </div>
                 </div>
             </div>

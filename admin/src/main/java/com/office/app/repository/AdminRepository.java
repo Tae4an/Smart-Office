@@ -24,12 +24,13 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     @Query("SELECT a FROM Admin a JOIN FETCH a.user u " +
             "WHERE (:role is null OR a.role = :role) " +
-            "AND (u.employeeId LIKE %:keyword% " +
-            "OR u.name LIKE %:keyword% " +
-            "OR u.department LIKE %:keyword%)")
+            "AND (:keyword is null OR :keyword = '' OR " +
+            "u.employeeId LIKE %:keyword% OR " +
+            "u.name LIKE %:keyword% OR " +
+            "u.department LIKE %:keyword%)")
     Page<Admin> searchAdmins(@Param("keyword") String keyword,
-                             @Param("role") AdminRole role,
-                             Pageable pageable);
+                            @Param("role") AdminRole role,
+                            Pageable pageable);
 
     long countByRole(AdminRole role);
 

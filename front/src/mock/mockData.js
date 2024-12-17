@@ -1,4 +1,4 @@
-import defaultProfileImage from '../assets/profile1.png';
+import defaultProfileImage from '../assets/profile1(before).png';
 
 export const mockUser = {
     name: "김지원",
@@ -69,13 +69,5 @@ export const mockActivities = [
         status: '승인완료',
         date: '2024-12-01',
         description: '오후 반차'
-    },
-    {
-        id: 5,
-        type: '초과근무',
-        title: '초과근무 신청',
-        status: '승인완료',
-        date: '2024-11-30',
-        description: '긴급 장애 대응으로 인한 초과근무 3시간'
     }
 ];

@@ -4,10 +4,6 @@
 <header class="header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <button class="btn btn-link sidebar-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
-
             <div class="ms-auto d-flex align-items-center">
                 <sec:authorize access="isAuthenticated()">
                     <div class="dropdown">

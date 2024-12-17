@@ -124,6 +124,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.awaitility:awaitility:4.2.0'
 
+    // Spring Boot의 캐싱 기능을 사용하기 위한 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+
 
 }
 

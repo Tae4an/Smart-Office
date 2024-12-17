@@ -3,32 +3,46 @@ import numpy as np
 from app.core.logging.logger import logger
 
 class ImageProcessor:
-    """문서 이미지 전처리를 위한 클래스"""
+    """
+    문서 이미지 전처리를 위한 클래스
+    
+    문서의 외곽선을 감지하고 투시 변환을 적용하여 정면 이미지로 변환
+    
+    Methods:
+        preprocess_document: 문서 이미지 전처리 수행
+        _order_points: 코너 포인트 정렬
+        _apply_perspective_transform: 투시 변환 적용
+    """
     
     def __init__(self):
         self.logger = logger
 
     def preprocess_document(self, image):
         """
-        ## 문서 외곽선 검출 및 투시 변환 적용
+        문서 이미지 전처리를 수행합니다.
         
-            Args:
-                image: 입력 이미지 (numpy.ndarray)
-            Returns:
-                투시 변환이 적용된 이미지 (numpy.ndarray)
+        Args:
+            image (numpy.ndarray): 입력 이미지
+            
+        Returns:
+            numpy.ndarray: 전처리된 이미지 또는 원본 이미지
         """
         try:
-            # 외곽선 검출을 위해서만 그레이스케일 사용
-            gray = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2GRAY)
-            edges = cv2.Canny(gray, 100, 200)
+            # 원본 이미지 복사
+            processed = image.copy()
             
-            # 문서 외곽선 검출 (그레이스케일 이미지 사용)
-            edges = cv2.Canny(gray, 100, 200)
+            # 그레이스케일 변환 및 노이즈 제거
+            gray = cv2.cvtColor(processed, cv2.COLOR_BGR2GRAY)
+            denoised = cv2.fastNlMeansDenoising(gray)
             
-            # 외곽선 찾기
+            # 외곽선 검출
+            edges = cv2.Canny(denoised, 100, 200)
+            
+            # 문서 외곽선 찾기
             contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             if not contours:
-                raise ValueError("문서 외곽선을 찾을 수 없습니다.")
+                self.logger.warning("문서 외곽선을 찾을 수 없습니다. 기본 전처리만 적용합니다.")
+                return self._enhance_image_quality(processed)
             
             # 가장 큰 외곽선 선택
             doc_contour = max(contours, key=cv2.contourArea)
@@ -38,23 +52,64 @@ class ImageProcessor:
             corners = cv2.approxPolyDP(doc_contour, epsilon, True)
             
             if len(corners) != 4:
-                raise ValueError("문서의 4개 코너를 찾을 수 없습니다.")
+                self.logger.warning("문서의 4개 코너를 찾을 수 없습니다. 기본 전처리만 적용합니다.")
+                return self._enhance_image_quality(processed)
             
-            # 코너 포인트 정렬
+            # 투시 변환 적용
             corners = self._order_points(corners.reshape(4, 2))
+            processed = self._apply_perspective_transform(processed, corners)
             
-            # 최종 투시 변환도 원본 컬러 이미지에 적용
-            return self._apply_perspective_transform(image, corners)
+            # 이미지 품질 개선만 적용
+            return self._enhance_image_quality(processed)
             
         except Exception as e:
             self.logger.error(f"이미지 전처리 중 오류 발생: {str(e)}")
-            raise
+            return image
+
+    def _enhance_image_quality(self, image):
+        """
+        이미지 품질을 개선합니다.
+        
+        Args:
+            image (numpy.ndarray): 입력 이미지
+            
+        Returns:
+            numpy.ndarray: 품질이 개선된 이미지
+        """
+        try:
+            # 1. 노이즈 제거 (최소한의 처리)
+            denoised = cv2.fastNlMeansDenoisingColored(
+                image,
+                None,
+                h=3,          # 필터 강도 최소화
+                hColor=3,     # 컬러 필터 강도 최소화
+                templateWindowSize=7,
+                searchWindowSize=21
+            )
+            
+            # 2. 대비 개선 (약한 수준)
+            lab = cv2.cvtColor(denoised, cv2.COLOR_BGR2LAB)
+            l, a, b = cv2.split(lab)
+            clahe = cv2.createCLAHE(clipLimit=1.5, tileGridSize=(8,8))
+            l = clahe.apply(l)
+            enhanced = cv2.merge([l, a, b])
+            enhanced = cv2.cvtColor(enhanced, cv2.COLOR_LAB2BGR)
+            
+            return enhanced
+            
+        except Exception as e:
+            self.logger.error(f"이미지 품질 개선 중 오류 발생: {str(e)}")
+            return image
 
     def _order_points(self, pts):
         """
-        ## 4개의 코너 포인트를 순서대로 정렬
+        4개의 코너 포인트를 시계방향으로 정렬합니다.
         
-            [top-left, top-right, bottom-right, bottom-left]
+        Args:
+            pts (numpy.ndarray): 정렬할 4개의 코너 포인트
+            
+        Returns:
+            numpy.ndarray: 정렬된 코너 포인트 [좌상, 우상, 우하, 좌하]
         """
         rect = np.zeros((4, 2), dtype=np.float32)
         
@@ -70,7 +125,14 @@ class ImageProcessor:
 
     def _apply_perspective_transform(self, image, corners):
         """
-        ## 4개의 코너 포인트를 이용해 투시 변환 적용
+        이미지에 투시 변환을 적용합니다.
+        
+        Args:
+            image (numpy.ndarray): 원본 이미지
+            corners (numpy.ndarray): 변환에 사용할 4개의 코너 포인트
+            
+        Returns:
+            numpy.ndarray: 투시 변환이 적용된 이미지
         """
         (tl, tr, br, bl) = corners
         

@@ -29,5 +29,32 @@
                 사용자 관리
             </a>
         </li>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#statisticsSubmenu">
+                <i class="fas fa-chart-line me-2"></i>
+                통계
+            </a>
+            <ul class="collapse nav-submenu" id="statisticsSubmenu">
+                <li class="nav-item">
+                    <a href="/statistics/board" class="nav-link">
+                        <i class="fas fa-clipboard-list me-2"></i>
+                        게시판 통계
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/statistics/department" class="nav-link">
+                        <i class="fas fa-building me-2"></i>
+                        부서별 통계
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/statistics/attendance" class="nav-link">
+                        <i class="fas fa-user-clock me-2"></i>
+                        출근 통계
+                    </a>
+                </li>
+            </ul>
+        </li>
     </ul>
 </nav>

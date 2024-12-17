@@ -1,19 +1,21 @@
 from google.cloud import storage
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from app.core.config import settings
 from app.core.logging.logger import logger
-import os
+from app.core.handlers.cache import RedisCacheHandler
 
 class GCSHandler:
     """
     Google Cloud Storage 작업을 처리하는 핸들러 클래스
     
+    파일 업로드/다운로드, 캐시 처리, URL 인코딩을 담당합니다.
+    
     Attributes:
-        client (storage.Client): GCS 클라이언트 인스턴스
-        bucket (storage.Bucket): GCS 버킷 인스턴스
-        gcs_download_path (str): GCS 다운로드 기본 경로
-        local_download_path (str): 로컬 다운로드 기본 경로
-        upload_path (str): GCS 업로드 기본 경로
+        client (storage.Client): GCS 클라이언트
+        bucket (storage.Bucket): GCS 버킷
+        gcs_download_path (str): 다운로드 기본 경로
+        upload_path (str): 업로드 기본 경로
+        cache_handler (RedisCacheHandler): Redis 캐시 핸들러
     """
     def __init__(self):
         """
@@ -24,49 +26,64 @@ class GCSHandler:
         self.client = storage.Client.from_service_account_json(settings.GOOGLE_CREDENTIALS_PATH)
         self.bucket = self.client.bucket(settings.GCS_BUCKET_NAME)
         self.gcs_download_path = settings.GCS_DOWNLOAD_PATH
-        self.local_download_path = settings.LOCAL_DOWNLOAD_PATH
         self.upload_path = settings.GCS_UPLOAD_PATH
+        self.cache_handler = RedisCacheHandler()
 
-    def upload_file(self, filename: str) -> bool:
+    def upload_bytes(self, file_bytes: bytes, destination_filename: str) -> bool:
         """
-        로컬 파일을 GCS에 업로드
+        바이트 데이터를 GCS에 업로드합니다.
         
         Args:
-            filename (str): 업로드할 로컬 파일의 전체 경로
+            file_bytes (bytes): 업로드할 파일 데이터
+            destination_filename (str): 저장될 파일명
             
         Returns:
-            bool: 업로드 성공 시 True, 실패 시 False
+            bool: 업로드 성공 여부
         """
         try:
-            base_filename = filename.split('/')[-1]
-            destination_path = self.upload_path + base_filename
+            destination_path = self.upload_path + destination_filename
             blob = self.bucket.blob(destination_path)
-            blob.upload_from_filename(filename)
+            blob.upload_from_string(file_bytes)
             return True
         except Exception as e:
-            logger.error(f"업로드 실패: {str(e)}")
+            logger.error(f"바이트 데이터 업로드 실패: {str(e)}")
             return False
 
-    def download_file(self, filename: str) -> bool:
+    def download_as_bytes(self, filename: str) -> Tuple[bool, Optional[bytes]]:
         """
-        GCS의 파일을 로컬로 다운로드
+        GCS의 파일을 바이트 데이터로 다운로드
         
         Args:
             filename (str): 다운로드할 파일명
             
         Returns:
-            bool: 다운로드 성공 시 True, 실패 시 False
+            Tuple[bool, Optional[bytes]]: (성공 여부, 파일 데이터)
         """
         try:
+            # 캐시에서 먼저 확인
+            cached_data = self.cache_handler.get_file(filename)
+            if cached_data:
+                return True, cached_data
+
+            # GCS에서 다운로드
             gcs_source_path = self.gcs_download_path + filename
-            local_destination_path = os.path.join(self.local_download_path, filename)
-            os.makedirs(os.path.dirname(local_destination_path), exist_ok=True)
+            
+            logger.debug(f"GCS 다운로드 시도: {gcs_source_path}")
+            
             blob = self.bucket.blob(gcs_source_path)
-            blob.download_to_filename(local_destination_path)
-            return True
+            if not blob.exists():
+                logger.error(f"파일이 존재하지 않음: {gcs_source_path}")
+                return False, None
+                
+            data = blob.download_as_bytes()
+            
+            # 캐시에 저장
+            self.cache_handler.save_file(filename, data)
+            return True, data
+            
         except Exception as e:
-            logger.error(f"다운로드 실패: {str(e)}")
-            return False
+            logger.error(f"바이트 데이터 다운로드 실패: {str(e)}, 파일명: {filename}")
+            return False, None
 
     def delete_file(self, filename: str, is_upload_path: bool = False) -> bool:
         """
@@ -84,6 +101,10 @@ class GCSHandler:
             file_path = base_path + filename
             blob = self.bucket.blob(file_path)
             blob.delete()
+            
+            # 캐시에서도 삭제
+            self.cache_handler.delete_file(filename)
+            
             return True
         except Exception as e:
             logger.error(f"삭제 실패: {str(e)}")
@@ -103,7 +124,7 @@ class GCSHandler:
             base_path = self.upload_path if use_upload_path else self.gcs_download_path
             blobs = self.bucket.list_blobs(prefix=base_path)
             return [
-                blob.name.replace(base_path, '') 
+                blob.name.replace(base_path, '')
                 for blob in blobs 
                 if blob.name.startswith(base_path) and not blob.name.endswith('/')
             ]

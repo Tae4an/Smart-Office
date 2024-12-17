@@ -24,8 +24,8 @@ public interface UserRepository extends JpaRepository<User, String> {
     List<String> findDistinctDepartments();
     
     @Query("SELECT u FROM User u WHERE " +
-           "(:keyword IS NULL OR u.employeeId LIKE %:keyword% OR u.name LIKE %:keyword%) AND " +
-           "(:department IS NULL OR u.department = :department)")
+           "(:keyword IS NULL OR :keyword = '' OR u.employeeId LIKE %:keyword% OR u.name LIKE %:keyword%) AND " +
+           "(:department IS NULL OR :department = '' OR u.department = :department)")
     Page<User> findByKeywordAndDepartment(
             @Param("keyword") String keyword,
             @Param("department") String department,

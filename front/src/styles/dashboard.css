@@ -25,18 +25,19 @@
   .welcome-info {
     background: white;
     border-radius: var(--border-radius-lg);
-    padding: var(--spacing-4);
+    padding: var(--spacing-2);
   }
   
   .profile-container {
     display: flex;
     align-items: center;
+    gap: var(--spacing-1);
   }
 
   .profile-card {
     background: white;
     border-radius: var(--border-radius-lg);
-    padding: var(--spacing-4);
+    padding: var(--spacing-2);  /* padding을 더 줄임 */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
@@ -44,26 +45,44 @@
     border-radius: 50%;
     overflow: hidden;
     background: var(--gradient);
-    padding: 2px;
+    padding: 0;  /* padding 축소 */
   }
   
   .profile-image {
-    width: 100%;
-    height: 100%;
+    width: 100%;  /* 이미지 크기 축소 */
+    height: 100%;  /* 이미지 크기 축소 */
+    margin: 0;  /* 중앙 정렬을 위한 margin 추가 */
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 1px solid white;  /* border 축소 */
   }
   
   .user-info {
     text-align: center;
     width: 100%;
+    padding: var(--spacing-1);  /* 패딩 더 축소 */
+    line-height: 1.2;
   }
   
   .position-text {
     color: var(--gray);
-    margin: 0.5rem 0;
-    font-size: 0.875rem;
+    margin: 0.1rem 0;  /* margin 더 축소 */
+    font-size: 0.75rem;  /* 폰트 크기 축소 */
+  }
+  
+  /* Profile Modal Styles */
+  .profile-table {
+    width: 100%;
+    margin-top: var(--spacing-4);
+  }
+  
+  .profile-table td {
+    padding: var(--spacing-2);
+    border-bottom: 1px solid var(--light);
+  }
+  
+  .profile-table td:first-child {
+    width: 100px;
   }
   
   /* ==========================================================================
@@ -74,7 +93,7 @@
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, auto);
     gap: var(--spacing-4);
-    margin-top: var(--spacing-4);
+    margin-top: 0;
   }
   
   .grid-cell {
@@ -82,7 +101,7 @@
     border: 2px dashed var(--light);
     border-radius: var(--border-radius-lg);
     height: fit-content;
-    min-height: 300px;
+    min-height: 100px;
     position: relative;
     transition: all 0.2s ease;
   }
@@ -170,30 +189,62 @@
     display: flex;
     gap: var(--spacing-2);
     z-index: 10;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 4px 8px;
-    border-radius: var(--border-radius);
-    border: 1px solid var(--light);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
-  .widget-controls button {
+  .widget-control-button {
     background: transparent;
     border: none;
     cursor: pointer;
     padding: 4px 8px;
     color: var(--gray);
-    font-size: 16px;
+    font-size: 14px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 4px;
+    border-radius: var(--border-radius);
     transition: all 0.2s ease;
   }
   
-  .widget-controls button:hover {
-    color: var(--danger);
-    background-color: rgba(255, 59, 48, 0.1);
+  .widget-control-button:hover {
+    background-color: var(--light);
+    color: var(--primary);
+  }
+  
+  .widget-control-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
     border-radius: var(--border-radius);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-1);
+    min-width: 120px;
+  }
+  
+  .widget-control-menu button {
+    width: 100%;
+    text-align: left;
+    padding: var(--spacing-2);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--dark);
+  }
+  
+  .widget-control-menu button:hover {
+    background-color: var(--light);
+  }
+  
+  .widget-control-menu button.danger {
+    color: var(--danger);
+  }
+  
+  .widget-control-menu button.danger:hover {
+    background-color: rgba(var(--danger-rgb), 0.1);
   }
   
   /* ==========================================================================
@@ -536,16 +587,16 @@
   .mini-calendar-card {
     background: white;
     border-radius: var(--border-radius-lg);
-    padding: var(--spacing-4);
+    padding: 0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 
   .mini-calendar-card .card-title {
-    margin: 0 0 var(--spacing-3);
+    margin: 0;
+    padding: var(--spacing-2);  /* 패딩을 title에만 적용 */
     font-size: 1.1rem;
     color: var(--dark);
   }
-  
   
   /* ==========================================================================
      Animations
@@ -645,4 +696,73 @@
       width: 200px;
       min-width: 200px;
     }
+  }
+
+  .attendance-stats {
+    width: 100%;
+    margin-top: var(--spacing-3);
+    padding-top: var(--spacing-3);
+    border-top: 1px solid var(--light);
+  }
+
+  .stat-progress-container {
+    margin-bottom: var(--spacing-2);
+  }
+
+  .stat-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--gray);
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--light);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .stat-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  /* Profile Edit Styles */
+  .edit-input {
+    width: 100%;
+    padding: var(--spacing-1);
+    border: 1px solid var(--light);
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+
+  .edit-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+  }
+
+  .edit-button,
+  .save-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-2);
+    color: var(--gray);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+  }
+
+  .edit-button:hover {
+    color: var(--primary);
+  }
+
+  .save-button:hover {
+    color: var(--success);
   }

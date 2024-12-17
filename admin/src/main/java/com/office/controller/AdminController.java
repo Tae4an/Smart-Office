@@ -29,7 +29,7 @@ public class AdminController {
     @GetMapping("/list")
     public String adminList(
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) AdminRole role,
+            @RequestParam(required = false) String role,  // AdminRole -> String으로 변경
             @PageableDefault(size = 10) Pageable pageable,
             Model model
     ) {
@@ -65,7 +65,7 @@ public class AdminController {
 
     @GetMapping("/users")
     public String userList(UserSearchDto searchDto,
-                           @PageableDefault(size = 10) Pageable pageable,
+                           @PageableDefault(size = 20) Pageable pageable,  // 페이지 사이즈를 20으로 수정
                            Model model) {
         model.addAttribute("departments", userService.getAllDepartments());
 

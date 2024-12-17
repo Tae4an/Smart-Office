@@ -1,0 +1,90 @@
+/* OCRResultList.css */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.ocr-result-section {
+    margin: 0;
+    padding: 1rem;
+    background: white;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.result-table th,
+.result-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.result-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.type-badge.ocr {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.type-badge.analysis {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.result-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    padding: 0.25rem;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background: #f5f5f5;
+}
+
+.action-btn.delete:hover {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+@media screen and (max-width: 768px) {
+    .ocr-result-section {
+        padding: 0.5rem;
+    }
+
+    .result-table th,
+    .result-table td {
+        padding: 0.5rem;
+    }
+}

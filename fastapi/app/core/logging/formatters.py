@@ -1,27 +1,36 @@
 import logging
 from .utils import get_memory_usage
+"""
+로그 메시지 포맷터 모듈
+
+주요 기능:
+    - 로그 레벨별 다른 형식 적용
+    - 밀리초 단위 타임스탬프 포함
+    - 메모리 사용량 정보 추가
+    - 프로세스 정보 포함 (디버그 레벨)
+
+포맷 형식:
+    1. 기본 형식 (INFO 이상):
+        2024-01-01 12:34:56.789 [INFO] [file.py:123] 메시지
+
+    2. 디버그 형식:
+        2024-01-01 12:34:56.789 [DEBUG] [file.py:123] 메시지
+        └─ [MainProcess:1234] [MEM:256MB]
+
+사용:
+    formatter = EnhancedFormatter()
+    handler.setFormatter(formatter)
+"""
 
 class EnhancedFormatter(logging.Formatter):
-    """
-    로그 메시지 형식화를 위한 포맷터
-    
-    로그 레벨에 따라 다른 형식 적용, 메모리 사용량 등 추가 정보 포함
-    
-    Debug 레벨:
-        시간 [레벨] [파일:라인] 메시지
-        └─ [프로세스명:PID] [메모리사용량]
-    
-    기타 레벨:
-        시간 [레벨] [파일:라인] 메시지
-    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.basic_formatter = logging.Formatter(
-            '%(asctime)s [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s',
+            '%(asctime)s.%(msecs)03d [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S'
         )
         self.debug_formatter = logging.Formatter(
-            '%(asctime)s [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s\n'
+            '%(asctime)s.%(msecs)03d [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s\n'
             '  └─ [%(processName)s:%(process)d] [MEM:%(memory)s]',
             datefmt='%Y-%m-%d %H:%M:%S'
         )

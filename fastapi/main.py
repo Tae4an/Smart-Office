@@ -1,8 +1,8 @@
 import uvicorn
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import chat, health, ocr
+from app.api.routes import chat, health, ocr, face
 from app.core.logging import logger
 from app.core.logging.logger import setup_uvicorn_logging
 from app.core.config import settings
@@ -34,13 +34,14 @@ app = FastAPI(
     여러 AI 서비스를 통합한 API 서버:
         - Llama 챗봇 서비스
         - OCR (문서 텍스트 추출) 서비스
+        - 얼굴 인식 서비스
         - 시스템 상태 모니터링
-        - 서비스 헬스체크
     
     엔드포인트:
         - /api/v1/llama/chat: Llama 모델과 대화
         - /api/v1/llama/status: Llama 서비스 상태 확인
         - /api/v1/ocr/process: 이미지 문서의 텍스트 추출
+        - /api/v1/face/verify: 얼굴 검증 처리
         - /api/v1/health: 시스템 전반적인 상태 확인
     """,
     version="1.0.0",
@@ -64,10 +65,26 @@ app.add_middleware(
     allow_headers=["*"],    # 허용할 HTTP 헤더
 )
 
+# CORS 미들웨어 설정 이후에 로깅 미들웨어 추가
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """모든 HTTP 요청과 응답을 로깅하는 미들웨어"""
+    # 요청 로깅
+    logger.info(f"Request: {request.method} {request.url}")
+    
+    # 요청 처리
+    response = await call_next(request)
+    
+    # 응답 로깅
+    logger.info(f"Response: Status {response.status_code}")
+    
+    return response
+
 # API 라우터 설정
-app.include_router(chat.router, prefix="/api/v1/llama", tags=["llama"])
 app.include_router(health.router, prefix="/api/v1", tags=["health"])
+app.include_router(chat.router, prefix="/api/v1/llama", tags=["llama"])
 app.include_router(ocr.router, prefix="/api/v1/ocr", tags=["ocr"])
+app.include_router(face.router, prefix="/api/v1/face", tags=["face"])
 
 if __name__ == "__main__":
     setup_uvicorn_logging()

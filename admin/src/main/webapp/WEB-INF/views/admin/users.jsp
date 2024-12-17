@@ -5,36 +5,35 @@
 <div class="container-fluid px-4">
     <h1 class="mt-4">사용자 관리</h1>
 
-    <!-- 검색 영역 -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <form id="searchForm" class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">검색어</label>
-                    <input type="text" class="form-control" name="keyword" value="${param.keyword}"
-                           placeholder="사번, 이름으로 검색">
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label">부서</label>
-                    <select class="form-select" name="department">
-                        <option value="">전체</option>
-                        <c:forEach items="${departments}" var="dept">
-                            <option value="${dept}" ${param.department eq dept ? 'selected' : ''}>
-                                    ${dept}
-                            </option>
-                        </c:forEach>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="form-label">&nbsp;</label>
-                    <button type="submit" class="btn btn-primary d-block">검색</button>
-                </div>
-            </form>
-        </div>
+    <!-- 검색 영역 수정 -->
+    <div class="search-section">
+        <form id="searchForm" class="row g-3" method="get">
+            <input type="hidden" name="page" value="0">  <!-- 검색 시 첫 페이지로 이동 -->
+            <div class="col-md-3">
+                <label class="form-label">검색어</label>
+                <input type="text" class="form-control" name="keyword" value="${param.keyword}"
+                       placeholder="사번, 이름으로 검색">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">부서</label>
+                <select class="form-select" name="department">
+                    <option value="">전체</option>
+                    <c:forEach items="${departments}" var="dept">
+                        <option value="${dept}" ${param.department eq dept ? 'selected' : ''}>
+                                ${dept}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary d-block">검색</button>
+            </div>
+        </form>
     </div>
 
     <!-- 사용자 목록 -->
-    <div class="card mb-4">
+    <div class="card user-card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div>
                 <i class="fas fa-users me-1"></i>
@@ -45,7 +44,7 @@
             </button>
         </div>
         <div class="card-body">
-            <table class="table table-striped table-bordered">
+            <table class="table table-custom">
                 <thead>
                 <tr>
                     <th>사번</th>
@@ -79,27 +78,30 @@
                 </tbody>
             </table>
 
-            <!-- 페이징 -->
+            <!-- 페이징 부분 수정 -->
             <nav aria-label="Page navigation" class="mt-3">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item ${users.first ? 'disabled' : ''}">
-                        <a class="page-link" href="?page=0&keyword=${param.keyword}&department=${param.department}">처음</a>
-                    </li>
-                    <li class="page-item ${users.first ? 'disabled' : ''}">
-                        <a class="page-link" href="?page=${users.number-1}&keyword=${param.keyword}&department=${param.department}">이전</a>
-                    </li>
-                    <c:forEach begin="${Math.max(0, users.number-2)}"
-                               end="${Math.min(users.totalPages-1, users.number+2)}" var="i">
-                        <li class="page-item ${users.number == i ? 'active' : ''}">
-                            <a class="page-link" href="?page=${i}&keyword=${param.keyword}&department=${param.department}">${i+1}</a>
+                    <c:if test="${users.totalElements > 0}">
+                        <li class="page-item ${users.first ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=0&keyword=${param.keyword}&department=${param.department}">처음</a>
                         </li>
-                    </c:forEach>
-                    <li class="page-item ${users.last ? 'disabled' : ''}">
-                        <a class="page-link" href="?page=${users.number+1}&keyword=${param.keyword}&department=${param.department}">다음</a>
-                    </li>
-                    <li class="page-item ${users.last ? 'disabled' : ''}">
-                        <a class="page-link" href="?page=${users.totalPages-1}&keyword=${param.keyword}&department=${param.department}">마지막</a>
-                    </li>
+                        <li class="page-item ${users.first ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${users.number-1}&keyword=${param.keyword}&department=${param.department}">이전</a>
+                        </li>
+                        
+                        <c:forEach begin="0" end="${users.totalPages-1}" var="i">
+                            <li class="page-item ${users.number == i ? 'active' : ''}">
+                                <a class="page-link" href="?page=${i}&keyword=${param.keyword}&department=${param.department}">${i+1}</a>
+                            </li>
+                        </c:forEach>
+                        
+                        <li class="page-item ${users.last ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${users.number+1}&keyword=${param.keyword}&department=${param.department}">다음</a>
+                        </li>
+                        <li class="page-item ${users.last ? 'disabled' : ''}">
+                            <a class="page-link" href="?page=${users.totalPages-1}&keyword=${param.keyword}&department=${param.department}">마지막</a>
+                        </li>
+                    </c:if>
                 </ul>
             </nav>
         </div>
@@ -153,6 +155,115 @@
         </div>
     </div>
 </div>
+
+<style>
+.search-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.user-card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.user-card .card-header {
+    background-color: #fff;
+    border-bottom: 2px solid #f0f0f0;
+    padding: 15px 20px;
+}
+
+.table-custom {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-custom thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    padding: 12px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table-custom tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.btn {
+    padding: 6px 14px;
+    font-weight: 500;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: #2196F3;
+    border-color: #2196F3;
+}
+
+.btn-primary:hover {
+    background-color: #1976D2;
+    border-color: #1976D2;
+}
+
+.btn-info {
+    background-color: #00BCD4;
+    border-color: #00BCD4;
+    color: white;
+}
+
+.btn-warning {
+    background-color: #FFC107;
+    border-color: #FFC107;
+    color: #000;
+}
+
+.btn-danger {
+    background-color: #F44336;
+    border-color: #F44336;
+}
+
+.modal-content {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.page-link {
+    color: #2196F3;
+    padding: 8px 16px;
+}
+
+.page-item.active .page-link {
+    background-color: #2196F3;
+    border-color: #2196F3;
+}
+</style>
 
 <!-- JavaScript -->
 <script>
@@ -261,4 +372,20 @@
                 });
         }
     }
+
+    // 검색 폼 제출 이벤트 수정
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const searchParams = new URLSearchParams();
+        
+        // 빈 값이 아닌 파라미터만 추가
+        for (let [key, value] of formData.entries()) {
+            if (value) {
+                searchParams.append(key, value);
+            }
+        }
+        
+        location.href = '?' + searchParams.toString();
+    });
 </script>

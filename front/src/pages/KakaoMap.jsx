@@ -5,11 +5,6 @@ import '../styles/pages.css';
 const KakaoMap = () => {
     return (
         <div className="page map-page">
-            <div className="page-header">
-                <h1 className="page-title">
-                    <span className="text-gradient">KakaoMap</span>
-                </h1>
-            </div>
             <div className="map-container">
                 <KakaoMapForm />
             </div>

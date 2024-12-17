@@ -1,0 +1,117 @@
+/* Comment.css */
+.comment-list {
+    margin-top: 1rem;
+}
+
+.comment-item {
+    padding: 1rem !important;
+    margin-bottom: 0.5rem !important;
+    background-color: white;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.comment-item:hover {
+    background-color: var(--light);
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.comment-author {
+    font-weight: 600 !important;
+    color: var(--primary) !important;
+}
+
+.comment-date {
+    color: var(--gray) !important;
+    font-size: 0.85rem !important;
+}
+
+.comment-content {
+    color: var(--dark) !important;
+    line-height: 1.5 !important;
+    margin-top: 0.5rem !important;
+}
+
+.delete-button {
+    color: var(--danger) !important;
+    opacity: 0;
+    transition: all 0.3s ease !important;
+}
+
+.comment-item:hover .delete-button {
+    opacity: 1;
+}
+
+.delete-button:hover {
+    transform: scale(1.1);
+}
+
+/* Comment Form Styles */
+.comment-form {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+}
+
+.comment-input .MuiOutlinedInput-root {
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.comment-input .MuiOutlinedInput-root:hover {
+    background-color: var(--light);
+}
+
+.submit-button {
+    background: var(--gradient) !important;
+    color: white !important;
+    padding: 0.5rem 1.5rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.submit-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.submit-button:disabled {
+    background: var(--gray) !important;
+    opacity: 0.7;
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.new-comment {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .comment-form {
+        padding: 0.5rem;
+    }
+
+    .comment-item {
+        padding: 0.75rem !important;
+    }
+
+    .submit-button {
+        padding: 0.5rem 1rem !important;
+    }
+}

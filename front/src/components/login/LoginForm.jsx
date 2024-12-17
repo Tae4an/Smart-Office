@@ -73,7 +73,8 @@ const Login = () => {
             department: response.data.department,
             position: response.data.position,
             email: response.data.email,
-            passwordChangeRequired: response.data.passwordChangeRequired
+            passwordChangeRequired: response.data.passwordChangeRequired,
+            role:response.data.role
           };
 
           // sessionStorage에 저장

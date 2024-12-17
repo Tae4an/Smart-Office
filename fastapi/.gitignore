@@ -56,7 +56,6 @@ docs/generated/
 *.pth
 *.onnx
 *.bin
-models/
 
 # 임시 테스트 파일들
 tmp/

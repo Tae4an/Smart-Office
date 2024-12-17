@@ -1,7 +1,12 @@
 import React from 'react';
 import '../../styles/dashboard.css';
 
-const WidgetSelector = ({ open, onClose, onSelectWidget, availableWidgets }) => {
+const WidgetSelector = ({ 
+    open, 
+    onClose, 
+    onSelectWidget, 
+    availableWidgets = []
+}) => {
     if (!open) return null;
 
     return (

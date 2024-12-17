@@ -11,6 +11,23 @@ import '../../styles/calendar.css';
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
+// 한글 요일 설정
+const messages = {
+  week: '주',
+  work_week: '근무주',
+  day: '일',
+  month: '월',
+  previous: '이전',
+  next: '다음',
+  today: '오늘',
+  agenda: '일정',
+  date: '날짜',
+  time: '시간',
+  event: '일정',
+  allDay: '하루종일',
+  noEventsInRange: '일정이 없습니다.',
+};
+
 const CalendarForm = ({ height = 'calc(100vh - 2rem)', minimode = false }) => {
   const { events, loading, addEvent, updateEvent, deleteEvent, resetEvent } = useCalendar();
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -91,6 +108,26 @@ const CalendarForm = ({ height = 'calc(100vh - 2rem)', minimode = false }) => {
     }
   }, [resetEvent]);
 
+  const dayPropGetter = useCallback(date => {
+    if (date.getDay() === 0) { // 일요일
+      return {
+        style: {
+          color: '#ff0000',
+          backgroundColor: 'rgba(255, 0, 0, 0.03)'  // 연한 빨간색 배경
+        }
+      };
+    }
+    if (date.getDay() === 6) { // 토요일
+      return {
+        style: {
+          color: '#0000ff',
+          backgroundColor: 'rgba(0, 0, 255, 0.03)'  // 연한 파란색 배경
+        }
+      };
+    }
+    return {};
+  }, []);
+
   if (loading) {
     return <div className="flex justify-center items-center h-full">
       <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
@@ -116,12 +153,18 @@ const CalendarForm = ({ height = 'calc(100vh - 2rem)', minimode = false }) => {
             onEventResize={resizeEvent}
             onSelectSlot={handleSelectSlot}
             onSelectEvent={handleSelectEvent}
+            messages={messages}
+            formats={{
+              weekdayFormat: (date, culture, localizer) => 
+                ['일', '월', '화', '수', '목', '금', '토'][date.getDay()]
+            }}
             resizable
             selectable
             style={{ height: !minimode ? 'calc(100% - 3rem)' : '100%' }}
             defaultView="month"
             views={minimode ? ['month'] : ['month', 'week', 'day']}
             toolbar={!minimode}
+            dayPropGetter={dayPropGetter}
         />
         <EventModal
             event={selectedEvent}

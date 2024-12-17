@@ -1,36 +1,57 @@
-/* Layout */
+/* Base Layout */
 .wrapper {
     display: flex;
     min-height: 100vh;
+    background-color: #f8fafc;
 }
 
 /* Sidebar */
 .sidebar {
     width: 250px;
-    background: #2c3e50;
+    background: #1e293b;
     color: #fff;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
     z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
 }
 
 .sidebar-header {
-    padding: 20px;
-    background: #1a252f;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
 }
 
 .sidebar-nav {
-    padding: 0;
+    padding: 0.5rem 0;
+    margin: 0;
     list-style: none;
 }
 
 .sidebar-nav .nav-link {
-    color: #fff;
-    padding: 10px 20px;
+    color: rgba(255,255,255,0.7);
+    padding: 0.875rem 1.5rem;
     transition: all 0.3s;
+    font-size: 0.875rem;
+    border-left: 3px solid transparent;
 }
 
-.sidebar-nav .nav-link:hover {
-    background: #34495e;
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+    border-left-color: #3b82f6;
+}
+
+.sidebar-nav .nav-link i {
+    width: 20px;
+    text-align: center;
+    margin-right: 10px;
 }
 
 /* Main Content */
@@ -39,31 +60,56 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: #f5f6fa;
 }
 
 /* Header */
 .header {
     background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    padding: 0.5rem 0;
 }
 
-.sidebar-toggle {
-    color: #fff;
-    padding: 0.5rem;
+.header .navbar {
+    padding: 0.75rem 1.5rem;
+}
+
+.header .dropdown-toggle {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.header .dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border-radius: 0.5rem;
+}
+
+.header .dropdown-item {
+    padding: 10px 20px;
+    transition: all 0.2s;
+}
+
+.header .dropdown-item:hover {
+    background-color: #f8f9fa;
 }
 
 /* Content Area */
 .content-wrapper {
     flex: 1;
-    padding: 20px;
-    background: #f8f9fa;
+    padding: 2rem;
 }
 
 /* Footer */
 .footer {
-    padding: 1rem 0;
+    padding: 1.5rem;
     background: #fff;
-    border-top: 1px solid #dee2e6;
+    border-top: 1px solid #e2e8f0;
+}
+
+.footer p {
+    color: #64748b;
+    font-size: 0.875rem;
 }
 
 /* Responsive */
@@ -75,4 +121,106 @@
     .sidebar.active {
         margin-left: 0;
     }
+    
+    .content-wrapper {
+        padding: 1rem;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Dashboard Card Styles */
+.dashboard-card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.dashboard-card .card-body {
+    padding: 1.5rem;
+}
+
+.dashboard-card h4 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* Chart Styles */
+.chart-container {
+    position: relative;
+    margin: auto;
+    height: 300px;
+    padding: 15px;
+}
+
+/* Profile Card Styles */
+.profile-card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.profile-card .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    padding: 1.5rem;
+}
+
+.profile-form .form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.profile-form .form-control {
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+.profile-form .form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Password Change Styles */
+.password-card {
+    max-width: 600px;
+    margin: 2rem auto;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.password-card .card-header {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    padding: 1.5rem;
+}
+
+.password-form .form-text {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
 }

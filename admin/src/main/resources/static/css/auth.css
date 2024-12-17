@@ -22,9 +22,62 @@
     padding: 0.75rem 1rem;
     font-weight: 500;
     border-radius: 7px;
+    background: linear-gradient(45deg, #2196F3, #1976D2);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #1976D2, #1565C0);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(33,150,243,0.3);
 }
 
 .alert {
     border-radius: 7px;
     font-size: 0.9rem;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.logo-img {
+    width: 120px;
+    height: auto;
+}
+
+.animate-card {
+    animation: fadeIn 0.8s ease-in-out;
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.animate-card:hover {
+    transform: translateY(-5px);
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.custom-input {
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+    background-color: #ffffff;
+    transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

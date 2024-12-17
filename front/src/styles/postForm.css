@@ -1,0 +1,184 @@
+/* PostForm.css */
+.post-form-page {
+    background-color: var(--light);
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    animation: fadeIn 0.3s ease-in;
+    padding: 1.5rem;
+}
+
+.post-form-container {
+    width: 95%;
+    margin: 0 auto;
+    min-height: calc(100vh - var(--header-height) - var(--footer-height) - 3rem);
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.5s ease-out;
+}
+
+.form-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid var(--light);
+    background: linear-gradient(to right, var(--light), white);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+    display: flex;
+    align-items: center;
+}
+
+.back-button {
+    color: var(--gray) !important;
+    transition: all 0.3s ease !important;
+}
+
+.back-button:hover {
+    color: var(--primary) !important;
+    transform: translateX(-3px);
+}
+
+.form-title {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700 !important;
+    margin-left: 1rem !important;
+}
+
+.save-button {
+    background: var(--gradient) !important;
+    padding: 0.5rem 2rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.save-button:disabled {
+    opacity: 0.7;
+    transform: none;
+}
+
+.form-content {
+    padding: 2rem;
+}
+
+/* Title Input Styling */
+.title-input .MuiOutlinedInput-root {
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.title-input .MuiOutlinedInput-root:hover {
+    background-color: var(--light);
+}
+
+/* Content Input Styling */
+.content-input .MuiOutlinedInput-root {
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.content-input .MuiOutlinedInput-root:hover {
+    background-color: var(--light);
+}
+
+/* File Attachment Section */
+.file-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--light);
+}
+
+.attach-button {
+    background: white !important;
+    border: 2px dashed var(--primary) !important;
+    padding: 1rem 2rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.attach-button:hover {
+    background: var(--light) !important;
+    border: 2px dashed var(--secondary) !important;
+}
+
+.file-list {
+    margin-top: 1rem !important;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.file-list-title {
+    color: var(--gray);
+    font-weight: 600 !important;
+    margin: 1rem 0 0.5rem 0 !important;
+}
+
+.file-item {
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem !important;
+    background-color: var(--light);
+    transition: all 0.3s ease;
+}
+
+.file-item:hover {
+    background-color: #f0f0f0;
+}
+
+.file-icon {
+    color: var(--primary);
+}
+
+.delete-button {
+    color: var(--danger) !important;
+    transition: all 0.3s ease !important;
+}
+
+.delete-button:hover {
+    transform: scale(1.1);
+}
+
+/* Animations */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .post-form-page {
+        padding: 1rem;
+    }
+
+    .post-form-container {
+        width: 100%;
+    }
+
+    .form-content {
+        padding: 1rem;
+    }
+
+    .form-header {
+        padding: 1rem;
+    }
+
+    .save-button {
+        padding: 0.5rem 1rem !important;
+    }
+}

@@ -1,4 +1,27 @@
 from pydantic_settings import BaseSettings
+"""
+애플리케이션 설정 관리 모듈
+
+설정 그룹:
+    - AppSettings: 기본 앱 설정 (버전, 환경, 디버그 모드)
+    - ServerSettings: 서버 관련 설정 (호스트, 포트, 워커)
+    - RedisSettings: Redis 연결 및 설정
+    - LogSettings: 로깅 시스템 설정
+    - APISettings: 외부 API 연동 설정
+    - StorageSettings: 파일 저장소 관련 설정
+
+특징:
+    - Pydantic 기반 타입 검증
+    - 환경 변수 자동 로드 (.env 파일 지원)
+    - 계층적 설정 구조
+    - 문서화된 설정 필드
+
+사용:
+    from app.core.config import settings
+    
+    debug_mode = settings.DEBUG
+    redis_host = settings.REDIS_HOST
+"""
 
 class AppSettings(BaseSettings):
     """
@@ -27,6 +50,21 @@ class ServerSettings(BaseSettings):
     SERVER_PORT: int
     RELOAD: bool
     WORKERS: int
+    
+class RedisSettings(BaseSettings):
+    """
+    Redis 관련 설정
+    
+    Attributes:
+        REDIS_HOST: Redis 호스트 주소
+        REDIS_PORT: Redis 포트
+        REDIS_PASSWORD: Redis 비밀번호
+        REDIS_LOG_KEY: Redis 로그 저장 키
+    """
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_PASSWORD: str
+    REDIS_LOG_KEY: str
 
 class LogSettings(BaseSettings):
     """
@@ -85,6 +123,7 @@ class StorageSettings(BaseSettings):
 class Settings(
     AppSettings,
     ServerSettings,
+    RedisSettings,
     LogSettings,
     APISettings,
     StorageSettings

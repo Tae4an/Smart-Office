@@ -45,7 +45,11 @@ public class SecurityConfig {
                             ).permitAll()
                             // WebSocket과 API 요청은 인증 필요
                             .requestMatchers("/ws/**").authenticated()
-                            .requestMatchers("/api/**").authenticated();
+                            .requestMatchers("/api/**").authenticated()
+                            .requestMatchers("/api/boards/**").hasAnyRole("MANAGER", "ADMIN", "SUPER_ADMIN")
+                            .requestMatchers("/api/posts/**").hasAnyRole("USER", "MANAGER", "ADMIN", "SUPER_ADMIN")
+                            .requestMatchers("/api/comments/**").hasAnyRole("USER", "MANAGER", "ADMIN", "SUPER_ADMIN")
+                            .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN");
 
                     // 개발 환경에서 Swagger UI 접근 허용
                     if ("dev".equals(activeProfile)) {

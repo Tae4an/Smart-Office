@@ -39,7 +39,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
         responseData.put("position", user.getPosition());
         responseData.put("email", user.getEmail());
         responseData.put("passwordChangeRequired", user.isPasswordChangeRequired());
-
+        responseData.put("role", user.getRole());
         // JSON 응답 생성
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json;charset=UTF-8");

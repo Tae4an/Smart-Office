@@ -1,13 +1,14 @@
-import { NavLink, useNavigate } from "react-router-dom";
+// NavLink 제거 (사용하지 않음)
+import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
+import { fetchWeatherData } from '../../utils/WeatherUtils';
 import '../../styles/layout.css';
 
 const Header = ({ setIsMenuOpen }) => {
     const navigate = useNavigate();
     const [showNotifications, setShowNotifications] = useState(false);
-    const [showSearchModal, setShowSearchModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [displayedResults, setDisplayedResults] = useState([]);
@@ -15,364 +16,435 @@ const Header = ({ setIsMenuOpen }) => {
     const [isLoading, setIsLoading] = useState(false);
     const itemsPerPage = 5;
 
-    const [notifications, setNotifications] = useState([
-        // 알림이 있을 경우
-        // { id: 1, message: "새로운 공지사항이 등록되었습니다.", date: "2024-12-09" }
-    ]);
+    // 프로필 모달 상태 추가
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+
+    // notifications 상태를 const로 변경 (setNotifications 사용하지 않음)
+    const notifications = [
+        { id: 1, message: "새로운 공지사항이 등록되었습니다.", date: "2024-12-09" },
+        { id: 2, message: "12월 정기 회의 일정이 변경되었습니다.", date: "2024-12-08" },
+        { id: 3, message: "연말 워크샵 참석 여부를 확인해주세요.", date: "2024-12-07" },
+        { id: 4, message: "새로운 프로젝트 킥오프 미팅이 예정되어 있습니다.", date: "2024-12-06" },
+        { id: 5, message: "보안 교육 이수 기간이 7일 남았습니다.", date: "2024-12-05" }
+    ];
 
     // JSON 서버에서 데이터 가져오기 부분을 하드코딩된 데이터로 변경
-    const userData = [
+    const userData = useMemo(() => [
         {
-            "id": "EMP001",
-            "name": "김지원",
-            "position": "선임연구원",
-            "department": "AI연구소",
-            "email": "jiwon.kim@company.com"
+            "id": "LAW001",
+            "name": "이종수",
+            "position": "이사",
+            "department": "법무팀",
+            "email": "lee.js@example.com"
         },
         {
-            "id": "EMP002",
-            "name": "이민수",
-            "position": "책임연구원",
-            "department": "개발팀",
-            "email": "minsu.lee@company.com"
+            "id": "LAW002",
+            "name": "김현주",
+            "position": "부장",
+            "department": "법무팀",
+            "email": "kim.hj@example.com"
         },
         {
-            "id": "EMP003",
-            "name": "박서연",
+            "id": "LAW003",
+            "name": "박승균",
             "position": "대리",
-            "department": "HR팀",
-            "email": "seoyeon.park@company.com"
+            "department": "법무팀",
+            "email": "park.sk@example.com"
         },
         {
-            "id": "EMP004",
-            "name": "정현우",
-            "position": "수석연구원",
-            "department": "AI연구소",
-            "email": "hyunwoo.jung@company.com"
+            "id": "LAW004",
+            "name": "최은영",
+            "position": "사원",
+            "department": "법무팀",
+            "email": "choi.ey@example.com"
         },
         {
-            "id": "EMP005",
-            "name": "송미라",
-            "position": "과장",
-            "department": "마케팅팀",
-            "email": "mira.song@company.com"
+            "id": "SEC001",
+            "name": "김정훈",
+            "position": "이사",
+            "department": "보안팀",
+            "email": "kim.jh@example.com"
         },
         {
-            "id": "EMP006",
-            "name": "강동훈",
-            "position": "책임연구원",
-            "department": "개발팀",
-            "email": "donghun.kang@company.com"
+            "id": "SEC002",
+            "name": "이승윤",
+            "position": "부장",
+            "department": "보안팀",
+            "email": "lee.sy@example.com"
         },
         {
-            "id": "EMP007",
-            "name": "이수진",
-            "position": "선임연구원",
-            "department": "AI연구소",
-            "email": "sujin.lee@company.com"
+            "id": "SEC003",
+            "name": "박도경",
+            "position": "대리",
+            "department": "보안팀",
+            "email": "park.dk@example.com"
         },
         {
-            "id": "EMP008",
-            "name": "한지민",
+            "id": "SEC004",
+            "name": "최현규",
+            "position": "사원",
+            "department": "보안팀",
+            "email": "choi.hk@example.com"
+        },
+        {
+            "id": "SEC005",
+            "name": "정은주",
+            "position": "사원",
+            "department": "보안팀",
+            "email": "jung.ej@example.com"
+        },
+        {
+            "id": "GA001",
+            "name": "박상현",
+            "position": "이사",
+            "department": "총무팀",
+            "email": "park.sh@example.com"
+        },
+        {
+            "id": "GA002",
+            "name": "김은지",
+            "position": "부장",
+            "department": "총무팀",
+            "email": "kim.ej@example.com"
+        },
+        {
+            "id": "GA003",
+            "name": "이동훈",
+            "position": "대리",
+            "department": "총무팀",
+            "email": "lee.dh@example.com"
+        },
+        {
+            "id": "GA004",
+            "name": "최수연",
+            "position": "사원",
+            "department": "총무팀",
+            "email": "choi.sy@example.com"
+        },
+        {
+            "id": "GA005",
+            "name": "정재우",
+            "position": "사원",
+            "department": "총무팀",
+            "email": "jung.jw@example.com"
+        },
+        {
+            "id": "GA006",
+            "name": "강혜진",
+            "position": "사원",
+            "department": "총무팀",
+            "email": "kang.hj@example.com"
+        },
+        {
+            "id": "FIN001",
+            "name": "김동현",
+            "position": "이사",
+            "department": "재무팀",
+            "email": "kim.dh@example.com"
+        },
+        {
+            "id": "FIN002",
+            "name": "박수영",
+            "position": "부장",
+            "department": "재무팀",
+            "email": "park.sy@example.com"
+        },
+        {
+            "id": "FIN003",
+            "name": "이정원",
+            "position": "차장",
+            "department": "재무팀",
+            "email": "lee.jw@example.com"
+        },
+        {
+            "id": "FIN004",
+            "name": "최현영",
             "position": "대리",
             "department": "재무팀",
-            "email": "jimin.han@company.com"
+            "email": "choi.hy@example.com"
         },
         {
-            "id": "EMP009",
-            "name": "최준호",
-            "position": "수석연구원",
-            "department": "개발팀",
-            "email": "junho.choi@company.com"
-        },
-        {
-            "id": "EMP010",
-            "name": "박영희",
-            "position": "과장",
-            "department": "HR팀",
-            "email": "younghee.park@company.com"
-        },
-        {
-            "id": "EMP011",
-            "name": "김태우",
-            "position": "선임연구원",
-            "department": "AI연구소",
-            "email": "taewoo.kim@company.com"
-        },
-        {
-            "id": "EMP012",
-            "name": "이하은",
-            "position": "대리",
-            "department": "마케팅팀",
-            "email": "haeun.lee@company.com"
-        },
-        {
-            "id": "EMP013",
-            "name": "정민성",
-            "position": "책임연구원",
-            "department": "개발팀",
-            "email": "minsung.jung@company.com"
-        },
-        {
-            "id": "EMP014",
-            "name": "윤서아",
-            "position": "과장",
+            "id": "FIN005",
+            "name": "정승환",
+            "position": "사원",
             "department": "재무팀",
-            "email": "seoa.yoon@company.com"
+            "email": "jung.sk@example.com"
         },
         {
-            "id": "EMP015",
-            "name": "임재현",
-            "position": "선임연구원",
-            "department": "AI연구소",
-            "email": "jaehyun.lim@company.com"
-        },
-        {
-            "id": "EMP016",
-            "name": "신다은",
-            "position": "대리",
-            "department": "HR팀",
-            "email": "daeun.shin@company.com"
-        },
-        {
-            "id": "EMP017",
-            "name": "권현우",
-            "position": "수석연구원",
-            "department": "개발팀",
-            "email": "hyunwoo.kwon@company.com"
-        },
-        {
-            "id": "EMP018",
-            "name": "장미영",
-            "position": "과장",
-            "department": "마케팅팀",
-            "email": "miyoung.jang@company.com"
-        },
-        {
-            "id": "EMP019",
-            "name": "오승훈",
-            "position": "책임연구원",
-            "department": "AI연구소",
-            "email": "seunghun.oh@company.com"
-        },
-        {
-            "id": "EMP020",
-            "name": "배수민",
-            "position": "대리",
+            "id": "FIN006",
+            "name": "강민정",
+            "position": "사원",
             "department": "재무팀",
-            "email": "sumin.bae@company.com"
+            "email": "kang.mj@example.com"
         },
         {
-            "id": "EMP021",
-            "name": "조은우",
-            "position": "선임연구원",
-            "department": "개발팀",
-            "email": "eunwoo.jo@company.com"
-        },
-        {
-            "id": "EMP022",
-            "name": "황지현",
-            "position": "과장",
-            "department": "HR팀",
-            "email": "jihyun.hwang@company.com"
-        },
-        {
-            "id": "EMP023",
-            "name": "노승준",
-            "position": "책임연구원",
-            "department": "AI연구소",
-            "email": "seungjun.noh@company.com"
-        },
-        {
-            "id": "EMP024",
-            "name": "유민지",
-            "position": "대리",
-            "department": "마케팅팀",
-            "email": "minji.yoo@company.com"
-        },
-        {
-            "id": "EMP025",
-            "name": "안현서",
-            "position": "수석연구원",
-            "department": "개발팀",
-            "email": "hyunseo.ahn@company.com"
-        },
-        {
-            "id": "EMP026",
-            "name": "홍서영",
-            "position": "과장",
+            "id": "FIN007",
+            "name": "오준혁",
+            "position": "사원",
             "department": "재무팀",
-            "email": "seoyoung.hong@company.com"
+            "email": "oh.jh@example.com"
         },
         {
-            "id": "EMP027",
-            "name": "백승호",
-            "position": "선임연구원",
-            "department": "AI연구소",
-            "email": "seungho.baek@company.com"
-        },
-        {
-            "id": "EMP028",
-            "name": "서은지",
-            "position": "대리",
-            "department": "HR팀",
-            "email": "eunji.seo@company.com"
-        },
-        {
-            "id": "EMP029",
-            "name": "남동현",
-            "position": "책임연구원",
+            "id": "DEV0016",
+            "name": "김재석",
+            "position": "이사",
             "department": "개발팀",
-            "email": "donghyun.nam@company.com"
+            "email": "kim.js@example.com"
         },
         {
-            "id": "EMP030",
-            "name": "문예진",
-            "position": "과장",
-            "department": "마케팅팀",
-            "email": "yejin.moon@company.com"
-        },
-        {
-            "id": "EMP031",
-            "name": "국민호",
-            "position": "선임연구원",
-            "department": "AI연구소",
-            "email": "minho.kook@company.com"
-        },
-        {
-            "id": "EMP032",
-            "name": "성지원",
-            "position": "대리",
-            "department": "재무팀",
-            "email": "jiwon.sung@company.com"
-        },
-        {
-            "id": "EMP033",
-            "name": "구본영",
-            "position": "수석연구원",
+            "id": "DEV0017",
+            "name": "이용석",
+            "position": "부장",
             "department": "개발팀",
-            "email": "bonyoung.koo@company.com"
+            "email": "lee.ys@example.com"
         },
         {
-            "id": "EMP034",
-            "name": "민서연",
-            "position": "과장",
-            "department": "HR팀",
-            "email": "seoyeon.min@company.com"
-        },
-        {
-            "id": "EMP035",
-            "name": "석현민",
-            "position": "책임연구원",
-            "department": "AI연구소",
-            "email": "hyunmin.seok@company.com"
-        },
-        {
-            "id": "EMP036",
-            "name": "염하윤",
-            "position": "대리",
-            "department": "마케팅팀",
-            "email": "hayun.yeom@company.com"
-        },
-        {
-            "id": "EMP037",
-            "name": "설지훈",
-            "position": "선임연구원",
+            "id": "DEV0018",
+            "name": "박현정",
+            "position": "차장",
             "department": "개발팀",
-            "email": "jihoon.seol@company.com"
+            "email": "park.hj@example.com"
         },
         {
-            "id": "EMP038",
-            "name": "진수아",
+            "id": "DEV004",
+            "name": "최성우",
             "position": "과장",
-            "department": "재무팀",
-            "email": "sua.jin@company.com"
-        },
-        {
-            "id": "EMP039",
-            "name": "기태윤",
-            "position": "책임연구원",
-            "department": "AI연구소",
-            "email": "taeyoon.ki@company.com"
-        },
-        {
-            "id": "EMP040",
-            "name": "마윤서",
-            "position": "대리",
-            "department": "HR팀",
-            "email": "yoonseo.ma@company.com"
-        },
-        {
-            "id": "EMP041",
-            "name": "피동하",
-            "position": "수석연구원",
             "department": "개발팀",
-            "email": "dongha.pi@company.com"
+            "email": "choi.sw@example.com"
         },
         {
-            "id": "EMP042",
-            "name": "전지아",
-            "position": "과장",
-            "department": "마케팅팀",
-            "email": "jia.jeon@company.com"
-        },
-        {
-            "id": "EMP043",
-            "name": "복승민",
-            "position": "선임연구원",
-            "department": "AI연구소",
-            "email": "seungmin.bok@company.com"
-        },
-        {
-            "id": "EMP044",
-            "name": "심도원",
+            "id": "DEV005",
+            "name": "정재현",
             "position": "대리",
-            "department": "재무팀",
-            "email": "dowon.shim@company.com"
-        },
-        {
-            "id": "EMP045",
-            "name": "공주원",
-            "position": "책임연구원",
             "department": "개발팀",
-            "email": "juwon.gong@company.com"
+            "email": "jung.jh@example.com"
         },
         {
-            "id": "EMP046",
-            "name": "방은수",
+            "id": "DEV006",
+            "name": "강민서",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "kang.ms@example.com"
+        },
+        {
+            "id": "DEV007",
+            "name": "오윤주",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "oh.yj@example.com"
+        },
+        {
+            "id": "DEV008",
+            "name": "한승규",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "han.sk@example.com"
+        },
+        {
+            "id": "DEV009",
+            "name": "송지민",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "song.jm@example.com"
+        },
+        {
+            "id": "DEV010",
+            "name": "윤혁규",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "yoon.hk@example.com"
+        },
+        {
+            "id": "DEV011",
+            "name": "신은영",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "shin.ey@example.com"
+        },
+        {
+            "id": "DEV012",
+            "name": "구도현",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "gu.dh@example.com"
+        },
+        {
+            "id": "DEV013",
+            "name": "권지우",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "kwon.jw@example.com"
+        },
+        {
+            "id": "DEV014",
+            "name": "임수연",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "im.sy@example.com"
+        },
+        {
+            "id": "DEV015",
+            "name": "류원기",
+            "position": "사원",
+            "department": "개발팀",
+            "email": "ryu.wk@example.com"
+        },
+        {
+            "id": "HR001",
+            "name": "박지훈",
+            "position": "이사",
+            "department": "인사팀",
+            "email": "park.jh@example.com"
+        },
+        {
+            "id": "HR002",
+            "name": "김서현",
+            "position": "부장",
+            "department": "인사팀",
+            "email": "kim.sh1@example.com"
+        },
+        {
+            "id": "HR003",
+            "name": "이윤지",
+            "position": "차장",
+            "department": "인사팀",
+            "email": "lee.yj@example.com"
+        },
+        {
+            "id": "HR004",
+            "name": "최민호",
             "position": "과장",
-            "department": "HR팀",
-            "email": "eunsoo.bang@company.com"
+            "department": "인사팀",
+            "email": "choi.mh@example.com"
         },
         {
-            "id": "EMP047",
-            "name": "여승우",
-            "position": "선임연구원",
-            "department": "AI연구소",
-            "email": "seungwoo.yeo@company.com"
-        },
-        {
-            "id": "EMP048",
-            "name": "탁서진",
+            "id": "HR005",
+            "name": "정혜선",
             "position": "대리",
-            "department": "마케팅팀",
-            "email": "seojin.tak@company.com"
+            "department": "인사팀",
+            "email": "jung.hs@example.com"
         },
         {
-            "id": "EMP049",
-            "name": "범현수",
-            "position": "수석연구원",
-            "department": "개발팀",
-            "email": "hyunsoo.bum@company.com"
+            "id": "HR006",
+            "name": "강지수",
+            "position": "사원",
+            "department": "인사팀",
+            "email": "kang.js@example.com"
         },
         {
-            "id": "EMP050",
-            "name": "추미란",
+            "id": "HR007",
+            "name": "손은경",
+            "position": "사원",
+            "department": "인사팀",
+            "email": "son.ek@example.com"
+        },
+        {
+            "id": "HR008",
+            "name": "양우진",
+            "position": "사원",
+            "department": "인사팀",
+            "email": "yang.wj@example.com"
+        },
+        {
+            "id": "HR009",
+            "name": "황선영",
+            "position": "사원",
+            "department": "인사팀",
+            "email": "hwang.sy@example.com"
+        },
+        {
+            "id": "HR010",
+            "name": "배동환",
+            "position": "사원",
+            "department": "인사팀",
+            "email": "bae.dh@example.com"
+        },
+        {
+            "id": "SAL001",
+            "name": "이상훈",
+            "position": "이사",
+            "department": "영업팀",
+            "email": "lee.sh@example.com"
+        },
+        {
+            "id": "SAL002",
+            "name": "박지민",
+            "position": "부장",
+            "department": "영업팀",
+            "email": "park.jm@example.com"
+        },
+        {
+            "id": "SAL003",
+            "name": "김현영",
+            "position": "차장",
+            "department": "영업팀",
+            "email": "kim.hy@example.com"
+        },
+        {
+            "id": "SAL004",
+            "name": "최우진",
             "position": "과장",
-            "department": "재무팀",
-            "email": "miran.choo@company.com"
+            "department": "영업팀",
+            "email": "choi.wj@example.com"
+        },
+        {
+            "id": "SAL005",
+            "name": "정수영",
+            "position": "대리",
+            "department": "영업팀",
+            "email": "jung.sy@example.com"
+        },
+        {
+            "id": "SAL006",
+            "name": "강도현",
+            "position": "사원",
+            "department": "영업팀",
+            "email": "kang.dh@example.com"
+        },
+        {
+            "id": "SAL007",
+            "name": "손은정",
+            "position": "사원",
+            "department": "영업팀",
+            "email": "son.ej@example.com"
+        },
+        {
+            "id": "SAL008",
+            "name": "양승기",
+            "position": "사원",
+            "department": "영업팀",
+            "email": "yang.sk@example.com"
+        },
+        {
+            "id": "SAL009",
+            "name": "황정훈",
+            "position": "사원",
+            "department": "영업팀",
+            "email": "hwang.jh@example.com"
+        },
+        {
+            "id": "SAL010",
+            "name": "임연주",
+            "position": "사원",
+            "department": "영업팀",
+            "email": "im.yj@example.com"
+        },
+        {
+            "id": "SAL011",
+            "name": "류민혁",
+            "position": "사원",
+            "department": "영업팀",
+            "email": "ryu.mh@example.com"
+        },
+        {
+            "id": "SAL012",
+            "name": "배현서",
+            "position": "사원",
+            "department": "영업팀",
+            "email": "bae.hs@example.com"
         }
-    ];
+    ], []);
 
     const handleLogout = async () => {
         try {
@@ -383,6 +455,7 @@ const Header = ({ setIsMenuOpen }) => {
             if (response.status === 200) {
                 // 세션스토리지에서 사용자 정보 제거
                 sessionStorage.removeItem('userInfo');
+                localStorage.removeItem('chatMessages');
                 navigate('/');
             }
         } catch (error) {
@@ -395,18 +468,26 @@ const Header = ({ setIsMenuOpen }) => {
         setShowNotifications(!showNotifications);
     }
 
-    // 검색 모달 토글
-    const toggleSearchModal = () => {
-        setShowSearchModal(!showSearchModal);
-        if(!showSearchModal) {
-            setSearchTerm('');
-            setDisplayedResults([]);
-        }
+    // 프로필 모달 표시 함수
+    const handleEmployeeHover = (employee, event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        // 모달이 화면 오른쪽을 벗어나지 않도록 위치 조정
+        const x = rect.right + 10 > window.innerWidth ? window.innerWidth - 320 : rect.right + 10;
+        const y = rect.top;
+        
+        setModalPosition({ x, y });
+        setSelectedEmployee(employee);
     };
 
-    // EmployeeForm.jsx의 검색 로직
-    const handleSearch = (e) => {
+    // 프로필 모달 숨기기
+    const handleEmployeeLeave = () => {
+        setSelectedEmployee(null);
+    };
+
+    // handleSearch를 useCallback으로 감싸서 의존성 문제 해결
+    const handleSearch = useCallback((e) => {
         e.preventDefault();
+        
         
         let results = userData.filter(item => {
             return (
@@ -421,7 +502,7 @@ const Header = ({ setIsMenuOpen }) => {
         setSearchResults(results);
         setDisplayedResults(results.slice(0, itemsPerPage));
         setPage(1);
-    };
+    }, [searchTerm, userData]); // userData 의존성 추가
 
     // loadMore 함수 수정
     const loadMore = useCallback(() => {
@@ -444,7 +525,7 @@ const Header = ({ setIsMenuOpen }) => {
         if (searchTerm) {
             handleSearch({ preventDefault: () => {} });
         }
-    }, [searchTerm]);
+    }, [searchTerm, handleSearch]);
 
     // 스크롤 이벤트 처리기 수정
     useEffect(() => {
@@ -469,6 +550,27 @@ const Header = ({ setIsMenuOpen }) => {
         };
     }, [searchTerm, loadMore, isLoading]);
 
+    const [weather, setWeather] = useState(null);
+    const [weatherLoading, setWeatherLoading] = useState(true);
+
+    useEffect(() => {
+        const getWeather = async (position) => {
+            try {
+                const { latitude, longitude } = position.coords;
+                const weatherData = await fetchWeatherData(latitude, longitude);
+                setWeather(weatherData);
+                setWeatherLoading(false);
+            } catch (error) {
+                console.error('날씨 정보를 가져오는데 실패했습니다:', error);
+                setWeatherLoading(false);
+            }
+        };
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(getWeather);
+        }
+    }, []);
+
     return(
         <header className="header">
             <div className="header-container">
@@ -489,7 +591,12 @@ const Header = ({ setIsMenuOpen }) => {
                                         <>
                                             <ul className="results-list">
                                                 {displayedResults.map((employee) => (
-                                                    <li key={employee.id} className="result-item">
+                                                    <li 
+                                                        key={employee.id} 
+                                                        className="result-item"
+                                                        onMouseEnter={(e) => handleEmployeeHover(employee, e)}
+                                                        onMouseLeave={handleEmployeeLeave}
+                                                    >
                                                         <div className="employee-info">
                                                             <strong>{employee.name}</strong>
                                                             <span>{employee.department} - {employee.position}</span>
@@ -514,10 +621,19 @@ const Header = ({ setIsMenuOpen }) => {
                     )}
                 </div>
                 <div className="header-right">
+                    {!weatherLoading && weather && (
+                        <div className="weather-info-mini">
+                            <span className="weather-temp">{weather.temperature}°</span>
+                            <span className="weather-desc">{weather.sky}</span>
+                        </div>
+                    )}
                     <div className="notification-wrapper">
                         <button className="notification-btn" onClick={toggleNotifications}>
                             <i className="fas fa-bell"></i>
-                            {notifications.length > 0 && <span className="notification-badge"></span>}
+                            {notifications.length > 0 &&
+                                <span className="notification-badge">
+                                    {notifications.length > 9 ? '9+' : notifications.length}
+                                </span>}
                         </button>
 
                         {showNotifications && (
@@ -550,6 +666,12 @@ const Header = ({ setIsMenuOpen }) => {
                         )}
                     </div>
                     <button
+                        className="notification-btn"
+                        onClick={() => navigate('/settings')}
+                    >
+                        <i className="fas fa-cog"></i>
+                    </button>
+                    <button
                         className="logout-btn"
                         onClick={handleLogout}
                     >
@@ -564,6 +686,39 @@ const Header = ({ setIsMenuOpen }) => {
                     </button>
                 </div>
             </div>
+            {selectedEmployee && (
+                <div 
+                    className={`search-profile-modal ${selectedEmployee ? 'visible' : 'hidden'}`}
+                    style={{
+                        top: `${modalPosition.y}px`,
+                        left: `${modalPosition.x}px`
+                    }}
+                >
+                    <div className="search-profile-header">
+                        <div className="search-profile-image">
+                            <i className="fas fa-user"></i>
+                        </div>
+                        <div className="search-profile-info">
+                            <h4>{selectedEmployee.name}</h4>
+                            <p>{selectedEmployee.position}</p>
+                        </div>
+                    </div>
+                    <div className="search-profile-details">
+                        <div className="search-profile-detail-item">
+                            <i className="fas fa-id-card"></i>
+                            <span>사번: {selectedEmployee.id}</span>
+                        </div>
+                        <div className="search-profile-detail-item">
+                            <i className="fas fa-building"></i>
+                            <span>부서: {selectedEmployee.department}</span>
+                        </div>
+                        <div className="search-profile-detail-item">
+                            <i className="fas fa-envelope"></i>
+                            <span>{selectedEmployee.email}</span>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 };

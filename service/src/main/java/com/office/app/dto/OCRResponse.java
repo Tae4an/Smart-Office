@@ -8,6 +8,7 @@ import java.util.List;
 public class OCRResponse {
     private String status;
     private OCRResultData data;
+    private String analysis;
 
     @Data
     public static class OCRResultData {

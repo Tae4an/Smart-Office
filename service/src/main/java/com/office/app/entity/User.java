@@ -52,4 +52,16 @@ public class User {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private UserRole role;
+
+    // 열거형 정의
+    public enum UserRole {
+        USER,       // 일반 사용자
+        MANAGER,    // 부서 관리자
+        ADMIN,      // 시스템 관리자
+        SUPER_ADMIN // 최고 관리자
+    }
 }

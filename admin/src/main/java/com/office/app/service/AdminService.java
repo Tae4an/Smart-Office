@@ -69,7 +69,6 @@ public class AdminService {
         return adminRepository.existsByUser_EmployeeId(employeeId);
     }
 
-
     // 페이징 처리된 전체 관리자 목록
     public Page<Admin> getAllAdmins(Pageable pageable) {
         return adminRepository.findAll(pageable);
@@ -86,12 +85,9 @@ public class AdminService {
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found with ID: " + id));
     }
 
-    // 검색 기능 추가
-    public Page<Admin> searchAdmins(String keyword, AdminRole role, Pageable pageable) {
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return role == null ? getAllAdmins(pageable) : getAdminsByRole(role, pageable);
-        }
-
+    // 이 메서드만 남기고 다른 중복된 검색 메서드는 제거
+    public Page<Admin> searchAdmins(String keyword, String roleStr, Pageable pageable) {
+        AdminRole role = (roleStr == null || roleStr.trim().isEmpty()) ? null : AdminRole.valueOf(roleStr);
         return adminRepository.searchAdmins(keyword, role, pageable);
     }
 }
