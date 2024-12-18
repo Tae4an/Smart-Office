@@ -85,3 +85,123 @@
     padding: 20px;
     height: calc(100vh - 100px);
 }
+/* Meeting Components Styles */
+
+/* Participants List Styles */
+.participants-dialog {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+}
+
+.participants-dialog .MuiDialog-paper {
+    background: var(--light);
+    border-radius: var(--border-radius-xl);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.participants-dialog .MuiDialogTitle-root {
+    background: linear-gradient(135deg, rgba(30, 48, 243, 0.05) 0%, rgba(226, 30, 128, 0.05) 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 16px 24px;
+}
+
+.participants-dialog .MuiListItem-root {
+    border-radius: var(--border-radius);
+    margin: 4px 0;
+    transition: background-color 0.2s ease;
+}
+
+.participants-dialog .MuiListItem-root:hover {
+    background-color: rgba(30, 48, 243, 0.05);
+}
+
+.participants-dialog .MuiAvatar-root {
+    background: var(--gradient);
+    color: white;
+    font-weight: 600;
+}
+
+.participants-dialog .MuiListItemText-primary {
+    font-weight: 500;
+}
+
+.participants-dialog .MuiListItemText-secondary {
+    color: var(--primary);
+}
+
+/* Control Bar Styles */
+.control-bar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius-xl);
+    padding: 12px 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.control-bar .MuiIconButton-root {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 12px;
+    border-radius: var(--border-radius-lg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.control-bar .MuiIconButton-root:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.control-bar .MuiIconButton-root.primary-btn {
+    color: var(--primary);
+}
+
+.control-bar .MuiIconButton-root.primary-btn:hover {
+    background: rgba(30, 48, 243, 0.05);
+}
+
+.control-bar .MuiIconButton-root.error-btn {
+    color: var(--danger);
+}
+
+.control-bar .MuiIconButton-root.error-btn:hover {
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.control-bar .MuiIconButton-root.end-call-btn {
+    background: var(--danger);
+    color: white;
+    padding: 12px 24px;
+}
+
+.control-bar .MuiIconButton-root.end-call-btn:hover {
+    background: #c82333;
+}
+
+.control-bar .MuiBadge-badge {
+    background: var(--danger);
+    color: white;
+    font-weight: 600;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    padding: 0 6px;
+}
+
+/* Animation Effects */
+@keyframes pulseError {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+.control-bar .MuiIconButton-root.error-state {
+    animation: pulseError 2s infinite;
+}

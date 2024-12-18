@@ -723,7 +723,7 @@ const ChatWidget = () => {
     };
 
     // 로그인 페이지에서는 위젯을 숨김
-    if (location.pathname === '/login' || location.pathname === '/' || location.pathname === '/password-change') {
+    if (location.pathname === '/login' || location.pathname === '/' || location.pathname === '/password-change'|| location.pathname === '/meetingRoom') {
         return null;
     }
 

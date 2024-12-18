@@ -571,18 +571,35 @@ const Header = ({ setIsMenuOpen }) => {
         }
     }, []);
 
+    const clearSearch = () => {
+        setSearchTerm('');
+        setSearchResults([]);
+        setDisplayedResults([]);
+        setPage(1);
+    };
+
     return(
         <header className="header">
             <div className="header-container">
                 <div className="search-container">
-                    <input
-                        type="text"
-                        className="search-bar"
-                        placeholder="이름, 부서, 직급으로 직원 검색 (예: 홍길동, 인사팀, 과장)"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
-                    />
+                    <div className="search-bar-wrapper">
+                        <i className="fas fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            className="search-bar"
+                            placeholder="이름, 부서, 직급으로 직원 검색 (예: 홍길동, 인사팀, 과장)"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
+                        />
+                        <button 
+                            className={`clear-search ${searchTerm ? 'visible' : ''}`}
+                            onClick={clearSearch}
+                            type="button"
+                        >
+                            <i className="fas fa-times"></i>
+                        </button>
+                    </div>
                     {searchTerm && (
                         <div className="search-modal">
                             <div className="search-modal-content">

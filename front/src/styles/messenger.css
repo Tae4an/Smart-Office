@@ -7,7 +7,6 @@
     border-radius: var(--border-radius-lg);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     overflow-y: hidden;
-    margin-bottom: var(--spacing-5);
 }
 
 .messenger-container {
@@ -15,6 +14,20 @@
     flex: 1;
     height: 100%;
     min-height: 0;
+    overflow: hidden;
+}
+
+.messenger-container.widget-fullscreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background: white;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius-lg);
     overflow: hidden;
 }
 
@@ -98,6 +111,16 @@
     align-items: center;
 }
 
+.widget-fullscreen .chat-header {
+    background-color: white;
+    border-bottom: 1px solid var(--light);
+    padding: var(--spacing-3);
+}
+
+.widget-fullscreen .chat-header .back-button {
+    margin-right: var(--spacing-3);
+}
+
 .chat-header h2 {
     font-size: 1.1rem;
     font-weight: 600;
@@ -105,7 +128,8 @@
     color: var(--dark);
 }
 
-.chat-header .back-button {
+/* 기본 back-button 스타일 */
+.back-button {
     width: 36px;
     height: 36px;
     display: flex;
@@ -115,14 +139,59 @@
     background: none;
     color: var(--gray);
     cursor: pointer;
-    margin-right: var(--spacing-2);
     border-radius: 50%;
     transition: all 0.2s ease;
+    z-index: 1; /* z-index 값을 낮춤 */
 }
 
-.chat-header .back-button:hover {
+.back-button:hover {
     background-color: var(--light);
     color: var(--primary);
+}
+
+/* 위젯이 아닐 때 */
+.email-detail:not(.widget-fullscreen) .email-detail-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    border-bottom: 1px solid var(--light);
+}
+
+.email-detail:not(.widget-fullscreen) .back-button {
+    margin-right: 0;
+    background-color: transparent;
+}
+
+.email-detail:not(.widget-fullscreen) .subject-line {
+    flex: 1;
+    min-width: 0;
+}
+
+.email-detail:not(.widget-fullscreen) h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 위젯일 때 */
+.widget-fullscreen .back-button {
+    position: absolute;
+    top: var(--spacing-3);
+    left: var(--spacing-3);
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.widget-fullscreen .back-button:hover {
+    background-color: var(--light);
+    color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .chat-header-info {
@@ -169,6 +238,10 @@
     flex: 1;
     overflow-y: auto;
     padding: var(--spacing-3);
+}
+
+.widget-fullscreen .messages-container {
+    height: calc(100% - 120px);
 }
 
 .message-wrapper {
@@ -220,11 +293,23 @@
 .input-container {
     padding: var(--spacing-3);
     border-top: 1px solid var(--light);
+    background: white;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.widget-fullscreen .input-container {
+    padding: var(--spacing-4);
+    height: 80px;
 }
 
 .message-form {
     display: flex;
     gap: var(--spacing-2);
+    width: 100%;
+    align-items: center;
 }
 
 .message-input {
@@ -233,11 +318,14 @@
     border: 1px solid var(--light);
     border-radius: var(--border-radius-xl);
     font-size: 0.9375rem;
+    min-height: 40px;
+    max-height: 40px;
 }
 
 .send-button {
     width: 40px;
     height: 40px;
+    min-width: 40px;
     border-radius: 50%;
     background: var(--gradient);
     color: white;
@@ -245,6 +333,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 /* 메일 컨텐츠 영역 */
@@ -255,18 +344,59 @@
     background-color: white;
     min-height: 0;
     overflow: auto;
+    position: relative;
+    max-height: 100%; /* 추가 */
+    height: 100%; /* 추가 */
 }
 
-.email-content {
-    flex: 1;
-    overflow-y: auto;
+.mail-content .back-button {
+    position: absolute;
+    top: var(--spacing-3);
+    left: var(--spacing-3);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--gray);
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.mail-content .back-button:hover {
+    background-color: var(--light);
+    color: var(--primary);
+}
+
+.widget-fullscreen .mail-content {
+    height: 100%;
     padding: var(--spacing-3);
-    white-space: pre-wrap;
-    line-height: 1.6;
 }
 
-.email-content p {
-    margin-bottom: var(--spacing-3);
+.widget-fullscreen .email-composer,
+.widget-fullscreen .email-detail,
+.widget-fullscreen .email-list {
+    margin-top: 0; /* 수정: 상단 여백 제거 */
+    height: 100%; /* 추가 */
+    max-height: calc(100vh - 60px); /* 추가: 헤더 높이를 고려한 최대 높이 */
+    overflow: auto; /* 추가 */
+}
+
+.widget-fullscreen .email-detail-title .back-button {
+    position: static;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.widget-fullscreen .email-detail-title .back-button:hover {
+    background-color: var(--light);
+    color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* 탭 스타일 */
@@ -375,30 +505,73 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.email-content-header {
-    padding: var(--spacing-3) var(--spacing-4);
-    border-bottom: 1px solid var(--light);
-    background: linear-gradient(to right, white, #f8f9fa);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-3);
-}
-
-.email-content-header h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--dark);
-    margin: 0;
-    flex: 1;
-}
-
-.email-content-body {
+.email-content {
     flex: 1;
     overflow-y: auto;
     padding: var(--spacing-3);
+    white-space: pre-wrap;
+    line-height: 1.6;
+    height: auto; /* 수정 */
+    min-height: 300px; /* 추가 */
 }
 
-.email-content .back-button {
+.widget-fullscreen .email-content {
+    height: calc(100% - 200px); /* 수정: 헤더와 첨부파일 영역을 고려한 높이 계산 */
+    max-height: none; /* 추가 */
+    overflow-y: auto; /* 추가 */
+}
+
+/* 이메일 상세 보기 스타일 */
+.email-detail {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    padding: var(--spacing-3);
+    height: 100%;
+}
+
+.email-detail-header {
+    position: relative;
+    padding-bottom: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
+    width: 100%; /* 너비 100% 추가 */
+}
+
+.email-detail-info {
+    position: relative;
+    padding-bottom: var(--spacing-4);
+}
+
+.email-detail-header::after,
+.email-detail-info::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--light);
+}
+
+.subject-line {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex: 1;
+    min-width: 0;
+}
+
+.email-detail-title {
+    width: 100%; /* 너비 100% 추가 */
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    position: relative;
+}
+
+.email-detail-title .back-button {
+    position: static; /* absolute 대신 static으로 변경 */
     width: 36px;
     height: 36px;
     display: flex;
@@ -410,28 +583,73 @@
     cursor: pointer;
     border-radius: 50%;
     transition: all 0.2s ease;
+    flex-shrink: 0; /* 추가: 버튼 크기 유지 */
 }
 
-.email-content .back-button:hover {
+/* 이메일 라벨 */
+.email-labels {
+    display: flex;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.email-label, .email-label-small {
     background-color: var(--light);
-    color: var(--primary);
-}
-
-.mail-detail-content {
-    padding: var(--spacing-4);
-    flex: 1;
-    overflow-y: auto;
-}
-
-.mail-detail-info {
-    margin-bottom: var(--spacing-4);
-    padding-bottom: var(--spacing-3);
-    border-bottom: 1px solid var(--light);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
     color: var(--gray);
 }
 
-.mail-detail-body {
-    line-height: 1.6;
+/* 이메일 정보 */
+.sender-info, .recipient-info, .cc-info {
+    margin-bottom: var(--spacing-2);
+}
+
+.email-address {
+    color: var(--gray);
+}
+
+/* 첨부파일 섹션 */
+.attachments-section {
+    position: relative;
+    margin: var(--spacing-4) 0;
+    padding: var(--spacing-3);
+    background-color: var(--light);
+    border-radius: var(--border-radius-lg);
+}
+
+.attachments-section::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--light);
+}
+
+.attachment-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+}
+
+.attachment-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--light);
+}
+
+.file-size {
+    color: var(--gray);
+    font-size: 0.875rem;
 }
 
 /* 메일 작성 */
@@ -460,7 +678,8 @@
 
 .email-recipients-input,
 .email-subject-input,
-.email-content-input {
+.email-content-input,
+.email-cc-input {
     width: 100%;
     padding: var(--spacing-3);
     border: 1px solid var(--light);
@@ -510,6 +729,173 @@
     border-radius: 10px;
     font-size: 0.75rem;
     margin-left: auto;
+}
+
+/* 작성 버튼 */
+.compose-button {
+    width: calc(100% - var(--spacing-3));
+    margin: var(--spacing-3) var(--spacing-2);
+    padding: var(--spacing-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    background: var(--gradient);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-lg);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.compose-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 모바일 스타일 */
+@media (max-width: 768px) {
+    .messenger-container.mobile {
+        flex-direction: column;
+    }
+
+    .chat-list {
+        width: 100%;
+        border-right: none;
+    }
+
+    .mail-sidebar {
+        width: 100%;
+    }
+
+    .mobile-chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .mobile-chat-header {
+        padding: var(--spacing-3);
+        border-bottom: 1px solid var(--light);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-3);
+    }
+
+    .mobile-header {
+        border-bottom: 1px solid var(--light);
+    }
+
+    .mobile-mail-container {
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .mobile-mail-tabs {
+        padding: var(--spacing-3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        border-bottom: 1px solid var(--light);
+    }
+
+    .mobile-mailbox-select {
+        padding: var(--spacing-2) var(--spacing-3);
+        border: 1px solid var(--light);
+        border-radius: var(--border-radius-lg);
+        background: white;
+    }
+
+    .mobile-compose-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gradient);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mobile-email-item {
+        padding: var(--spacing-3);
+        border-bottom: 1px solid var(--light);
+    }
+
+    .mobile-email-header {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        margin-bottom: var(--spacing-2);
+    }
+
+    .mobile-email-sender {
+        font-weight: 600;
+        flex: 1;
+    }
+
+    .mobile-email-time {
+        color: var(--gray);
+        font-size: 0.75rem;
+    }
+
+    .mobile-email-subject {
+        font-weight: 600;
+        margin-bottom: var(--spacing-1);
+    }
+
+    .mobile-email-preview {
+        color: var(--gray);
+        font-size: 0.875rem;
+    }
+
+    .mobile-email-footer {
+        margin-top: var(--spacing-2);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+    }
+
+    .mobile-attachment-indicator {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-1);
+        color: var(--gray);
+        font-size: 0.75rem;
+    }
+
+    .mobile-email-label {
+        background-color: var(--light);
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        color: var(--gray);
+    }
+}
+
+/* 애니메이션 */
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* 유틸리티 스타일 */
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--gray);
+    font-size: 1rem;
+}
+
+.loading-message {
+    text-align: center;
+    padding: var(--spacing-4);
+    color: var(--gray);
 }
 
 /* 이메일 아이템 스타일 */
@@ -577,448 +963,17 @@
     font-size: 0.875rem;
 }
 
-.email-label, .email-label-small {
+/* 이메일 아이템 라벨 */
+.email-item-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+}
+
+.email-label-small {
     background-color: var(--light);
     padding: 2px 8px;
     border-radius: 12px;
     font-size: 0.75rem;
     color: var(--gray);
-}
-
-/* 이메일 상세 보기 스타일 */
-.email-detail {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: auto;
-    padding: var(--spacing-3);
-    height: 100%;
-}
-
-.email-detail-header {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-3);
-    margin-bottom: var(--spacing-4);
-    padding-bottom: var(--spacing-3);
-    border-bottom: 1px solid var(--light);
-}
-
-.email-detail-title {
-    flex: 1;
-}
-
-.subject-line {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    margin-bottom: var(--spacing-2);
-}
-
-.email-labels {
-    display: flex;
-    gap: var(--spacing-2);
-    flex-wrap: wrap;
-}
-
-.sender-info, .recipient-info, .cc-info {
-    margin-bottom: var(--spacing-2);
-}
-
-.email-address {
-    color: var(--gray);
-}
-
-.attachments-section {
-    position: relative;
-    margin: var(--spacing-4) 0;
-    padding: var(--spacing-3);
-    background-color: var(--light);
-    border-radius: var(--border-radius-lg);
-}
-
-.attachment-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-2);
-    margin-top: var(--spacing-2);
-}
-
-.attachment-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    padding: var(--spacing-2) var(--spacing-3);
-    background-color: white;
-    border-radius: var(--border-radius-lg);
-    border: 1px solid var(--light);
-}
-
-.file-size {
-    color: var(--gray);
-    font-size: 0.875rem;
-}
-
-/* 모바일 메일 스타일 */
-@media (max-width: 768px) {
-    .mobile-email-item {
-        padding: var(--spacing-3);
-        border-bottom: 1px solid var(--light);
-    }
-
-    .mobile-email-header {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-2);
-        margin-bottom: var(--spacing-2);
-    }
-
-    .mobile-email-sender {
-        font-weight: 600;
-        flex: 1;
-    }
-
-    .mobile-email-time {
-        color: var(--gray);
-        font-size: 0.75rem;
-    }
-
-    .mobile-email-subject {
-        font-weight: 600;
-        margin-bottom: var(--spacing-1);
-    }
-
-    .mobile-email-preview {
-        color: var(--gray);
-        font-size: 0.875rem;
-    }
-
-    .mobile-email-footer {
-        margin-top: var(--spacing-2);
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-2);
-    }
-
-    .mobile-attachment-indicator {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-1);
-        color: var(--gray);
-        font-size: 0.75rem;
-    }
-
-    .mobile-email-label {
-        background-color: var(--light);
-        padding: 2px 6px;
-        border-radius: 10px;
-        font-size: 0.75rem;
-        color: var(--gray);
-    }
-}
-
-/* 모바일 스타일 */
-@media (max-width: 768px) {
-    .messenger-container.mobile {
-        flex-direction: column;
-    }
-
-    .chat-list {
-        width: 100%;
-        border-right: none;
-    }
-
-    .mail-sidebar {
-        width: 100%;
-    }
-
-    .email-content.overlay {
-        margin: 0;
-        border-radius: 0;
-    }
-
-    .mobile-chat-container {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .mobile-chat-header {
-        padding: var(--spacing-3);
-        border-bottom: 1px solid var(--light);
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-3);
-    }
-
-    .mobile-header {
-        border-bottom: 1px solid var(--light);
-    }
-
-    .mobile-mail-container {
-        height: 100%;
-        overflow-y: auto;
-    }
-
-    .mobile-mail-tabs {
-        padding: var(--spacing-3);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: white;
-        border-bottom: 1px solid var(--light);
-    }
-
-    .mobile-mailbox-select {
-        padding: var(--spacing-2) var(--spacing-3);
-        border: 1px solid var(--light);
-        border-radius: var(--border-radius-lg);
-        background: white;
-    }
-
-    .mobile-compose-button {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--gradient);
-        color: white;
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-}
-
-.mobile-chat-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.mobile-chat-header {
-    display: flex;
-    align-items: center;
-    padding: var(--spacing-3);
-    gap: var(--spacing-3);
-    border-bottom: 1px solid var(--light);
-}
-
-.chat-avatar-small {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-}
-
-/* 기타 유틸리티 스타일 */
-.empty-state {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--gray);
-    font-size: 1rem;
-}
-
-.loading-message {
-    text-align: center;
-    padding: var(--spacing-4);
-    color: var(--gray);
-}
-
-/* 애니메이션 */
-@keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-/* 메일 작성 폼 추가 스타일 */
-.email-form-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--spacing-3);
-    border-bottom: 1px solid var(--light);
-}
-
-.email-form-controls {
-    display: flex;
-    gap: var(--spacing-2);
-}
-
-.email-form-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-3);
-    border-top: 1px solid var(--light);
-    background-color: var(--light);
-}
-
-.email-priority-select {
-    padding: var(--spacing-2) var(--spacing-3);
-    border: 1px solid var(--light);
-    border-radius: var(--border-radius-lg);
-    background: white;
-    color: var(--dark);
-}
-
-.email-cc-input {
-    width: 100%;
-    padding: var(--spacing-3);
-    border: 1px solid var(--light);
-    border-radius: var(--border-radius-lg);
-    font-size: 0.95rem;
-}
-
-/* 이메일 버튼 스타일 */
-.attach-button, .send-email-button {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    padding: var(--spacing-2) var(--spacing-3);
-    border-radius: var(--border-radius-lg);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.attach-button {
-    background-color: white;
-    border: 1px solid var(--light);
-    color: var(--gray);
-}
-
-.send-email-button {
-    background: var(--gradient);
-    border: none;
-    color: white;
-}
-
-.attach-button:hover {
-    background-color: var(--light);
-    color: var(--primary);
-}
-
-.send-email-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* 작성 버튼 스타일 수정 */
-.compose-button {
-    width: calc(100% - var(--spacing-3));  /* 양쪽 여백을 spacing-2씩 줄임 */
-    margin: var(--spacing-3) var(--spacing-2);  /* 상하 spacing-3, 좌우 spacing-2 */
-    padding: var(--spacing-3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-2);
-    background: var(--gradient);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius-lg);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.compose-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* 첨부파일 관련 추가 스타일 */
-.attachment-preview {
-    margin-top: var(--spacing-3);
-    padding: var(--spacing-3);
-    background-color: var(--light);
-    border-radius: var(--border-radius-lg);
-}
-
-.attachment-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    padding: var(--spacing-2);
-    background-color: white;
-    border: 1px solid var(--light);
-    border-radius: var(--border-radius-lg);
-    margin-right: var(--spacing-2);
-    margin-bottom: var(--spacing-2);
-}
-
-.remove-attachment {
-    background: none;
-    border: none;
-    color: var(--gray);
-    cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-}
-
-.remove-attachment:hover {
-    background-color: var(--light);
-    color: var(--danger);
-}
-
-/* 알림 배지 스타일 */
-.notification-badge {
-    background-color: var(--danger);
-    color: white;
-    font-size: 0.75rem;
-    padding: 2px 6px;
-    border-radius: 10px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    transform: translate(50%, -50%);
-}
-
-/* 드래그 앤 드롭 영역 스타일 */
-.drag-drop-zone {
-    border: 2px dashed var(--light);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-4);
-    text-align: center;
-    color: var(--gray);
-    transition: all 0.2s ease;
-}
-
-.drag-drop-zone.active {
-    border-color: var(--primary);
-    background-color: rgba(30, 48, 243, 0.05);
-}
-
-/* 이메일 상세 보기 스타일 수정 */
-.email-detail-header {
-    position: relative;
-    padding-bottom: var(--spacing-4);
-    margin-bottom: var(--spacing-4);
-}
-
-.email-detail-info {
-    position: relative;
-    padding-bottom: var(--spacing-4);
-}
-
-.email-detail-header::after,
-.email-detail-info::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: var(--light);
-}
-
-.attachments-section::after {
-    content: '';
-    position: absolute;
-    bottom: -24px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: var(--light);
 }

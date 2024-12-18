@@ -169,3 +169,173 @@
     padding: 0;
   }
 }
+/* Modern Meeting Page Styles */
+:root {
+  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --secondary-gradient: linear-gradient(135deg, #f472b6 0%, #f87171 100%);
+  --surface-color: #ffffff;
+  --background-color: #f8fafc;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --border-radius-sm: 0.5rem;
+  --border-radius-md: 1rem;
+  --border-radius-lg: 1.5rem;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page {
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  background-color: var(--background-color);
+  animation: fadeIn 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+
+@keyframes rotateBg {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Modern Container Styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Card Styles */
+.MuiCard-root {
+  background: var(--surface-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.MuiCard-root:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Typography Styles */
+.text-gradient {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
+
+/* Icon Styles */
+.MuiSvgIcon-root {
+  transition: var(--transition);
+}
+
+.MuiCard-root:hover .MuiSvgIcon-root {
+  transform: scale(1.1);
+  color: #6366f1;
+}
+
+/* Button Styles */
+.MuiButton-root {
+  text-transform: none;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  padding: 0.75rem 1.5rem;
+  transition: var(--transition);
+}
+
+.MuiButton-outlined {
+  border: 2px solid #6366f1;
+  color: #6366f1;
+}
+
+.MuiButton-outlined:hover {
+  background: rgba(99, 102, 241, 0.04);
+  border: 2px solid #6366f1;
+}
+
+/* Card Content Styles */
+.MuiCardContent-root {
+  transition: var(--transition);
+}
+
+.MuiCard-root:hover .MuiCardContent-root {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(99, 102, 241, 0.03) 100%);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Glass Morphism Effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 2;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+          130deg,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(255, 255, 255, 0.1) 100%
+  );
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.glass-card:hover::before {
+  background: linear-gradient(
+          130deg,
+          rgba(255, 255, 255, 0.4) 0%,
+          rgba(255, 255, 255, 0.2) 100%
+  );
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .MuiTypography-h4 {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .MuiTypography-h4 {
+    font-size: 1.5rem;
+  }
+
+  .MuiCard-root {
+    border-radius: var(--border-radius-sm);
+  }
+}

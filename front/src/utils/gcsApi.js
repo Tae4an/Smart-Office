@@ -23,6 +23,9 @@ gcsApi.interceptors.request.use((config) => {
 });
 
 export const uploadFile = async (file) => {
+    if (!window.confirm('파일을 업로드하시겠습니까?')) {
+        return;
+    }
     try {
         const formData = new FormData();
         formData.append('file', file);
@@ -58,6 +61,9 @@ export const uploadFile = async (file) => {
 
 export const getFileList = () => gcsApi.get('/list');
 export const downloadFile = async (fileName) => {
+    if (!window.confirm(`파일을 다운로드하시겠습니까?`)) {
+        return;
+    }
     try {
         const response = await gcsApi.get(`/download/${fileName}`, {
             responseType: 'blob'
@@ -102,13 +108,21 @@ export const downloadFile = async (fileName) => {
         throw error;
     }
 };
-export const deleteFile = (fileName) => gcsApi.delete(`/${fileName}`);
+export const deleteFile = (fileName) => {
+    if (!window.confirm(`파일을 삭제하시겠습니까?`)) {
+        return;
+    }
+    return gcsApi.delete(`/${fileName}`);
+};
 
 export const getUserFileList = () => {
     const userId = getUserId();
     return gcsApi.get(`/user/${userId}`);
 };
 export const uploadOCRFile = async (file) => {
+    if (!window.confirm('OCR 처리를 위해 파일을 업로드하시겠습니까?')) {
+        return;
+    }
     try {
         const formData = new FormData();
         formData.append('file', file);

@@ -1,114 +1,79 @@
 // VideoGrid.jsx
-import React, { useEffect } from 'react';
+import React, {useEffect, useMemo} from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Paper, Typography } from '@mui/material';
+import {Box, Typography, Fade} from '@mui/material';
+import {Person as PersonIcon} from '@mui/icons-material';
+import '../../styles/video.css'
 
-const VideoGrid = ({ localStream, remoteStreams, participants, localVideoRef }) => {
-    // 디버깅을 위한 useEffect 추가
+const VideoGrid = ({localStream, remoteStreams, participants, localVideoRef}) => {
     useEffect(() => {
         console.log('VideoGrid rendered with:', {
             hasLocalStream: !!localStream,
             remoteStreamsSize: remoteStreams.size,
-            remoteStreamsEntries: Array.from(remoteStreams.entries()),
-            participantsCount: participants.length,
-            participants
+            participantsCount: participants.length
         });
     }, [localStream, remoteStreams, participants]);
 
-    console.log('VideoGrid render:', {
-        remoteStreamsArray: Array.from(remoteStreams.entries())
-    });
+    const gridClass = useMemo(() => {
+        const totalParticipants = participants.length;
+        return `video-grid-container grid-${totalParticipants}`;
+    }, [participants.length]);
+
+    const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+
 
     return (
-        <Grid container spacing={2}>
-            {/* 로컬 비디오 */}
-            <Grid item xs={12} md={participants.length <= 1 ? 12 : 6} lg={participants.length <= 2 ? 6 : 4}>
-                <Paper sx={{ position: 'relative', aspectRatio: '16/9' }}>
-                    <video
-                        ref={localVideoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                        }}
-                    />
-                    <Typography
-                        sx={{
-                            position: 'absolute',
-                            bottom: 8,
-                            left: 8,
-                            color: 'white',
-                            backgroundColor: 'rgba(0,0,0,0.5)',
-                            padding: '2px 8px',
-                            borderRadius: 1,
-                        }}
-                    >
-                        {JSON.parse(sessionStorage.getItem('userInfo'))?.name || 'You'} (나)
-                    </Typography>
-                </Paper>
-            </Grid>
+        <Fade in={true}>
+            <div>
+                <Box className={gridClass}>
+                    {/* Local Video */}
+                    <div className="video-wrapper">
+                        <video
+                            ref={localVideoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            className="video-element"
+                        />
+                        <div className="video-overlay"/>
+                        <div className="participant-info">
+                            <Typography className="participant-name">
+                                <PersonIcon sx={{fontSize: 18}}/>
+                                {userInfo?.name || 'You'}
+                                <span className="local-indicator">나</span>
+                            </Typography>
+                        </div>
+                    </div>
 
-            {/* 원격 비디오들 */}
-            {Array.from(remoteStreams).map(([userId, {stream, userName}]) => {
-                console.log('Rendering remote video for:', userId, userName, stream);
-                return (
-                    <Grid
-                        item
-                        xs={12}
-                        md={participants.length <= 2 ? 6 : 4}
-                        lg={participants.length <= 2 ? 6 : 4}
-                        key={userId}
-                    >
-                        <Paper sx={{ position: 'relative', aspectRatio: '16/9' }}>
+                    {/* Remote Videos */}
+                    {Array.from(remoteStreams).map(([userId, {stream, userName}]) => (
+                        <div className="video-wrapper" key={userId}>
                             <video
                                 autoPlay
                                 playsInline
+                                className="video-element"
                                 ref={el => {
                                     if (el && stream) {
-                                        console.log('Setting stream:', {
-                                            id: stream.id,
-                                            active: stream.active,
-                                            trackCount: stream.getTracks().length,
-                                            tracks: stream.getTracks().map(t => ({
-                                                kind: t.kind,
-                                                enabled: t.enabled,
-                                                muted: t.muted
-                                            }))
-                                        });
+                                        console.log('Setting remote stream for:', userName);
                                         el.srcObject = stream;
-                                        // 스트림 재생 시도
                                         el.play().catch(err => {
                                             console.error('Error playing video:', err);
                                         });
                                     }
                                 }}
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                }}
                             />
-                            <Typography
-                                sx={{
-                                    position: 'absolute',
-                                    bottom: 8,
-                                    left: 8,
-                                    color: 'white',
-                                    backgroundColor: 'rgba(0,0,0,0.5)',
-                                    padding: '2px 8px',
-                                    borderRadius: 1,
-                                }}
-                            >
-                                {userName}
-                            </Typography>
-                        </Paper>
-                    </Grid>
-                );
-            })}
-        </Grid>
+                            <div className="video-overlay"/>
+                            <div className="participant-info">
+                                <Typography className="participant-name">
+                                    <PersonIcon sx={{fontSize: 18}}/>
+                                    {userName}
+                                </Typography>
+                            </div>
+                        </div>
+                    ))}
+                </Box>
+            </div>
+        </Fade>
     );
 };
 

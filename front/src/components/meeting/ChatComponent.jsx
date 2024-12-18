@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import PropTypes from 'prop-types';
 import {
-    Paper,
     Box,
     TextField,
     IconButton,
@@ -10,19 +9,63 @@ import {
     ListItem,
     Drawer,
     CircularProgress,
-    Alert
+    Alert,
+    Fade
 } from '@mui/material';
 import {
     Send as SendIcon,
-    Close as CloseIcon
+    Close as CloseIcon,
+    Chat as ChatIcon
 } from '@mui/icons-material';
-import { meetingApi } from "../../utils/meetingApi";
+import '../../styles/chat.css';
+
+// 메시지 컴포넌트 분리 및 메모이제이션
+const ChatMessage = memo(({ message, isMine }) => (
+    <ListItem
+        sx={{
+            flexDirection: 'column',
+            alignItems: isMine ? 'flex-end' : 'flex-start',
+            p: 0,
+            mb: 2
+        }}
+    >
+        <Typography
+            variant="caption"
+            sx={{
+                color: 'text.secondary',
+                mb: 0.5,
+                px: 1
+            }}
+        >
+            {message.senderName} • {new Date(message.createdAt).toLocaleTimeString()}
+        </Typography>
+        <Box
+            className={`message-bubble ${isMine ? 'mine' : 'others'}`}
+        >
+            <Typography variant="body2">
+                {message.content}
+            </Typography>
+        </Box>
+    </ListItem>
+));
+
+ChatMessage.propTypes = {
+    message: PropTypes.shape({
+        id: PropTypes.string,
+        content: PropTypes.string.isRequired,
+        senderName: PropTypes.string.isRequired,
+        createdAt: PropTypes.string.isRequired,
+        senderId: PropTypes.string.isRequired
+    }).isRequired,
+    isMine: PropTypes.bool.isRequired
+};
 
 const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [newMessage, setNewMessage] = useState('');
     const messagesEndRef = useRef(null);
+    const userInfo = useRef(JSON.parse(sessionStorage.getItem('userInfo')));
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -30,17 +73,7 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
         }
     };
 
-    ChatComponent.propTypes = {
-        roomId: PropTypes.string.isRequired,
-        websocket: PropTypes.object.isRequired,
-        isOpen: PropTypes.bool.isRequired,
-        onClose: PropTypes.func.isRequired,
-        messages: PropTypes.array.isRequired
-    };
-
-    // 초기 메시지 로드 및 새 메시지 수신 시 스크롤
     useEffect(() => {
-        console.log('Messages prop received:', messages);
         if (messages.length > 0) {
             scrollToBottom();
         }
@@ -50,21 +83,17 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
         if (!newMessage.trim() || !websocket?.current) return;
 
         try {
-            const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
-            console.log('Sending chat message...');
-
             const messageData = {
                 type: 'chat',
                 roomId: roomId,
                 data: {
                     content: newMessage.trim(),
                     type: 'TEXT',
-                    senderName: userInfo.name || 'Anonymous',
-                    senderId: userInfo.employeeId
+                    senderName: userInfo.current.name || 'Anonymous',
+                    senderId: userInfo.current.employeeId
                 }
             };
 
-            console.log('Message data:', messageData);
             websocket.current.send(JSON.stringify(messageData));
             setNewMessage('');
         } catch (error) {
@@ -86,6 +115,7 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
             open={isOpen}
             onClose={onClose}
             variant="persistent"
+            className="chat-drawer"
             sx={{
                 width: 320,
                 flexShrink: 0,
@@ -95,21 +125,47 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
                 },
             }}
         >
-            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ p: 2, display: 'flex', alignItems: 'center', borderBottom: 1, borderColor: 'divider' }}>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>Chat</Typography>
-                    <IconButton onClick={onClose}>
-                        <CloseIcon />
-                    </IconButton>
+            <Box sx={{
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden'
+            }}>
+                <Box className="chat-header">
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <ChatIcon sx={{ color: 'primary.main' }} />
+                        <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
+                            채팅
+                        </Typography>
+                        <IconButton
+                            onClick={onClose}
+                            sx={{
+                                '&:hover': {
+                                    background: 'rgba(0, 0, 0, 0.04)'
+                                }
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
                 </Box>
 
                 {error && (
-                    <Alert severity="error" onClose={() => setError(null)} sx={{ m: 1 }}>
-                        {error}
-                    </Alert>
+                    <Fade in={true}>
+                        <Alert
+                            severity="error"
+                            onClose={() => setError(null)}
+                            sx={{
+                                m: 1,
+                                borderRadius: '8px'
+                            }}
+                        >
+                            {error}
+                        </Alert>
+                    </Fade>
                 )}
 
-                <List sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
+                <List className="chat-messages">
                     {loading && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
                             <CircularProgress size={24} />
@@ -117,40 +173,21 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
                     )}
 
                     {messages.map((message) => {
-                        const isMine = message.senderId === JSON.parse(sessionStorage.getItem('userInfo'))?.employeeId;
+                        const isMine = message.senderId === userInfo.current?.employeeId;
+                        const messageKey = message.id || `${message.senderId}-${message.createdAt}-${message.content}`;
+
                         return (
-                            <ListItem
-                                key={message.id || Math.random()}
-                                sx={{
-                                    flexDirection: 'column',
-                                    alignItems: isMine ? 'flex-end' : 'flex-start',
-                                    mb: 1,
-                                    padding: 0
-                                }}
-                            >
-                                <Typography variant="caption" color="text.secondary">
-                                    {message.senderName} • {new Date(message.createdAt).toLocaleTimeString()}
-                                </Typography>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        p: 1,
-                                        mt: 0.5,
-                                        bgcolor: isMine ? 'primary.light' : 'background.paper',
-                                        color: isMine ? 'white' : 'inherit',
-                                        maxWidth: '80%',
-                                        wordBreak: 'break-word'
-                                    }}
-                                >
-                                    <Typography variant="body2">{message.content}</Typography>
-                                </Paper>
-                            </ListItem>
+                            <ChatMessage
+                                key={messageKey}
+                                message={message}
+                                isMine={isMine}
+                            />
                         );
                     })}
                     <div ref={messagesEndRef} />
                 </List>
 
-                <Box sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
+                <Box className="chat-input-container">
                     <TextField
                         fullWidth
                         multiline
@@ -161,11 +198,14 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
                         placeholder="메시지를 입력하세요..."
                         variant="outlined"
                         size="small"
+                        className="chat-input"
                         InputProps={{
                             endAdornment: (
                                 <IconButton
                                     onClick={handleSendMessage}
                                     disabled={!newMessage.trim() || loading}
+                                    className="send-button"
+                                    sx={{ mr: 1 }}
                                 >
                                     <SendIcon />
                                 </IconButton>
@@ -177,6 +217,7 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
         </Drawer>
     );
 };
+
 ChatComponent.propTypes = {
     roomId: PropTypes.string.isRequired,
     websocket: PropTypes.object.isRequired,

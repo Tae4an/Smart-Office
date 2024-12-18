@@ -1,13 +1,14 @@
 // hooks/useMediaStream.jsx
 import { useState, useCallback, useRef } from 'react';
 
-export const useMediaStream = () => {
+export const useMediaStream = (peerConnection) => {
     const [localStream, setLocalStream] = useState(null);
     const [remoteStreams, setRemoteStreams] = useState(new Map());
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
     const localVideoRef = useRef(null);
-
+    const [isScreenSharing, setIsScreenSharing] = useState(false);
+    const originalVideoTrack = useRef(null);  // 원본 비디오 트랙 저장용
     const initializeStream = useCallback(async () => {
         try {
             console.log('Requesting media stream...');
@@ -129,7 +130,89 @@ export const useMediaStream = () => {
             return newStreams;
         });
     }, []);
+    const toggleScreenShare = useCallback(async () => {
+        try {
+            if (!isScreenSharing) {
+                // 화면 공유 시작
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: {
+                        cursor: 'always'
+                    },
+                    audio: false
+                });
 
+                // 현재 비디오 트랙 저장
+                originalVideoTrack.current = localStream.getVideoTracks()[0];
+
+                // 화면 공유 트랙으로 교체
+                const screenTrack = screenStream.getVideoTracks()[0];
+
+                if (localStream) {
+                    const videoTrack = localStream.getVideoTracks()[0];
+                    if (videoTrack) {
+                        localStream.removeTrack(videoTrack);
+                    }
+                    localStream.addTrack(screenTrack);
+
+                    // WebRTC 연결 업데이트
+                    if (peerConnection) {
+                        const senders = peerConnection.getSenders();
+                        const videoSender = senders.find(sender =>
+                            sender.track && sender.track.kind === 'video'
+                        );
+                        if (videoSender) {
+                            await videoSender.replaceTrack(screenTrack);
+                        }
+                    }
+                }
+
+                // 화면 공유 중단 감지
+                screenTrack.onended = async () => {
+                    await stopScreenSharing();
+                };
+
+                setIsScreenSharing(true);
+            } else {
+                await stopScreenSharing();
+            }
+        } catch (error) {
+            console.error('Screen sharing error:', error);
+            await stopScreenSharing();
+        }
+    }, [isScreenSharing, localStream, peerConnection]);
+
+    const stopScreenSharing = async () => {
+        try {
+            if (localStream) {
+                // 현재 화면 공유 트랙 중지
+                const currentTrack = localStream.getVideoTracks()[0];
+                if (currentTrack) {
+                    currentTrack.stop();
+                    localStream.removeTrack(currentTrack);
+                }
+
+                // 원본 비디오 트랙 복구
+                if (originalVideoTrack.current) {
+                    localStream.addTrack(originalVideoTrack.current);
+                } else {
+                    // 원본 트랙이 없는 경우 새로 생성
+                    const newStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 },
+                            facingMode: 'user'
+                        }
+                    });
+                    const newVideoTrack = newStream.getVideoTracks()[0];
+                    localStream.addTrack(newVideoTrack);
+                }
+            }
+            setIsScreenSharing(false);
+        } catch (error) {
+            console.error('Error stopping screen share:', error);
+            setIsScreenSharing(false);
+        }
+    };
     const toggleMute = useCallback(() => {
         if (localStream) {
             localStream.getAudioTracks().forEach(track => {
@@ -157,6 +240,12 @@ export const useMediaStream = () => {
             });
             setLocalStream(null);
         }
+        // 화면 공유 정리 추가
+        if (originalVideoTrack.current) {
+            originalVideoTrack.current.stop();
+            originalVideoTrack.current = null;
+        }
+        setIsScreenSharing(false);
     }, [localStream]);
 
     return {
@@ -164,12 +253,14 @@ export const useMediaStream = () => {
         remoteStreams,
         isMuted,
         isVideoOff,
+        isScreenSharing,
         localVideoRef,
         initializeStream,
         updateRemoteStream,
         removeRemoteStream,
         toggleMute,
         toggleVideo,
+        toggleScreenShare,
         cleanup
     };
 };

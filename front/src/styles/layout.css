@@ -1,5 +1,6 @@
 :root {
     --sidebar-width: 250px;
+    --sidebar-collapsed-width: 70px;
     --header-height: 60px;
     --bottom-nav-height: 60px;
 }
@@ -31,13 +32,19 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-4);
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.mini ~ .header .header-container {
+    margin-left: var(--sidebar-collapsed-width);
 }
 
 .header-right {
     display: flex;
     align-items: center;
     gap: var(--spacing-3);
-    margin-left: auto; /* 추가: 오른쪽으로 밀어냄 */
+    margin-left: auto;
 }
 
 .notification-wrapper {
@@ -48,16 +55,16 @@
     position: absolute;
     top: -3px;
     right: -3px;
-    width: 16px;  /* 크기 증가 */
-    height: 16px; /* 크기 증가 */
+    width: 16px;
+    height: 16px;
     background-color: #ff4d4f;
     border-radius: 50%;
-    display: flex;           /* 추가 */
-    justify-content: center; /* 추가 */
-    align-items: center;     /* 추가 */
-    font-size: 10px;        /* 추가 */
-    color: white;           /* 추가 */
-    border: 2px solid white; /* 추가: 테두리 추가 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: white;
+    border: 2px solid white;
 }
 
 .notification-modal {
@@ -221,6 +228,56 @@
     text-decoration: none;
 }
 
+/* 브랜드 로고 스타일 추가 */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+/* 로고 이미지 스타일 수정 */
+.logo-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* 사이드바 축소 상태일 때도 같은 크기 유지 */
+.sidebar.mini .logo-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* 호버 시에도 크기 유지하면서 숨김 처리만 적용 */
+.sidebar.mini:hover .logo-icon {
+    display: none;
+}
+
+/* 사이드바 축소 상태일 때의 스타일 수정 */
+.sidebar.mini .brand {
+    justify-content: center;
+}
+
+.sidebar.mini .brand-text {
+    display: none;
+}
+
+.sidebar.mini .logo-icon {
+    font-size: 1.8rem;
+}
+
+.sidebar.mini:hover .brand {
+    justify-content: flex-start;
+}
+
+.sidebar.mini:hover .brand-text {
+    display: block;
+}
+
+.sidebar.mini:hover .logo-icon {
+    font-size: 1.5rem;
+}
+
 .brand-text {
     font-weight: 700;
     font-size: 1.5rem;
@@ -240,13 +297,14 @@
     bottom: 0;
     z-index: 1000;
     overflow-y: auto;
-    transition: transform 0.3s ease-in-out;
+    transition: width 0.3s ease;
     border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-header {
     height: var(--header-height);
     display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 0 var(--spacing-4);
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -323,9 +381,14 @@
 .main-content {
     flex: 1;
     margin-top: var(--header-height);
+    margin-left: var(--sidebar-width);
     padding: var(--spacing-4);
-    transition: margin-left 0.3s ease-in-out;
+    transition: margin-left 0.3s ease;
     background-color: var(--light);
+}
+
+.sidebar.mini ~ .main-content {
+    margin-left: var(--sidebar-collapsed-width);
 }
 
 @media (min-width: 992px) {
@@ -344,6 +407,12 @@
 
 .footer-container {
     padding: 0 var(--spacing-4);
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.mini ~ .footer .footer-container {
+    margin-left: var(--sidebar-collapsed-width);
 }
 
 .footer-content {
@@ -439,8 +508,9 @@
 /* Icon Styles */
 .nav-link i {
     font-size: 1.25rem;
-    min-width: 1.25rem;
+    width: 1.25rem;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .bottom-nav .nav-link i {
@@ -614,9 +684,14 @@
     position: relative;
 }
 
+.search-bar-wrapper {
+    position: relative;
+    width: 100%;
+}
+
 .search-bar {
     width: 100%;
-    padding: 10px 16px;
+    padding: 10px 40px;  /* 양쪽에 아이콘을 위한 여백 */
     border: 1px solid var(--light);
     border-radius: 24px;
     font-size: 0.95rem;
@@ -629,6 +704,42 @@
     border-color: var(--primary);
     background-color: white;
     box-shadow: 0 0 0 3px rgba(30, 48, 243, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+    font-size: 1rem;
+}
+
+.clear-search {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+
+.clear-search.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.clear-search:hover {
+    color: var(--dark);
 }
 
 /* Weather Info Mini Styles */
@@ -767,6 +878,7 @@
 .board-arrow {
     margin-left: auto;
     transition: transform 0.3s ease;
+    flex-shrink: 0;
 }
 
 .board-submenu {
@@ -805,4 +917,88 @@
 .board-submenu-item.loading {
     text-align: center;
     padding: 1rem;
+}
+
+/* ========================================================================
+    # SIDEBAR
+======================================================================== */
+.sidebar.mini {
+    width: var(--sidebar-collapsed-width);
+    transition: width 0.3s ease;
+}
+
+.sidebar.mini:hover {
+    width: var(--sidebar-width);
+}
+
+.sidebar.mini .nav-link span,
+.sidebar.mini .brand-text,
+.sidebar.mini .board-arrow {
+    display: none;  /* opacity를 display로 변경 */
+}
+
+.sidebar.mini:hover .nav-link span,
+.sidebar.mini:hover .brand-text,
+.sidebar.mini:hover .board-arrow {
+    display: block;  /* visibility와 opacity 대신 display 사용 */
+}
+
+.sidebar.mini .nav-link {
+    justify-content: center;
+    padding: var(--spacing-2);
+}
+
+.sidebar.mini:hover .nav-link {
+    justify-content: flex-start;
+    padding: var(--spacing-2) var(--spacing-3);
+}
+
+.sidebar.mini:hover .nav-link span {
+    display: inline;  /* block 대신 inline으로 변경 */
+    margin-left: var(--spacing-2);
+}
+
+.collapse-btn {
+    background: none;
+    border: none;
+    color: var(--gray);
+    cursor: pointer;
+    padding: var(--spacing-2);
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.collapse-btn:hover {
+    color: var(--primary);
+}
+
+.sidebar.mini .collapse-btn {
+    transform: rotate(180deg);
+}
+
+.sidebar.mini .profile-image-wrapper {
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+}
+
+.sidebar.mini:hover .profile-image-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar.mini .user-info,
+.sidebar.mini .attendance-stats {
+    opacity: 0;
+    height: 0;
+    visibility: hidden;
+}
+
+.sidebar.mini:hover .user-info,
+.sidebar.mini:hover .attendance-stats {
+    opacity: 1;
+    height: auto;
+    visibility: visible;
 }

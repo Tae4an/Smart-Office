@@ -1,4 +1,3 @@
-// pages/MeetingRoom.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -11,10 +10,12 @@ import {
     DialogContent,
     DialogActions,
     Button,
-    Alert
+    Alert,
+    Fade
 } from '@mui/material';
 import WebRTCComponent from '../components/meeting/WebRTCComponent';
 import { meetingApi } from '../utils/meetingApi';
+import '../styles/meetingRoom.css'
 
 const MeetingRoom = () => {
     const navigate = useNavigate();
@@ -33,10 +34,8 @@ const MeetingRoom = () => {
 
             try {
                 setIsLoading(true);
-                // getRoomDetails를 사용하여 회의방 정보와 접근 권한을 한 번에 확인
                 const roomDetails = await meetingApi.getRoomDetails(state.roomId);
 
-                // 서버에서 받은 roomDetails에 따라 접근 권한 처리
                 if (roomDetails) {
                     setRoomAccess(true);
                 } else {
@@ -52,10 +51,9 @@ const MeetingRoom = () => {
         };
         checkRoomAccess();
 
-        // 페이지 나가기 전 확인
         const handleBeforeUnload = (e) => {
             e.preventDefault();
-            e.returnValue = ''; // Chrome requires returnValue to be set
+            e.returnValue = '';
         };
 
         window.addEventListener('beforeunload', handleBeforeUnload);
@@ -79,17 +77,23 @@ const MeetingRoom = () => {
 
     if (isLoading) {
         return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-                <CircularProgress />
-            </Box>
+            <Fade in={true}>
+                <Box className="loading-container">
+                    <CircularProgress className="loading-spinner" size={48} />
+                </Box>
+            </Fade>
         );
     }
 
     if (error) {
         return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-                <Alert severity="error">{error}</Alert>
-            </Box>
+            <Fade in={true}>
+                <Box className="error-container">
+                    <Alert severity="error" className="error-alert">
+                        {error}
+                    </Alert>
+                </Box>
+            </Fade>
         );
     }
 
@@ -98,48 +102,69 @@ const MeetingRoom = () => {
     }
 
     return (
-        <div className="meeting-room-container">
-            <Box className="meeting-room">
-                <Container maxWidth="xl">
-                    <Box mb={3} display="flex" justifyContent="space-between" alignItems="center">
-                        <Typography variant="h4" gutterBottom>
-                            {state?.roomName || '회의방'}
+        <Fade in={true}>
+            <div className="meeting-room-container">
+                <Box className="meeting-header">
+                    <Container maxWidth="xl">
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <Typography variant="h4" className="room-title">
+                                {state?.roomName || '회의방'}
+                            </Typography>
+                            <Button
+                                className="control-button leave"
+                                onClick={() => setShowLeaveDialog(true)}
+                            >
+                                회의 나가기
+                            </Button>
+                        </Box>
+                    </Container>
+                </Box>
+
+                <Box className="meeting-room">
+                    <Container maxWidth="xl">
+                        {roomAccess && (
+                            <WebRTCComponent
+                                roomId={state.roomId}
+                                roomName={state.roomName}
+                                onError={(error) => setError(error)}
+                            />
+                        )}
+                    </Container>
+                </Box>
+
+                <Dialog
+                    open={showLeaveDialog}
+                    onClose={() => setShowLeaveDialog(false)}
+                    className="meeting-dialog"
+                    PaperProps={{
+                        className: "meeting-dialog"
+                    }}
+                >
+                    <DialogTitle className="dialog-title">
+                        회의방 나가기
+                    </DialogTitle>
+                    <DialogContent className="dialog-content">
+                        <Typography>
+                            정말로 회의방을 나가시겠습니까?
                         </Typography>
+                    </DialogContent>
+                    <DialogActions>
                         <Button
-                            variant="outlined"
-                            color="error"
-                            onClick={() => setShowLeaveDialog(true)}
+                            onClick={() => setShowLeaveDialog(false)}
+                            className="dialog-button"
                         >
-                            회의 나가기
+                            취소
                         </Button>
-                    </Box>
-
-                    {roomAccess && (
-                        <WebRTCComponent
-                            roomId={state.roomId}
-                            roomName={state.roomName}
-                            onError={(error) => setError(error)}
-                        />
-                    )}
-                </Container>
-            </Box>
-
-            {/* 회의방 나가기 확인 다이얼로그 */}
-            <Dialog open={showLeaveDialog} onClose={() => setShowLeaveDialog(false)}>
-                <DialogTitle>회의방 나가기</DialogTitle>
-                <DialogContent>
-                    <Typography>
-                        정말로 회의방을 나가시겠습니까?
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setShowLeaveDialog(false)}>취소</Button>
-                    <Button onClick={handleLeaveRoom} color="error">
-                        나가기
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
+                        <Button
+                            onClick={handleLeaveRoom}
+                            className="dialog-button danger"
+                        >
+                            나가기
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        </Fade>
     );
 };
 

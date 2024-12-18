@@ -45,7 +45,7 @@ const ProfileSection = ({ user: initialUser, stats }) => {
     ];
 
     return (
-        <div className="welcome-info">
+        <div className="profile-card">
             <div 
                 className="profile-container" 
                 style={{ 

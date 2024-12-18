@@ -23,6 +23,9 @@ ocrApi.interceptors.request.use((config) => {
 
 // OCR 결과 저장
 export const saveOCRResult = async (saveData) => {
+    if (!window.confirm(`OCR 결과를 저장하시겠습니까?`)) {
+        return;
+    }
     try {
         const response = await ocrApi.post('', saveData);
         return response.data;
@@ -53,6 +56,9 @@ export const getOCRResult = async (id) => {
 
 // OCR 결과 삭제
 export const deleteOCRResult = async (id) => {
+    if (!window.confirm(`OCR 결과를 삭제하시겠습니까?`)) {
+        return;
+    }
     try {
         const response = await ocrApi.delete(`/${id}`);
         return response.data;
@@ -63,6 +69,9 @@ export const deleteOCRResult = async (id) => {
 
 // OCR 결과 다운로드
 export const downloadOCRResult = async (id) => {
+    if (!window.confirm(`파일을 다운로드하시겠습니까?`)) {
+        return;
+    }
     try {
         const response = await ocrApi.get(`/${id}/download`, {
             responseType: 'blob'
@@ -83,7 +92,6 @@ export const downloadOCRResult = async (id) => {
                 }
             }
         }
-
         // Blob 생성 및 다운로드
         const blob = new Blob([response.data], {
             type: response.headers['content-type']

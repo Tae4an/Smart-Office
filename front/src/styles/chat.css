@@ -1,0 +1,178 @@
+/* Chat Component Styles */
+.chat-drawer {
+    background: var(--light);
+}
+
+.chat-drawer .MuiDrawer-paper {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.chat-header {
+    background: linear-gradient(135deg, rgba(30, 48, 243, 0.05) 0%, rgba(226, 30, 128, 0.05) 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 16px;
+}
+
+.chat-messages {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+    background:
+            radial-gradient(circle at 0% 0%, rgba(30, 48, 243, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(226, 30, 128, 0.03) 0%, transparent 50%);
+    height: calc(100vh - 140px); /* 헤더와 입력 영역 높이를 제외한 높이 */
+}
+
+.message-bubble {
+    max-width: 80%;
+    margin: 8px 0;
+    padding: 10px 16px;
+    border-radius: 16px;
+    position: relative;
+    animation: messageAppear 0.3s ease-out;
+}
+
+.message-bubble.mine {
+    background: var(--primary);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.message-bubble.others {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin-right: auto;
+    border-bottom-left-radius: 4px;
+}
+
+.chat-input-container {
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+
+.chat-input {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 24px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.chat-input .MuiOutlinedInput-root {
+    border-radius: 24px;
+    padding-right: 8px;
+}
+
+.send-button {
+    background: var(--gradient);
+    color: white;
+    border-radius: 50%;
+    padding: 8px;
+    transition: all 0.3s ease;
+}
+
+.send-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Room List Styles */
+.room-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.room-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.room-card-header {
+    background: linear-gradient(135deg, rgba(30, 48, 243, 0.05) 0%, rgba(226, 30, 128, 0.05) 100%);
+    padding: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.room-title {
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.room-info {
+    padding: 16px;
+}
+
+.room-info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    color: var(--gray);
+}
+
+.room-join-button {
+    background: var(--gradient);
+    color: white;
+    border-radius: var(--border-radius);
+    padding: 10px 24px;
+    transition: all 0.3s ease;
+}
+
+.room-join-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.room-join-button:disabled {
+    background: #e0e0e0;
+    color: #9e9e9e;
+}
+
+/* Password Dialog Styles */
+.password-dialog {
+    backdrop-filter: blur(10px);
+}
+
+.password-dialog .MuiDialog-paper {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.password-dialog-title {
+    background: linear-gradient(135deg, rgba(30, 48, 243, 0.05) 0%, rgba(226, 30, 128, 0.05) 100%);
+    padding: 16px 24px;
+}
+
+/* Animations */
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .chat-drawer .MuiDrawer-paper {
+        width: 100%;
+    }
+
+    .room-card {
+        margin: 8px;
+    }
+}

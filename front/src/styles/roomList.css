@@ -1,0 +1,277 @@
+/* RoomList.css */
+:root {
+    /* 부드러운 파스텔톤 색상 */
+    --soft-primary: #8b5cf6;
+    --soft-secondary: #6168fa;
+    --soft-gradient: linear-gradient(135deg, #a78bfa 0%, #7447ff 100%);
+    --soft-bg: #f8fafc;
+    --soft-text: #4b5563;
+    --soft-gray: #9ca3af;
+    --soft-purple: #c4b5fd;
+    --soft-pink: #fce7f3;
+
+    /* 그림자 효과 */
+    --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --hover-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+
+    /* 간격 */
+    --spacing-2: 0.5rem;
+    --spacing-3: 1rem;
+    --spacing-4: 1.5rem;
+    --spacing-5: 2rem;
+
+    /* 둥근 모서리 */
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+}
+
+.content-wrapper {
+    padding: var(--spacing-4);
+    background-color: var(--soft-bg);
+    min-height: 100vh;
+}
+
+.meeting-header-container {
+    margin-bottom: var(--spacing-5);
+    text-align: center;
+}
+
+.header-title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    font-weight: 700;
+    background: var(--soft-gradient);
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: var(--spacing-3);
+}
+
+.header-subtitle {
+    color: var(--soft-text);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.create-room-form {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-5);
+    box-shadow: var(--card-shadow);
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid rgba(199, 210, 254, 0.3);
+}
+
+.room-input {
+    margin-bottom: var(--spacing-4) !important;
+}
+
+.room-input .MuiOutlinedInput-root {
+    border-radius: var(--radius-lg);
+    background: var(--soft-bg);
+    transition: all 0.2s ease;
+}
+
+.create-button {
+    margin-top: var(--spacing-4) !important;
+    height: 48px;
+    border-radius: var(--radius-lg) !important;
+    background: var(--soft-gradient) !important;
+    font-weight: 600;
+    text-transform: none;
+    font-size: 1.1rem;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease !important;
+}
+
+.create-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--hover-shadow);
+}
+
+.room-card {
+    height: 100%;
+    background: white;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(199, 210, 254, 0.3);
+}
+
+.room-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--hover-shadow);
+}
+
+.room-card-header {
+    padding: var(--spacing-4);
+    background: var(--soft-gradient);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.room-card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+    z-index: 1;
+}
+
+.room-title-container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.room-title {
+    font-weight: 600 !important;
+    color: white !important;
+    font-size: 1.25rem !important;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.lock-icon {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 1.2rem !important;
+}
+
+.room-info {
+    padding: var(--spacing-4) !important;
+    background: white;
+}
+
+.room-info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    color: var(--soft-text);
+    padding: var(--spacing-2) 0;
+}
+
+.room-info-item svg {
+    color: var(--soft-primary);
+    opacity: 0.8;
+}
+
+.room-join-button {
+    margin-top: var(--spacing-3) !important;
+    background: var(--soft-gradient) !important;
+    border-radius: var(--radius-lg) !important;
+    height: 42px;
+    font-weight: 600;
+    text-transform: none;
+    transition: all 0.3s ease !important;
+}
+
+.room-join-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--hover-shadow);
+}
+
+.room-join-button:disabled {
+    background: #e2e8f0 !important;
+    color: var(--soft-gray) !important;
+}
+
+.password-dialog .MuiDialog-paper {
+    border-radius: var(--radius-xl);
+    background: white;
+    border: 1px solid rgba(199, 210, 254, 0.3);
+}
+
+.password-dialog-title {
+    background: var(--soft-gradient);
+    color: white;
+    padding: var(--spacing-4) var(--spacing-4) !important;
+    font-weight: 600;
+}
+
+.password-input {
+    margin-top: var(--spacing-4) !important;
+}
+
+.password-input .MuiOutlinedInput-root {
+    border-radius: var(--radius-lg);
+    background: var(--soft-bg);
+}
+
+.dialog-actions {
+    padding: var(--spacing-4) !important;
+}
+
+.cancel-button {
+    color: var(--soft-text) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: var(--spacing-2) var(--spacing-4) !important;
+    text-transform: none;
+    font-weight: 500;
+}
+
+.join-button {
+    border-radius: var(--radius-lg) !important;
+    padding: var(--spacing-2) var(--spacing-4) !important;
+    background: var(--soft-gradient) !important;
+    text-transform: none;
+    font-weight: 600;
+}
+
+.empty-room-container {
+    text-align: center;
+    padding: var(--spacing-5);
+    background: white;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(199, 210, 254, 0.3);
+}
+
+.empty-room-text {
+    color: var(--soft-primary);
+    margin-bottom: var(--spacing-4);
+    font-weight: 600;
+}
+
+.create-meeting-button {
+    background: var(--soft-gradient) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: var(--spacing-2) var(--spacing-4) !important;
+    font-weight: 600;
+    text-transform: none;
+    transition: all 0.3s ease !important;
+}
+
+.create-meeting-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--hover-shadow);
+}
+
+.alert {
+    border-radius: var(--radius-lg) !important;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding: var(--spacing-3);
+    }
+
+    .create-room-form {
+        padding: var(--spacing-4);
+    }
+
+    .room-card-header {
+        padding: var(--spacing-3);
+    }
+
+    .room-info {
+        padding: var(--spacing-3) !important;
+    }
+}

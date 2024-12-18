@@ -427,10 +427,12 @@ const MessengerForm = ({ isWidget }) => {
   const renderEmailDetail = (email) => (
     <div className="email-detail">
       <div className="email-detail-header">
-        <button className="back-button" onClick={() => setSelectedEmail(null)}>
-          <ArrowLeft size={20} />
-        </button>
         <div className="email-detail-title">
+          {!isWidget && (
+            <button className="back-button" onClick={() => setSelectedEmail(null)}>
+              <ArrowLeft size={20} />
+            </button>
+          )}
           <div className="subject-line">
             {getPriorityIcon(email.priority)}
             <h2>{email.subject}</h2>
@@ -527,98 +529,98 @@ const MessengerForm = ({ isWidget }) => {
   );
 
   const renderDesktopUI = () => (
-    <div className="messenger-container">
-      <div className="chat-list">
-        <div className="messenger-tabs">
-          <button
-            onClick={() => setActiveTab('chat')}
-            className={`messenger-tab ${activeTab === 'chat' ? 'active' : ''}`}
-          >
-            <MessageCircle size={20} />
-            <span>채팅</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('mail')}
-            className={`messenger-tab ${activeTab === 'mail' ? 'active' : ''}`}
-          >
-            <Mail size={20} />
-            <span>메일</span>
-          </button>
-        </div>
-
-        {activeTab === 'chat' ? (
-          <div className="chat-list-content">
-            {chats.map(chat => (
-              <div
-                key={chat.id}
-                className={`chat-list-item ${selectedChat?.id === chat.id ? 'active' : ''}`}
-                onClick={() => setSelectedChat(chat)}
-              >
-                <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
-                <div className="chat-info">
-                  <div className="chat-name">{chat.name}</div>
-                  <div className="chat-last-message">{chat.lastMessage}</div>
-                </div>
-                <div className="chat-time">{chat.time}</div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="mail-menu">
-            <button onClick={handleComposeEmail} className="compose-button">
-              <Plus size={18} />
-              <span>메일쓰기</span>
+    <div className={`messenger-container ${(isWidget && (selectedChat || selectedEmail || isComposing)) ? 'widget-fullscreen' : ''}`}>
+      {(!isWidget || (!selectedChat && !selectedEmail && !isComposing)) && (
+        <div className="chat-list">
+          <div className="messenger-tabs">
+            <button
+              onClick={() => setActiveTab('chat')}
+              className={`messenger-tab ${activeTab === 'chat' ? 'active' : ''}`}
+            >
+              <MessageCircle size={20} />
+              <span>채팅</span>
             </button>
-            <div className="mailbox-list">
-              <button
-                className={`mailbox-item ${mailboxTab === 'inbox' ? 'active' : ''}`}
-                onClick={() => setMailboxTab('inbox')}
-              >
-                <Mail size={18} />
-                <span>받은메일함</span>
-                {emails.inbox.filter(email => !email.isRead).length > 0 && (
-                  <span className="unread-count">
-                    {emails.inbox.filter(email => !email.isRead).length}
-                  </span>
-                )}
-              </button>
-              <button
-                className={`mailbox-item ${mailboxTab === 'sent' ? 'active' : ''}`}
-                onClick={() => setMailboxTab('sent')}
-              >
-                <Send size={18} />
-                <span>보낸메일함</span>
-              </button>
-              <button
-                className={`mailbox-item ${mailboxTab === 'drafts' ? 'active' : ''}`}
-                onClick={() => setMailboxTab('drafts')}
-              >
-                <Edit3 size={18} />
-                <span>임시보관함</span>
-                {emails.drafts.length > 0 && (
-                  <span className="draft-count">{emails.drafts.length}</span>
-                )}
-              </button>
-            </div>
+            <button
+              onClick={() => setActiveTab('mail')}
+              className={`messenger-tab ${activeTab === 'mail' ? 'active' : ''}`}
+            >
+              <Mail size={20} />
+              <span>메일</span>
+            </button>
           </div>
-        )}
-      </div>
+
+          {activeTab === 'chat' ? (
+            <div className="chat-list-content">
+              {chats.map(chat => (
+                <div
+                  key={chat.id}
+                  className={`chat-list-item ${selectedChat?.id === chat.id ? 'active' : ''}`}
+                  onClick={() => setSelectedChat(chat)}
+                >
+                  <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
+                  <div className="chat-info">
+                    <div className="chat-name">{chat.name}</div>
+                    <div className="chat-last-message">{chat.lastMessage}</div>
+                  </div>
+                  <div className="chat-time">{chat.time}</div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mail-menu">
+              <button onClick={handleComposeEmail} className="compose-button">
+                <Plus size={18} />
+                <span>메일쓰기</span>
+              </button>
+              <div className="mailbox-list">
+                <button
+                  className={`mailbox-item ${mailboxTab === 'inbox' ? 'active' : ''}`}
+                  onClick={() => setMailboxTab('inbox')}
+                >
+                  <Mail size={18} />
+                  <span>받은메일함</span>
+                  {emails.inbox.filter(email => !email.isRead).length > 0 && (
+                    <span className="unread-count">
+                      {emails.inbox.filter(email => !email.isRead).length}
+                    </span>
+                  )}
+                </button>
+                <button
+                  className={`mailbox-item ${mailboxTab === 'sent' ? 'active' : ''}`}
+                  onClick={() => setMailboxTab('sent')}
+                >
+                  <Send size={18} />
+                  <span>보낸메일함</span>
+                </button>
+                <button
+                  className={`mailbox-item ${mailboxTab === 'drafts' ? 'active' : ''}`}
+                  onClick={() => setMailboxTab('drafts')}
+                >
+                  <Edit3 size={18} />
+                  <span>임시보관함</span>
+                  {emails.drafts.length > 0 && (
+                    <span className="draft-count">{emails.drafts.length}</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="content-container">
         {activeTab === 'chat' ? (
           selectedChat ? (
             <>
               <div className="chat-header">
-                {isWidget ? (
-                  <div className="chat-header-content">
+                <div className="chat-header-content">
+                  {isWidget && (
                     <button onClick={handleBack} className="back-button">
                       <ArrowLeft size={24} />
                     </button>
-                    <h2>{selectedChat.name}</h2>
-                  </div>
-                ) : (
+                  )}
                   <h2>{selectedChat.name}</h2>
-                )}
+                </div>
               </div>
 
               <div className="messages-container" ref={messagesContainerRef}>
@@ -667,9 +669,23 @@ const MessengerForm = ({ isWidget }) => {
         ) : (
           <div className="mail-content">
             {isComposing ? (
-              renderEmailComposer()
+              <>
+                {isWidget && (
+                  <button onClick={() => setIsComposing(false)} className="back-button">
+                    <ArrowLeft size={24} />
+                  </button>
+                )}
+                {renderEmailComposer()}
+              </>
             ) : selectedEmail ? (
-              renderEmailDetail(selectedEmail)
+              <>
+                {isWidget && (
+                  <button onClick={() => setSelectedEmail(null)} className="back-button">
+                    <ArrowLeft size={24} />
+                  </button>
+                )}
+                {renderEmailDetail(selectedEmail)}
+              </>
             ) : (
               renderEmailList()
             )}

@@ -8,6 +8,7 @@ import '../../styles/layout.css';
 const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
     const [boards, setBoards] = useState([]);
     const [isBoardOpen, setIsBoardOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
 
     const boardList = [
@@ -34,12 +35,17 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
         setIsBoardOpen(!isBoardOpen);
     };
 
+    const handleMenuClick = () => {
+        setIsBoardOpen(false);  // 드롭다운 닫기
+        setIsMenuOpen(false);   // 모바일에서 사이드바 닫기
+    };
 
     return (
         <>
-            <aside className={`sidebar ${isMenuOpen ? 'show' : ''}`}>
+            <aside className={`sidebar ${isMenuOpen ? 'show' : ''} ${isCollapsed ? 'mini' : ''}`}>
                 <div className="sidebar-header">
                     <NavLink to="/home" className="brand">
+                        <img src="/assets/dashboard.png" alt="Logo" className="logo-icon" />
                         <span className="brand-text">Dashboard</span>
                     </NavLink>
                 </div>
@@ -51,7 +57,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
                                 to="/home"
                                 className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}
                                 end
-                                onClick={() => setIsMenuOpen(false)}
+                                onClick={handleMenuClick}  // 변경된 부분
                             >
                                 <i className="fas fa-home"></i>
                                 <span>Home</span>
@@ -74,7 +80,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
                                         <NavLink
                                             to={`/boards/${board.id}`}
                                             className={({isActive}) => `board-link ${isActive ? 'active' : ''}`}
-                                            onClick={() => setIsMenuOpen(false)}
+                                            onClick={handleMenuClick}  // 변경된 부분
                                         >
                                             <span>{board.name}</span>
                                         </NavLink>
@@ -89,7 +95,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
                                 <NavLink
                                     to={item.path}
                                     className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}
-                                    onClick={() => setIsMenuOpen(false)}
+                                    onClick={handleMenuClick}  // 변경된 부분
                                 >
                                     <i className={item.icon}></i>
                                     <span>{item.label}</span>

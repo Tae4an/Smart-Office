@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
-    Container,
     Grid,
     Card,
     CardContent,
-    CardHeader,
     Button,
     Dialog,
     DialogTitle,
@@ -21,18 +19,20 @@ import {
     CircularProgress,
     IconButton,
     Alert,
-    Snackbar
+    Snackbar,
+    Tooltip
 } from '@mui/material';
 import {
     Lock as LockIcon,
-    Add as AddIcon,
     People as PeopleIcon,
-    Description as DescriptionIcon
+    Description as DescriptionIcon,
+    Add as AddIcon,
+    VideoCall as VideoCallIcon,
+    ArrowForward as ArrowForwardIcon
 } from '@mui/icons-material';
 import { meetingApi } from '../../utils/meetingApi';
 import { useNavigate } from 'react-router-dom';
-
-
+import '../../styles/roomList.css';
 
 const RoomList = ({ mode = 'join', onBack }) => {
     const [rooms, setRooms] = useState([]);
@@ -50,7 +50,6 @@ const RoomList = ({ mode = 'join', onBack }) => {
     });
     const [joinPassword, setJoinPassword] = useState('');
     const navigate = useNavigate();
-
 
     useEffect(() => {
         if (mode === 'join') {
@@ -89,23 +88,15 @@ const RoomList = ({ mode = 'join', onBack }) => {
             setLoading(false);
         }
     };
+
     const handleCreateRoom = async () => {
-        console.log('Validating room input:', newRoom);  // 추가
         if (!validateRoomInput()) {
-            console.log('Validation failed');  // 추가
             return;
         }
 
-        console.log('Starting room creation...'); // 추가
-
         try {
             setLoading(true);
-            console.log('Room data:', newRoom);
-
-            // 디버깅: API 호출 직전
-            console.log('Calling API...');
             const response = await meetingApi.createRoom(newRoom);
-            console.log('API Response:', response);
 
             if (response && response.roomId) {
                 setSuccessMessage('회의방이 생성되었습니다.');
@@ -118,14 +109,11 @@ const RoomList = ({ mode = 'join', onBack }) => {
                     });
                 }, 1500);
             } else {
-                console.log('Invalid response:', response);
                 throw new Error('회의방 생성에 실패했습니다.');
             }
         } catch (error) {
-            console.error('Detailed error:', error);
             setError(error.message || '회의방 생성에 실패했습니다.');
         } finally {
-            console.log('Finishing room creation attempt');
             setLoading(false);
         }
     };
@@ -145,7 +133,6 @@ const RoomList = ({ mode = 'join', onBack }) => {
                 });
             }
         } catch (error) {
-            console.error('Error joining room:', error);
             setError(error.message || '회의방 입장에 실패했습니다.');
         } finally {
             setPasswordDialogOpen(false);
@@ -154,30 +141,32 @@ const RoomList = ({ mode = 'join', onBack }) => {
             setLoading(false);
         }
     };
+
     if (loading && mode === 'join' && rooms.length === 0) {
         return (
-            <div className="page">
-                <div className="content-wrapper">
-                    <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-                        <CircularProgress />
-                    </Box>
-                </div>
-            </div>
+            <Box className="loading-container">
+                <CircularProgress />
+            </Box>
         );
     }
 
     return (
         <div className="content-wrapper">
-            <Box className="content-header" display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h4" className="text-gradient">
+            <Box className="meeting-header-container">
+                <Typography variant="h4" className="text-gradient header-title">
+                    <VideoCallIcon />
                     {mode === 'create' ? '새 회의 만들기' : '회의 참여하기'}
                 </Typography>
+                {mode === 'join' && (
+                    <Typography variant="subtitle1" className="header-subtitle">
+                        현재 진행 중인 회의 목록입니다. 참여하고 싶은 회의를 선택하세요.
+                    </Typography>
+                )}
             </Box>
 
             {mode === 'create' ? (
-                <Box component="form" onSubmit={(e) => {
+                <Box component="form" className="create-room-form" onSubmit={(e) => {
                     e.preventDefault();
-                    console.log('Form submitted');  // 추가
                     handleCreateRoom();
                 }}>
                     <TextField
@@ -193,8 +182,9 @@ const RoomList = ({ mode = 'join', onBack }) => {
                                 ? '회의 이름은 최소 3자 이상이어야 합니다'
                                 : ''
                         }
+                        className="room-input"
                     />
-                    <FormControl fullWidth margin="normal">
+                    <FormControl fullWidth margin="normal" className="room-input">
                         <InputLabel>최대 참가자 수</InputLabel>
                         <Select
                             value={newRoom.maxParticipants}
@@ -219,59 +209,76 @@ const RoomList = ({ mode = 'join', onBack }) => {
                                 ? '비밀번호는 최소 4자 이상이어야 합니다'
                                 : ''
                         }
+                        className="room-input"
                     />
                     <Button
                         type="submit"
                         fullWidth
                         variant="contained"
                         disabled={loading || newRoom.roomName.length < 3 || (newRoom.password.length > 0 && newRoom.password.length < 4)}
-                        sx={{ mt: 2 }}
+                        className="create-button"
                     >
-                        {loading ? <CircularProgress size={24} /> : '회의 만들기'}
+                        {loading ? (
+                            <CircularProgress size={24} />
+                        ) : (
+                            <Box className="button-content">
+                                <AddIcon /> 회의 만들기
+                            </Box>
+                        )}
                     </Button>
                 </Box>
             ) : (
                 <Grid container spacing={3}>
                     {rooms.length === 0 ? (
                         <Grid item xs={12}>
-                            <Box textAlign="center" py={4}>
-                                <Typography variant="h6" color="text.secondary">
+                            <Box className="empty-room-container">
+                                <Typography variant="h6" className="empty-room-text">
                                     현재 진행 중인 회의가 없습니다
                                 </Typography>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => navigate('/meeting/create')}
+                                    className="create-meeting-button"
+                                >
+                                    새 회의 만들기
+                                </Button>
                             </Box>
                         </Grid>
                     ) : (
                         rooms.map((room) => (
                             <Grid item xs={12} sm={6} md={4} key={room.roomId}>
-                                <Card>
-                                    <CardHeader
-                                        title={room.roomName}
-                                        action={
-                                            room.hasPassword && (
-                                                <IconButton size="small">
-                                                    <LockIcon />
-                                                </IconButton>
-                                            )
-                                        }
-                                    />
-                                    <CardContent>
+                                <Card className="room-card">
+                                    <Box className="room-card-header">
+                                        <Box className="room-title-container">
+                                            <Typography variant="h6" className="room-title">
+                                                {room.roomName}
+                                            </Typography>
+                                            {room.hasPassword && (
+                                                <Tooltip title="비밀번호가 설정된 회의입니다">
+                                                    <IconButton size="small">
+                                                        <LockIcon className="lock-icon" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )}
+                                        </Box>
+                                    </Box>
+                                    <CardContent className="room-info">
                                         {room.description && (
-                                            <Box display="flex" alignItems="center" mb={2}>
-                                                <DescriptionIcon sx={{ mr: 1 }} />
-                                                <Typography color="text.secondary">
-                                                    {room.description}
-                                                </Typography>
+                                            <Box className="room-info-item">
+                                                <DescriptionIcon />
+                                                <Typography>{room.description}</Typography>
                                             </Box>
                                         )}
-                                        <Box display="flex" alignItems="center" mb={2}>
-                                            <PeopleIcon sx={{ mr: 1 }} />
-                                            <Typography color="text.secondary">
+                                        <Box className="room-info-item">
+                                            <PeopleIcon />
+                                            <Typography>
                                                 {room.currentParticipants}/{room.maxParticipants}명
                                             </Typography>
                                         </Box>
                                         <Button
                                             variant="contained"
                                             fullWidth
+                                            className="room-join-button"
                                             onClick={() => {
                                                 if (room.hasPassword) {
                                                     setSelectedRoom(room);
@@ -281,6 +288,7 @@ const RoomList = ({ mode = 'join', onBack }) => {
                                                 }
                                             }}
                                             disabled={room.currentParticipants >= room.maxParticipants}
+                                            endIcon={<ArrowForwardIcon />}
                                         >
                                             {room.currentParticipants >= room.maxParticipants ? '정원 초과' : '참여하기'}
                                         </Button>
@@ -292,18 +300,19 @@ const RoomList = ({ mode = 'join', onBack }) => {
                 </Grid>
             )}
 
-            {/* 비밀번호 입력 다이얼로그 */}
             <Dialog
                 open={passwordDialogOpen}
                 onClose={() => setPasswordDialogOpen(false)}
                 maxWidth="xs"
                 fullWidth
+                className="password-dialog"
             >
-                <DialogTitle>회의실 비밀번호 입력</DialogTitle>
-                <DialogContent sx={{ pt: 2 }}>
+                <DialogTitle className="password-dialog-title">
+                    회의실 비밀번호 입력
+                </DialogTitle>
+                <DialogContent>
                     <TextField
                         autoFocus
-                        margin="dense"
                         label="비밀번호"
                         type="password"
                         fullWidth
@@ -314,28 +323,39 @@ const RoomList = ({ mode = 'join', onBack }) => {
                                 handleJoinRoom(selectedRoom);
                             }
                         }}
+                        className="password-input"
                     />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setPasswordDialogOpen(false)}>취소</Button>
+                <DialogActions className="dialog-actions">
+                    <Button
+                        onClick={() => setPasswordDialogOpen(false)}
+                        className="cancel-button"
+                    >
+                        취소
+                    </Button>
                     <Button
                         onClick={() => selectedRoom && handleJoinRoom(selectedRoom)}
                         variant="contained"
                         disabled={loading}
+                        className="join-button"
                     >
                         {loading ? <CircularProgress size={24} /> : '입장'}
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            {/* 알림 메시지 */}
             <Snackbar
                 open={!!error}
                 autoHideDuration={6000}
                 onClose={() => setError('')}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-                <Alert severity="error" onClose={() => setError('')} variant="filled">
+                <Alert
+                    severity="error"
+                    onClose={() => setError('')}
+                    variant="filled"
+                    className="alert error"
+                >
                     {error}
                 </Alert>
             </Snackbar>
@@ -346,7 +366,12 @@ const RoomList = ({ mode = 'join', onBack }) => {
                 onClose={() => setSuccessMessage('')}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             >
-                <Alert severity="success" onClose={() => setSuccessMessage('')} variant="filled">
+                <Alert
+                    severity="success"
+                    onClose={() => setSuccessMessage('')}
+                    variant="filled"
+                    className="alert success"
+                >
                     {successMessage}
                 </Alert>
             </Snackbar>

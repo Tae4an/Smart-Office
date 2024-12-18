@@ -2,9 +2,12 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import {useNavigate} from "react-router-dom";
-import {Badge, Box, Container, IconButton, Paper, Tooltip, Typography} from '@mui/material';
-import {People as PeopleIcon, Settings as SettingsIcon} from '@mui/icons-material';
-
+import {Badge, Box, Container, IconButton, Tooltip, Typography, Fade} from '@mui/material';
+import {
+    People as PeopleIcon,
+    Settings as SettingsIcon,
+    Videocam as VideocamIcon
+} from '@mui/icons-material';
 import {useWebRTC} from './hooks/useWebRTC';
 import {useMediaStream} from './hooks/useMediaStream';
 import {useWebSocketSignaling} from './hooks/useWebSocketSignaling';
@@ -16,8 +19,9 @@ import ParticipantsList from './ParticipantsList';
 import ChatComponent from './ChatComponent';
 import {checkWebRTCSupport} from '../../utils/webrtc';
 import {meetingApi} from "../../utils/meetingApi";
+import '../../styles/webRTCComponent.css';
 
-const WebRTCComponent = ({ roomId }) => {
+const WebRTCComponent = ({roomId}) => {
     const navigate = useNavigate();
     const [initError, setInitError] = useState(null);
     const handleWebSocketMessageType = useRef(null);
@@ -26,6 +30,7 @@ const WebRTCComponent = ({ roomId }) => {
     const userInfoStr = sessionStorage.getItem('userInfo');
     const userInfo = JSON.parse(userInfoStr);
     const participantsRef = useRef([]);
+    const updateRemoteStreamRef = useRef(null);
 
     const configuration = {
         iceServers: [{
@@ -35,25 +40,6 @@ const WebRTCComponent = ({ roomId }) => {
         }]
     };
 
-    const {
-        localStream, remoteStreams, isMuted, isVideoOff, localVideoRef,
-        initializeStream, updateRemoteStream, removeRemoteStream,
-        toggleMute, toggleVideo, cleanup: cleanupMedia
-    } = useMediaStream();
-
-    const {
-        participants, showParticipants, setShowParticipants,
-        handleParticipantUpdate, handleParticipantsList
-    } = useParticipants(removeRemoteStream);
-
-    const {
-        isChatOpen, setIsChatOpen, unreadMessages,
-        chatMessages, handleChatMessage, handleChatToggle
-    } = useChat();
-
-    useEffect(() => {
-        participantsRef.current = participants;
-    }, [participants]);
 
     const handleTrack = useCallback((event) => {
         console.log('[Track] Event received:', {
@@ -102,9 +88,10 @@ const WebRTCComponent = ({ roomId }) => {
             streamTracks: stream?.getTracks().length
         });
 
-        updateRemoteStream(senderId, stream, participant.name);
-    }, [updateRemoteStream]);
-
+        if (updateRemoteStreamRef.current) {
+            updateRemoteStreamRef.current(senderId, stream, participant.name);
+        }
+    }, []);
 
     const handleIceCandidateFromPeer = useCallback((candidate) => {
         if (sendSignalingMessage) {
@@ -123,6 +110,33 @@ const WebRTCComponent = ({ roomId }) => {
         startCall, cleanup: cleanupWebRTC
     } = useWebRTC(configuration, handleTrack, handleIceCandidateFromPeer);
 
+    const {
+        localStream, remoteStreams, isMuted, isVideoOff, localVideoRef,
+        initializeStream, updateRemoteStream, removeRemoteStream, isScreenSharing,
+        toggleMute, toggleVideo, toggleScreenShare,
+        cleanup: cleanupMedia
+    } = useMediaStream(peerConnection);
+    useEffect(() => {
+        updateRemoteStreamRef.current = updateRemoteStream;
+    }, [updateRemoteStream]);
+    const {
+        participants, showParticipants, setShowParticipants,
+        handleParticipantUpdate, handleParticipantsList
+    } = useParticipants(removeRemoteStream);
+
+    const {
+        isChatOpen, setIsChatOpen, unreadMessages,
+        chatMessages, handleChatMessage, handleChatToggle
+    } = useChat();
+
+    useEffect(() => {
+        participantsRef.current = participants;
+    }, [participants]);
+
+
+
+
+
     const handleWebSocketMessage = useCallback((event) => {
         try {
             const message = JSON.parse(event.data);
@@ -136,7 +150,7 @@ const WebRTCComponent = ({ roomId }) => {
         }
     }, []);
 
-    const { websocket, sendSignalingMessage, connectWebSocket } =
+    const {websocket, sendSignalingMessage, connectWebSocket} =
         useWebSocketSignaling(roomId, handleWebSocketMessage, resetPeerConnection);
 
     useEffect(() => {
@@ -287,95 +301,130 @@ const WebRTCComponent = ({ roomId }) => {
 
     const handleEndCall = useCallback(() => {
         cleanup(true);
-        navigate('/');
+        navigate('/meeting');
     }, [cleanup, navigate]);
 
     if (initError) {
         return (
-            <Paper sx={{ p: 3, m: 2 }} elevation={3}>
-                <Typography variant="h5" color="error" gutterBottom>
-                    WebRTC Error
-                </Typography>
-                <Typography paragraph>{initError}</Typography>
-                <Typography variant="subtitle1">
-                    Please use a modern browser with camera and microphone support.
-                </Typography>
-            </Paper>
+            <Fade in={true}>
+                <Container maxWidth="md">
+                    <Box className="error-container">
+                        <VideocamIcon sx={{fontSize: 48, color: 'error.light', mb: 2}}/>
+                        <Typography variant="h5" gutterBottom sx={{color: 'error.light'}}>
+                            화상 회의 오류
+                        </Typography>
+                        <Typography sx={{mb: 3, color: 'rgba(255, 255, 255, 0.8)'}}>
+                            {initError}
+                        </Typography>
+                        <Typography variant="subtitle1" sx={{color: 'rgba(255, 255, 255, 0.6)'}}>
+                            카메라와 마이크가 지원되는 최신 브라우저를 사용해주세요.
+                        </Typography>
+                    </Box>
+                </Container>
+            </Fade>
         );
     }
-
     return (
-        <Container maxWidth="xl">
-            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                    <Typography variant="h5">Video Conference</Typography>
-                    <Typography variant="subtitle2" color="text.secondary">
-                        Room: {roomId}
-                    </Typography>
-                </Box>
-                <Box display="flex" alignItems="center" gap={2}>
-                    <Tooltip title="Participants">
-                        <IconButton onClick={() => setShowParticipants(true)}>
-                            <Badge badgeContent={participants.length} color="primary">
-                                <PeopleIcon />
-                            </Badge>
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Settings">
-                        <IconButton>
-                            <SettingsIcon />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            </Box>
+        <Fade in={true}>
+            <div className="video-conference-container">
+                <Container maxWidth="xl">
+                    <Box className="conference-header">
+                        <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <Box>
+                                <Typography variant="h5" className="room-title">
+                                    화상 회의
+                                </Typography>
+                                <Typography
+                                    variant="subtitle2"
+                                    sx={{color: 'rgba(255, 255, 255, 0.6)', mt: 0.5}}
+                                >
+                                    Room ID: {roomId}
+                                </Typography>
+                            </Box>
 
-            <VideoGrid
-                localStream={localStream}
-                remoteStreams={remoteStreams}
-                participants={participants}
-                localVideoRef={localVideoRef}
-            />
+                            <Box className="header-controls">
+                                <Tooltip title="참가자 목록">
+                                    <IconButton
+                                        onClick={() => setShowParticipants(true)}
+                                        className="header-button"
+                                    >
+                                        <Badge
+                                            badgeContent={participants.length}
+                                            color="primary"
+                                            sx={{
+                                                '& .MuiBadge-badge': {
+                                                    background: 'var(--primary)',
+                                                    border: '2px solid #0a0c1b'
+                                                }
+                                            }}
+                                        >
+                                            <PeopleIcon/>
+                                        </Badge>
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title="설정">
+                                    <IconButton className="header-button">
+                                        <SettingsIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                        </Box>
+                    </Box>
 
-            <ControlBar
-                isMuted={isMuted}
-                isVideoOff={isVideoOff}
-                onToggleMute={toggleMute}
-                onToggleVideo={toggleVideo}
-                onEndCall={handleEndCall}
-                onChatToggle={handleChatToggle}
-                unreadMessages={unreadMessages}
-            />
+                    <Box className="video-grid">
+                        <VideoGrid
+                            localStream={localStream}
+                            remoteStreams={remoteStreams}
+                            participants={participants}
+                            localVideoRef={localVideoRef}
+                        />
+                    </Box>
 
-            <ParticipantsList
-                participants={participants}
-                open={showParticipants}
-                onClose={() => setShowParticipants(false)}
-            />
+                    <ControlBar
+                        isMuted={isMuted}
+                        isVideoOff={isVideoOff}
+                        isScreenSharing={isScreenSharing}
+                        onToggleMute={toggleMute}
+                        onToggleVideo={toggleVideo}
+                        onToggleScreenShare={toggleScreenShare}
+                        onEndCall={handleEndCall}
+                        onChatToggle={handleChatToggle}
+                        unreadMessages={unreadMessages}
+                    />
 
-            <ChatComponent
-                roomId={roomId}
-                websocket={websocket}
-                isOpen={isChatOpen}
-                onClose={() => setIsChatOpen(false)}
-                messages={chatMessages}
-            />
+                    <Box className="connection-status">
+                        <div className={`status-indicator ${isConnected ? 'connected' : 'connecting'}`}/>
+                        <Typography
+                            variant="body2"
+                            sx={{color: 'rgba(255, 255, 255, 0.8)'}}
+                        >
+                            {isConnected ? '연결됨' : '연결 중...'}
+                        </Typography>
+                    </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mt: 2 }}>
-                <Box
-                    sx={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        backgroundColor: isConnected ? 'success.main' : 'warning.main',
-                    }}
-                />
-                <Typography variant="body2" color="text.secondary">
-                    {isConnected ? 'Connected' : 'Connecting...'}
-                </Typography>
-            </Box>
-        </Container>
+                    <ParticipantsList
+                        participants={participants}
+                        open={showParticipants}
+                        onClose={() => setShowParticipants(false)}
+                    />
+
+                    <ChatComponent
+                        roomId={roomId}
+                        websocket={websocket}
+                        isOpen={isChatOpen}
+                        onClose={() => setIsChatOpen(false)}
+                        messages={chatMessages}
+                    />
+                </Container>
+            </div>
+        </Fade>
     );
 };
+
 
 WebRTCComponent.propTypes = {
     roomId: PropTypes.string.isRequired

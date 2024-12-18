@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Edit2, Save } from 'lucide-react';
+import '../../styles/dashboard.css';
 
 const ProfileModal = ({ user, isOpen, onClose, onUpdate }) => {
     const [isEditing, setIsEditing] = useState(false);
