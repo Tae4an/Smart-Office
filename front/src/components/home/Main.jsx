@@ -296,7 +296,7 @@ const Main = () => {
                                         </span>
                                     )}
                                 </div>
-                                <div style={{ height: '400px', padding: '0 var(--spacing-2) var(--spacing-2)' }}>
+                                <div style={{ height: '450px', padding: '0 var(--spacing-2) var(--spacing-2)' }}>
                                     <CalendarForm 
                                         height="100%"
                                         minimode={true} 

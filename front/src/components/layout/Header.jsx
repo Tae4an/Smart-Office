@@ -5,6 +5,16 @@ import axios from 'axios';
 import {fetchWeatherData} from '../../utils/WeatherUtils';
 import VerifyModal from '../ai/VerifyModal';
 import '../../styles/layout.css';
+import {
+    Alert,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Snackbar
+} from "@mui/material";
 
 const Header = ({setIsMenuOpen}) => {
     const navigate = useNavigate();
@@ -574,11 +584,53 @@ const Header = ({setIsMenuOpen}) => {
         }
     }, []);
 
+    const [isCheckedIn, setIsCheckedIn] = useState(() => {
+        return sessionStorage.getItem('isCheckedIn') === 'true';
+    });
     const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+    const [showCheckoutDialog, setShowCheckoutDialog] = useState(false);
+    const [alertInfo, setAlertInfo] = useState({
+        show: false,
+        message: '',
+        severity: 'success'
+    });
 
-    const handleVerifyClick = () => {
-        setIsVerifyModalOpen(true);
-    }
+    // 출근하기 버튼 클릭 핸들러
+    const handleAttendanceClick = () => {
+        if (!isCheckedIn) {
+            setIsVerifyModalOpen(true);
+        } else {
+            setShowCheckoutDialog(true);
+        }
+    };
+
+    // 퇴근 처리 핸들러
+    const handleCheckout = () => {
+        setIsCheckedIn(false);
+        sessionStorage.setItem('isCheckedIn', 'false');
+        setShowCheckoutDialog(false);
+        setAlertInfo({
+            show: true,
+            message: '퇴근 처리가 완료되었습니다.',
+            severity: 'success'
+        });
+    };
+
+    const handleCheckinSuccess = () => {
+        setIsCheckedIn(true);
+        sessionStorage.setItem('isCheckedIn', 'true');
+        setIsVerifyModalOpen(false);
+        setAlertInfo({
+            show: true,
+            message: '출근 처리가 완료되었습니다.',
+            severity: 'success'
+        });
+    };
+
+    const handleAlertClose = () => {
+        setAlertInfo(prev => ({ ...prev, show: false }));
+    };
+
     const clearSearch = () => {
         setSearchTerm('');
         setSearchResults([]);
@@ -588,81 +640,82 @@ const Header = ({setIsMenuOpen}) => {
     return (
         <header className="header">
             <div className="header-container">
-                <div className="search-container">
-                    <div className="search-bar-wrapper">
-                        <i className="fas fa-search search-icon"></i>
-                        <input
-                            type="text"
-                            className="search-bar"
-                            placeholder="이름, 부서, 직급으로 직원 검색 (예: 홍길동, 인사팀, 과장)"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
-                        />
-                        <button
-                            className={`clear-search ${searchTerm ? 'visible' : ''}`}
-                            onClick={clearSearch}
-                            type="button"
-                        >
-                            <i className="fas fa-times"></i>
-                        </button>
-                    </div>
-                    {searchTerm && (
-                        <div className="search-modal">
-                            <div className="search-modal-content">
-                                <div className="search-results">
-                                    {displayedResults.length > 0 ? (
-                                        <>
-                                            <ul className="results-list">
-                                                {displayedResults.map((employee) => (
-                                                    <li
-                                                        key={employee.id}
-                                                        className="result-item"
-                                                        onMouseEnter={(e) => handleEmployeeHover(employee, e)}
-                                                        onMouseLeave={handleEmployeeLeave}
-                                                    >
-                                                        <div className="employee-info">
-                                                            <strong>{employee.name}</strong>
-                                                            <span>{employee.department} - {employee.position}</span>
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                            {/* 로딩 UI를 리스트 아래로 이동 */}
-                                            {isLoading && (
-                                                <div className="search-loading">
-                                                    <i className="fas fa-spinner fa-spin"></i>
-                                                    <p>Loading more results...</p>
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : (
-                                        searchTerm && <p className="no-results">검색 결과가 없습니다.</p>
-                                    )}
+                <div className="header-right">
+                    <div className="search-container">
+                        <div className="search-bar-wrapper">
+                            <i className="fas fa-search search-icon"></i>
+                            <input
+                                type="text"
+                                className="search-bar"
+                                placeholder="이름, 부서, 직급으로 직원 검색 (예: 홍길동, 인사팀, 과장)"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
+                            />
+                            <button
+                                className={`clear-search ${searchTerm ? 'visible' : ''}`}
+                                onClick={clearSearch}
+                                type="button"
+                            >
+                                <i className="fas fa-times"></i>
+                            </button>
+                        </div>
+                        {searchTerm && (
+                            <div className="search-modal">
+                                <div className="search-modal-content">
+                                    <div className="search-results">
+                                        {displayedResults.length > 0 ? (
+                                            <>
+                                                <ul className="results-list">
+                                                    {displayedResults.map((employee) => (
+                                                        <li
+                                                            key={employee.id}
+                                                            className="result-item"
+                                                            onMouseEnter={(e) => handleEmployeeHover(employee, e)}
+                                                            onMouseLeave={handleEmployeeLeave}
+                                                        >
+                                                            <div className="employee-info">
+                                                                <strong>{employee.name}</strong>
+                                                                <span>{employee.department} - {employee.position}</span>
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                {/* 로딩 UI를 리스트 아래로 이동 */}
+                                                {isLoading && (
+                                                    <div className="search-loading">
+                                                        <i className="fas fa-spinner fa-spin"></i>
+                                                        <p>Loading more results...</p>
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            searchTerm && <p className="no-results">검색 결과가 없습니다.</p>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
-                </div>
-                <div className="header-right">
+                        )}
+                    </div>
                     <button
-                        className="check-in-btn"
-                        onClick={handleVerifyClick}
+                        className={`check-${isCheckedIn ? 'out' : 'in'}-btn`}
+                        onClick={handleAttendanceClick}
                         style={{
                             padding: '8px 16px',
                             marginRight: '16px',
-                            backgroundColor: '#4CAF50',
+                            backgroundColor: isCheckedIn ? '#dc3545' : '#4CAF50',
                             color: 'white',
                             border: 'none',
                             borderRadius: '4px',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px'
+                            gap: '8px',
+                            transition: 'background-color 0.3s'
                         }}
                     >
-                        <i className="fas fa-user-check"></i>
-                        <span>출근하기</span>
+                        <i className={`fas fa-user-${isCheckedIn ? 'minus' : 'check'}`}></i>
+                        <span>{isCheckedIn ? '퇴근하기' : '출근하기'}</span>
                     </button>
                     {!weatherLoading && weather && (
                         <div className="weather-info-mini">
@@ -762,10 +815,49 @@ const Header = ({setIsMenuOpen}) => {
                     </div>
                 </div>
             )}
+            {/* Alert Message */}
+            <Snackbar
+                open={alertInfo.show}
+                autoHideDuration={3000}
+                onClose={handleAlertClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleAlertClose}
+                    severity={alertInfo.severity}
+                    sx={{ width: '100%' }}
+                    elevation={6}
+                >
+                    {alertInfo.message}
+                </Alert>
+            </Snackbar>
+            {/* 출근 인증 모달 */}
             <VerifyModal
                 open={isVerifyModalOpen}
                 onClose={() => setIsVerifyModalOpen(false)}
+                onSuccess={handleCheckinSuccess}
             />
+
+            {/* 퇴근 확인 다이얼로그 */}
+            <Dialog
+                open={showCheckoutDialog}
+                onClose={() => setShowCheckoutDialog(false)}
+            >
+                <DialogTitle>퇴근 확인</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        퇴근 처리하시겠습니까?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setShowCheckoutDialog(false)} color="inherit">
+                        취소
+                    </Button>
+                    <Button onClick={handleCheckout} color="error">
+                        퇴근하기
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </header>
     );
 };

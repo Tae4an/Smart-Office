@@ -1,27 +1,39 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Webcam from 'react-webcam';
-import { Modal, Button, Alert, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+import {
+  Modal,
+  Button,
+  Alert,
+  IconButton,
+  CircularProgress,
+  Box,
+  Typography,
+  Paper
+} from '@mui/material';
+import {
+  Close as CloseIcon,
+  Camera as CameraIcon,
+  Replay as ReplayIcon,
+  Login as LoginIcon
+} from '@mui/icons-material';
 
-const VerifyModal = ({ open, onClose }) => {
+const VerifyModal = ({ open, onClose, onSuccess }) => {
   const webcamRef = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [status, setStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // 모든 상태 초기화를 위한 함수
   const resetState = useCallback(() => {
     setCapturedImage(null);
     setStatus(null);
+    setIsLoading(false);
   }, []);
 
-  // 모달 닫기 처리
   const handleClose = useCallback(() => {
     resetState();
     onClose();
   }, [onClose, resetState]);
 
-  // userInfo 가져오는 함수 분리
   const getUserInfo = useCallback(() => {
     const userInfo = sessionStorage.getItem('userInfo');
     return userInfo ? JSON.parse(userInfo) : null;
@@ -40,27 +52,25 @@ const VerifyModal = ({ open, onClose }) => {
     const height = video.videoHeight;
     canvas.width = width;
     canvas.height = height;
-    
+
     const ctx = canvas.getContext('2d');
-    
-    // 캔버스 중앙을 기준으로 좌우반전
     ctx.translate(width, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, width, height);
-    
-    // 원래 상태로 복원
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    
+
     const imageSrc = canvas.toDataURL('image/jpeg');
     setCapturedImage(imageSrc);
   };
 
   const retake = () => {
     setCapturedImage(null);
+    setStatus(null);
   };
 
   const verify = async () => {
     try {
+      setIsLoading(true);
       const userInfo = getUserInfo();
       if (!userInfo?.employeeId) {
         setStatus('error');
@@ -68,26 +78,27 @@ const VerifyModal = ({ open, onClose }) => {
         return;
       }
 
-      // Base64 문자열을 Blob으로 간단하게 변환
       const blob = await fetch(capturedImage).then(res => res.blob());
-      
       const formData = new FormData();
       formData.append('file', blob, `${userInfo.employeeId}.jpg`);
 
-      const result = await axios.post('/api/verify/face', formData, {
+      const result = await fetch('/api/verify/face', {
+        method: 'POST',
         headers: {
-          'Content-Type': 'multipart/form-data',
           'X-User-Id': userInfo.employeeId
-        }
+        },
+        body: formData
       });
 
-      if (result.data.success) {
-        setStatus('success');
-        setTimeout(handleClose, 2000);
+      const data = await result.json();
+
+      if (data.success) {
+        onSuccess(); // 얼굴 인증 성공 시 부모 컴포넌트에 알림
+        handleClose();
       } else {
         setStatus('error');
-        if (result.data.message) {
-          alert(result.data.message);
+        if (data.message) {
+          alert(data.message);
         }
         setTimeout(() => setStatus(null), 3000);
       }
@@ -96,137 +107,184 @@ const VerifyModal = ({ open, onClose }) => {
       const errorMessage = error.response?.data?.message || '얼굴 인증 중 오류가 발생했습니다.';
       alert(errorMessage);
       setTimeout(() => setStatus(null), 3000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // 컴포넌트 언마운트 시 타이머 정리
   useEffect(() => {
     return () => {
-      // 모든 진행 중인 타이머 정리
-      const cleanup = () => {
-        setStatus(null);
-        setCapturedImage(null);
-      };
-      cleanup();
+      resetState();
     };
-  }, []);
+  }, [resetState]);
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-    >
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        backgroundColor: 'white',
-        padding: '50px 20px 20px 20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        maxWidth: '90vw',
-        maxHeight: '90vh',
-        width: '720px', // 고정 너비 설정
-      }}>
-        <div style={{ 
-          position: 'absolute',
-          top: 8,
-          right: 8,
-          zIndex: 1000 // z-index 추가하여 항상 최상단에 표시
-        }}>
-          <IconButton 
-            onClick={handleClose}
-            size="small"
-            sx={{ 
-              bgcolor: 'rgba(255, 255, 255, 0.8)',
-              '&:hover': {
-                bgcolor: 'rgba(255, 255, 255, 0.9)'
-              }
+      <Modal
+          open={open}
+          onClose={handleClose}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+      >
+        <Paper
+            elevation={24}
+            sx={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '720px',
+              maxHeight: '90vh',
+              mx: 2,
+              p: 3,
+              bgcolor: 'background.paper',
+              borderRadius: 2,
+              boxShadow: 24,
+              outline: 'none',
             }}
+        >
+          <IconButton
+              onClick={handleClose}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+                bgcolor: 'background.paper',
+                '&:hover': {
+                  bgcolor: 'action.hover',
+                },
+              }}
           >
             <CloseIcon />
           </IconButton>
-        </div>
-        
-        {status && (
-          <Alert 
-            severity={status} 
-            sx={{ mb: 2 }}
-          >
-            {status === 'success' ? '출근이 완료되었습니다.' : '얼굴 인증에 실패했습니다. 다시 시도해주세요.'}
-          </Alert>
-        )}
-        
-        {!capturedImage ? (
-          <>
-            <div style={{
-              borderRadius: '12px',
-              overflow: 'hidden',
-              backgroundColor: '#f5f5f5',
-              border: '1px solid #e0e0e0'
-            }}>
-              <Webcam
-                audio={false}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                videoConstraints={videoConstraints}
-                mirrored={true}
-                style={{ 
-                  width: '100%', 
-                  height: 'auto',
-                  display: 'block' // 이미지 하단 갭 제거
+
+          <Box sx={{ mb: 3, textAlign: 'center' }}>
+            <Typography variant="h5" component="h2" gutterBottom>
+              출근하기
+            </Typography>
+          </Box>
+
+          {status && (
+              <Alert
+                  severity={status === 'success' ? 'success' : 'error'}
+                  sx={{ mb: 2 }}
+              >
+                {status === 'success'
+                    ? '출근이 완료되었습니다.'
+                    : '얼굴 인증에 실패했습니다. 다시 시도해주세요.'}
+              </Alert>
+          )}
+
+          <Box sx={{ position: 'relative' }}>
+            <Paper
+                variant="outlined"
+                sx={{
+                  overflow: 'hidden',
+                  borderRadius: 2,
+                  bgcolor: 'grey.50'
                 }}
-              />
-            </div>
-            <Button 
-              variant="contained" 
-              onClick={capture}
-              fullWidth
-              sx={{ mt: 2 }}
             >
-              사진 촬영
-            </Button>
-          </>
-        ) : (
-          <>
-            <div style={{
-              borderRadius: '12px',
-              overflow: 'hidden',
-              backgroundColor: '#f5f5f5',
-              border: '1px solid #e0e0e0'
-            }}>
-              <img 
-                src={capturedImage} 
-                alt="captured" 
-                style={{ 
-                  width: '100%', 
-                  height: 'auto',
-                  display: 'block' // 이미지 하단 갭 제거
-                }}
-              />
-            </div>
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={verify}
-              fullWidth
-              sx={{ mt: 2 }}
-            >
-              인증하기
-            </Button>
-            <Button 
-              variant="outlined" 
-              onClick={retake}
-              fullWidth
-              sx={{ mt: 1 }}
-            >
-              다시 촬영
-            </Button>
-          </>
-        )}
-      </div>
-    </Modal>
+              {!capturedImage ? (
+                  <Webcam
+                      audio={false}
+                      ref={webcamRef}
+                      screenshotFormat="image/jpeg"
+                      videoConstraints={videoConstraints}
+                      mirrored={true}
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        display: 'block'
+                      }}
+                  />
+              ) : (
+                  <img
+                      src={capturedImage}
+                      alt="captured"
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        display: 'block'
+                      }}
+                  />
+              )}
+            </Paper>
+
+            {isLoading && (
+                <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      bgcolor: 'rgba(0, 0, 0, 0.5)',
+                      borderRadius: 2,
+                    }}
+                >
+                  <CircularProgress sx={{ color: 'white', mb: 1 }} />
+                  <Typography sx={{ color: 'white' }}>
+                    인증 처리 중...
+                  </Typography>
+                </Box>
+            )}
+          </Box>
+
+          <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {!capturedImage ? (
+                <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={capture}
+                    disabled={isLoading}
+                    startIcon={<CameraIcon />}
+                    sx={{
+                      height: 48,
+                      bgcolor: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.dark',
+                      },
+                    }}
+                >
+                  사진 촬영
+                </Button>
+            ) : (
+                <>
+                  <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={verify}
+                      disabled={isLoading}
+                      startIcon={<LoginIcon />}
+                      sx={{
+                        height: 48,
+                        bgcolor: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.dark',
+                        },
+                      }}
+                  >
+                    출근하기
+                  </Button>
+                  <Button
+                      variant="outlined"
+                      fullWidth
+                      onClick={retake}
+                      disabled={isLoading}
+                      startIcon={<ReplayIcon />}
+                      sx={{ height: 48 }}
+                  >
+                    다시 촬영
+                  </Button>
+                </>
+            )}
+          </Box>
+        </Paper>
+      </Modal>
   );
 };
 

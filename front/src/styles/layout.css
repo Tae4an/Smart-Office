@@ -32,7 +32,7 @@
     padding: 0 var(--spacing-4);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: var(--spacing-4);
     margin-left: var(--sidebar-width);
     transition: margin-left 0.3s ease;
@@ -688,6 +688,12 @@
     flex: 1;
     max-width: 600px;
     position: relative;
+    margin-left: 20px; /* 좌측 여백 추가 */
+    transition: margin-left 0.3s ease; /* 트랜지션 효과 추가 */
+}
+
+.sidebar.mini ~ .header .search-container {
+    margin-left: 0; /* 사이드바가 축소되었을 때 여백 제거 */
 }
 
 .search-bar-wrapper {
