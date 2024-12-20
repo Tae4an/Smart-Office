@@ -10,6 +10,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 /* Header Styles */
@@ -17,7 +18,8 @@
     height: var(--header-height);
     width: 100%;
     padding: 0;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
@@ -290,7 +292,8 @@
 /* Sidebar Styles */
 .sidebar {
     width: var(--sidebar-width);
-    background-color: var(--light);
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
     position: fixed;
     left: 0;
     top: 0;
@@ -382,9 +385,10 @@
     flex: 1;
     margin-top: var(--header-height);
     margin-left: var(--sidebar-width);
-    padding: var(--spacing-4);
+    background-color: transparent;
     transition: margin-left 0.3s ease;
-    background-color: var(--light);
+    position: relative;
+    z-index: 1;
 }
 
 .sidebar.mini ~ .main-content {
@@ -399,10 +403,12 @@
 
 /* Footer Styles */
 .footer {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
     padding: var(--spacing-3) 0;
     margin-top: auto;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 2;
 }
 
 .footer-container {

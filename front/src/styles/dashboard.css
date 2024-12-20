@@ -1,216 +1,221 @@
 /* ==========================================================================
-   Dashboard Layout
-   ========================================================================== */
-.dashboard-content {
+  Dashboard Layout
+  ========================================================================== */
+  .dashboard-content {
     position: relative;
     padding: var(--spacing-4);
     max-width: 100%;
     margin: 0 auto;
     z-index: 1;
-}
+ }
   
-.dashboard-grid {
+ .dashboard-grid {
     display: grid;
     grid-template-columns: 350px 1fr;
     gap: var(--spacing-4);
     min-height: 100vh;
     height: 100%;
-}
+ }
   
-.dashboard-column {
+ .dashboard-column {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-4);
     height: calc(100vh - var(--spacing-4) * 2);  /* 상하 패딩 고려 */
-}
+ }
    
-.dashboard-column:nth-child(2) {
+ .dashboard-column:nth-child(2) {
     height: 100%;
     min-height: 100vh;
-}
-
-.dashboard-wrapper {
+ }
+ 
+ .dashboard-wrapper {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     min-height: 100vh;
     position: relative;
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Profile Section
    ========================================================================== */
-.profile-card {
+ .profile-card {
     background: white;
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-2);
-}
+ }
   
-.profile-container {
+ .profile-container {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-1);
     transition: all 0.3s ease;
-}
+ }
   
-.profile-image-wrapper {
+ .profile-image-wrapper {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     overflow: hidden;
     background: var(--gradient);
     transition: all 0.3s ease;
-}
-
-.profile-image {
+ }
+ 
+ .profile-image {
     width: 100%;  /* 이미지 크기 축소 */
     height: 100%;  /* 이미지 크기 축소 */
     margin: 0;  /* 중앙 정렬을 위한 margin 추가 */
     object-fit: cover;
     border-radius: 50%;
     border: 1px solid white;  /* border 축소 */
-}
-
-.user-info {
+ }
+ 
+ .user-info {
     text-align: center;
     width: 100%;
     padding: var(--spacing-1);
     line-height: 1.2;
     transition: all 0.3s ease;
-}
+ }
   
-.position-text {
+ .position-text {
     color: var(--gray);
     margin: 0.1rem 0;  /* margin 더 축소 */
     font-size: 0.75rem;  /* 폰트 크기 축소 */
-}
+ }
   
-/* Profile Modal Styles */
-.profile-table {
+ /* Profile Modal Styles */
+ .profile-table {
     width: 100%;
     margin-top: var(--spacing-4);
-}
+ }
   
-.profile-table td {
+ .profile-table td {
     padding: var(--spacing-2);
     border-bottom: 1px solid var(--light);
-}
+ }
   
-.profile-table td:first-child { 
+ .profile-table td:first-child { 
     width: 100px;
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Grid Layout
    ========================================================================== */
-.grid-layout {
-    flex: 1;
+ .grid-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;  /* 5개의 동일한 크기의 열로 분할 */
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     grid-template-areas: 
         "sub1 sub1 main main main"
         "sub2 sub2 main main main";
     gap: var(--spacing-4);
-    margin-top: 0;
-    height: 100%;
-}
-
-.grid-cell[style*="gridArea: main"] {
-    min-width: 500px; /* main 영역의 최소 너비 설정 */
-    min-height: 0;
-    height: 100%;
-}
-
-.grid-cell[style*="gridArea: sub"] {
-    min-height: 0;
-    height: 100%;
-}
-
-.grid-cell:nth-child(1) { 
-    grid-area: main;
-    min-height: calc(100vh - var(--spacing-4));
-    max-height: none;
-    height: 100%;
-}
-
-.grid-cell:nth-child(n+2) {
-    min-height: calc((100vh - var(--spacing-4) * 4) / 2);
-    max-height: none;
-    height: 100%;
-}
-
-.grid-cell {
+    height: 580px;
+    margin-bottom: var(--spacing-4);
+ }
+ 
+ .grid-cell {
     background: rgba(255, 255, 255, 0.5);
     border: 2px dashed var(--light);
     border-radius: var(--border-radius-lg);
     position: relative;
     transition: all 0.2s ease;
-    min-height: 0;  /* 그리드 셀이 컨테이너를 벗어나지 않도록 */
+    overflow: hidden;
+ }
+ 
+ /* main 영역(달력) 스타일 */
+ .grid-cell:nth-child(1) { 
+    grid-area: main;
     height: 100%;
-}
-  
-.grid-cell.occupied {
+ }
+ 
+ /* 최근활동 영역 스타일 */
+ .grid-cell:nth-child(2) {
+    grid-area: sub1;
+    height: 427.58px;
+ }
+ 
+ /* 근태현황 영역 스타일 */
+ .grid-cell:nth-child(3) {
+    grid-area: sub2;
+    height: 336px;
+ }
+ 
+ .grid-cell.occupied {
     border: none;
     background: white;
-    height: auto; /* 자동 높이 조정 */
-    max-height: 400px; /* 최대 높이 제한 추가 */
-}
-
-.grid-cell .widget-container {
+ }
+ 
+ .grid-cell .widget-container {
     height: 100%; /* 셀 높이에 맞춤 */
     display: flex;
     flex-direction: column;
-}
-
-.grid-cell .widget-content {
+ }
+ 
+ .grid-cell .widget-content {
     flex: 1; /* 남은 공간 채움 */
     overflow: auto; /* 내용이 넘칠 경우 스크롤 */
-}
+    height: 100%; /* 부모 컨테이너의 높이에 맞춤 */
+    display: flex;
+    align-items: flex-start; /* 수정: 위쪽 정렬 */
+ }
+ 
+ /* 메일 위젯 관련 스타일 수정 */
+ .grid-cell .widget-content .messenger-widget-container {
+    height: 100%;
+    max-height: 100%; /* 수정: 최대 높이를 부모 높이에 맞춤 */
+    position: relative;
+    overflow: hidden;
+ }
 
-.status-grid-container {
+ .grid-cell .widget-content .messenger-widget-container .widget-fullscreen {
+    position: relative; /* 수정: fixed에서 relative로 변경 */
+    height: 100%; /* 추가 */
+    width: 100%; /* 추가 */
+ }
+ 
+ .status-grid-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-3);
-    margin-bottom: var(--spacing-4);
+    gap: var(--spacing-2);
+    height: 250px;
     max-width: 100%;
-}
+    margin: 0;
+    padding: var(--spacing-1);
+ }
   
-/* Empty Cell 스타일 */
-.empty-cell {
+ /* Empty Cell 스타일 */
+ .empty-cell {
     background: white;
     border: 2px dashed var(--light);
     border-radius: var(--border-radius-lg);
-    min-height: 200px; /* 최소 높이 설정 */
-    max-height: 400px; /* 최대 높이 제한 추가 */
-    height: auto; /* 자동 높이 조정 */
+    min-height: 200px;
+    max-height: 400px;
+    height: auto;
     transition: all 0.2s ease;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-}
+ }
   
-.empty-cell:hover {
+ .empty-cell:hover {
     border-color: var(--primary);
     background: rgba(var(--primary-rgb), 0.05);
-}
+ }
   
-.empty-cell .text-3xl {
+ .empty-cell .text-3xl {
     font-size: 2rem;
     font-weight: 300;
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Widget Base
    ========================================================================== */
-.widget-container {
-    min-height: inherit;
-    max-height: 400px; /* 최대 높이 제한 추가 */
+ .widget-container {
     height: 100%;
-    margin: 0;
     display: flex;
     flex-direction: column;
     background: white;
@@ -218,43 +223,46 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.2s ease;
     position: relative;
-}
+ }
   
-.widget-container:hover {
+ .widget-container:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+ }
   
-.widget-header {
+ .widget-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: var(--spacing-3);
     border-bottom: 1px solid var(--light);
     position: relative;
-}
+ }
   
-.widget-header h3 {
+ .widget-header h3 {
     margin: 0;
     font-size: 1.1rem;
     color: var(--dark);
-}
+ }
   
-.widget-content {
+ .widget-content {
     flex: 1;
     overflow: auto;
-    height: calc(100% - 60px);
-}
-  
-.widget-controls {
+    padding: var(--spacing-3);
+ }
+ 
+/* ==========================================================================
+  Widget Controls
+  ========================================================================== */
+  .widget-controls {
     position: absolute;
     top: var(--spacing-2);
     right: var(--spacing-2);
     display: flex;
     gap: var(--spacing-2);
     z-index: 10;
-}
+ }
   
-.widget-control-button {
+ .widget-control-button {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -266,14 +274,14 @@
     gap: 4px;
     border-radius: var(--border-radius);
     transition: all 0.2s ease;
-}
+ }
   
-.widget-control-button:hover {
+ .widget-control-button:hover {
     background-color: var(--light);
     color: var(--primary);
-}
+ }
   
-.widget-control-menu {
+ .widget-control-menu {
     position: absolute;
     top: 100%;
     right: 0;
@@ -282,9 +290,9 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: var(--spacing-1);
     min-width: 120px;
-}
+ }
   
-.widget-control-menu button {
+ .widget-control-menu button {
     width: 100%;
     text-align: left;
     padding: var(--spacing-2);
@@ -296,24 +304,24 @@
     align-items: center;
     gap: var(--spacing-2);
     color: var(--dark);
-}
+ }
   
-.widget-control-menu button:hover {
+ .widget-control-menu button:hover {
     background-color: var(--light);
-}
+ }
   
-.widget-control-menu button.danger {
+ .widget-control-menu button.danger {
     color: var(--danger);
-}
+ }
   
-.widget-control-menu button.danger:hover {
+ .widget-control-menu button.danger:hover {
     background-color: rgba(var(--danger-rgb), 0.1);
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Modal
    ========================================================================== */
-.modal-overlay {
+ .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -324,9 +332,9 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
-}
+ }
   
-.modal-content {
+ .modal-content {
     background: white;
     border-radius: var(--border-radius-lg);
     width: 90%;
@@ -334,27 +342,27 @@
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
-}
+ }
   
-.modal-header {
+ .modal-header {
     padding: var(--spacing-4);
     border-bottom: 1px solid var(--light);
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
+ }
   
-.modal-header h3 {
+ .modal-header h3 {
     margin: 0;
     font-size: 1.25rem;
     color: var(--dark);
-}
+ }
   
-.modal-body {
+ .modal-body {
     padding: var(--spacing-4);
-}
+ }
   
-.close-button {
+ .close-button {
     background: transparent;
     border: none;
     font-size: 1.25rem;
@@ -362,16 +370,16 @@
     padding: var(--spacing-2);
     color: var(--gray);
     transition: color 0.2s;
-}
+ }
   
-.close-button:hover {
+ .close-button:hover {
     color: var(--danger);
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Widget Options
    ========================================================================== */
-.widget-option {
+ .widget-option {
     width: 100%;
     text-align: left;
     padding: var(--spacing-4);
@@ -381,215 +389,217 @@
     cursor: pointer;
     margin-bottom: var(--spacing-3);
     transition: all 0.2s;
-}
+ }
   
-.widget-option:hover {
+ .widget-option:hover {
     border-color: var(--primary);
     background: rgba(var(--primary-rgb), 0.05);
-}
+ }
   
-.widget-option h4 {
+ .widget-option h4 {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
     color: var(--dark);
-}
+ }
   
-.widget-option p {
+ .widget-option p {
     margin: var(--spacing-2) 0 0;
     font-size: 0.875rem;
     color: var(--gray);
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Activity Widget
    ========================================================================== */
-.activity-card {
+ .activity-card {
     background: white;
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-4);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+ }
   
-.activity-list {
+ .activity-list {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-3);
-}
+    height: 100%;
+    overflow-y: auto;
+ }
   
-.activity-item {
+ .activity-item {
     padding: var(--spacing-3);
     border-radius: var(--border-radius);
     background: var(--light);
     transition: all 0.2s ease;
-}
+ }
   
-.activity-item:hover {
+ .activity-item:hover {
     background: #f0f0f5;
-}
+ }
   
-.status-badge {
+ .status-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 500;
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Status Widget
    ========================================================================== */
-.status-card {
+ .status-card {
     background: white;
     border-radius: var(--border-radius-lg);
-    padding: var(--spacing-3);
+    padding: var(--spacing-2);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
+    gap: var(--spacing-1);
     min-width: 0;
     max-width: 100%;
-    max-height: 400px;
-}
+    height: 100%;
+ }
   
-.status-card-title {
+ .status-card-title {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--gray);
-    margin-bottom: var(--spacing-1);
-}
+    margin-bottom: 0;
+ }
   
-.main-stat {
+ .main-stat {
     text-align: center;
     padding: var(--spacing-1) 0;
-}
+ }
   
-.main-stat-value {
+ .main-stat-value {
     display: flex;
     align-items: baseline;
     justify-content: center;
     gap: var(--spacing-1);
-}
+ }
   
-.main-stat-value .value {
+ .main-stat-value .value {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--primary);
-}
+ }
   
-.main-stat-value .unit {
+ .main-stat-value .unit {
     font-size: 0.875rem;
     color: var(--gray);
     margin-left: var(--spacing-1);
-}
+ }
   
-.main-stat-label {
+ .main-stat-label {
     display: block;
     color: var(--gray);
     font-size: 0.75rem;
     margin-top: var(--spacing-1);
-}
+ }
   
-.stats-grid {
+ .stats-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-2);
-    padding-top: var(--spacing-2);
+    padding-top: var(--spacing-1);
     border-top: 1px solid var(--light);
-}
-
-.stat-item {
+ }
+ 
+ .stat-item {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-}
-
-.stat-label {
+ }
+ 
+ .stat-label {
     font-size: 0.75rem;
     color: var(--gray);
-}
-
-.stat-value {
+ }
+ 
+ .stat-value {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--dark);
-}
-
-.stat-unit {
+ }
+ 
+ .stat-unit {
     font-size: 0.75rem;
     color: var(--gray);
     margin-left: 0.25rem;
-}
-  
+ }
+ 
 /* ==========================================================================
-   Map Widget
-   ========================================================================== */
-.map-widget {
+  Map Widget
+  ========================================================================== */
+  .map-widget {
     height: 100%;
     width: 100%;
     min-height: calc(100vh - var(--spacing-4) * 2);
     position: relative;
-}
+ }
   
-.map-widget-container {
+ .map-widget-container {
     width: 100% !important;
     height: 100% !important;
     position: relative;
     overflow: hidden;
     border-radius: var(--border-radius);
-}
+ }
   
-.map-widget-container > div {
+ .map-widget-container > div {
     width: 100% !important;
     height: 100% !important;
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Weather Widget
    ========================================================================== */
-.weather-card {
+ .weather-card {
     background: white;
     border-radius: var(--border-radius-lg);
     padding: var(--spacing-4);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+ }
   
-.weather-content {
+ .weather-content {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-3);
     align-items: center;
     padding: var(--spacing-2);
-}
+ }
   
-.weather-location {
+ .weather-location {
     font-size: 1rem;
     color: var(--gray);
-}
+ }
   
-.weather-info {
+ .weather-info {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-2);
-}
+ }
   
-.weather-info .temperature {
+ .weather-info .temperature {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--primary);
-}
+ }
   
-.weather-info .condition {
+ .weather-info .condition {
     font-size: 1.1rem;
     color: var(--dark);
-}
+ }
   
-/* ==========================================================================
+ /* ==========================================================================
    Message Widget
    ========================================================================== */
-.messenger-widget-container {
-    position: relative;  /* 추가: absolute 포지셔닝의 기준점 */
+ .messenger-widget-container {
+    position: relative;
     height: 100%;
     max-height: calc(100vh - var(--spacing-4) * 2);
     border-radius: var(--border-radius-lg);
@@ -597,9 +607,9 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-}
+ }
   
-.messenger-widget-container .widget-fullscreen {
+ .messenger-widget-container .widget-fullscreen {
     position: fixed;
     top: 0;
     left: 0;
@@ -609,9 +619,9 @@
     margin: 0;
     max-height: none;
     border-radius: 0;
-}
-
-.messenger-widget-container .messenger-container {
+ }
+ 
+ .messenger-widget-container .messenger-container {
     height: 100%;
     margin: 0;
     border-radius: 0;
@@ -619,133 +629,127 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-}
+ }
   
-.messenger-widget-container .chat-container {
+ .messenger-widget-container .chat-container {
     height: 100%;
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0; /* 추가: 스크롤이 정상적으로 작동하도록 */
-}
+    min-height: 0;
+ }
   
-.messenger-widget-container .chat-list {
+ .messenger-widget-container .chat-list {
     width: 280px;
     min-width: 280px;
     transition: all 0.3s ease;
-}
-
-.messenger-widget-container .messenger-container.has-selected-chat .chat-list {
+ }
+ 
+ .messenger-widget-container .messenger-container.has-selected-chat .chat-list {
     display: none;
-}
+ }
   
-.messenger-widget-container .messages-container {
+ .messenger-widget-container .messages-container {
     flex: 1;
     overflow-y: auto;
     padding: var(--spacing-3);
-    height: calc(100% - 100px);  /* 수정: 입력 영역 고려 */
-    min-height: 0; /* 추가: 스크롤이 정상적으로 작동하도록 */
-}
+    height: calc(100% - 100px);
+    min-height: 0;
+ }
   
-.messenger-widget-container .input-container {
-    height: auto;      /* 수정: 자동 높이 */
-    min-height: 60px;  /* 수정: 최소 높이만 설정 */
-    flex-shrink: 0;    /* 추가: 크기 고정 */
+ .messenger-widget-container .input-container {
+    height: auto;
+    min-height: 60px;
+    flex-shrink: 0;
     position: relative;
     bottom: 0;
     left: 0;
     right: 0;
     background: white;
     border-top: 1px solid var(--light);
-}
-  
-/* ==========================================================================
-   Refresh Indicator
-   ========================================================================== */
-.mini-calendar-card {
-    background: white;
-    border-radius: var(--border-radius-lg);
-    padding: 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    flex: 0 0 auto;  /* 고정 높이 유지 */
-}
-
-.mini-calendar-card .card-title {
-    margin: 0;
-    padding: var(--spacing-2);  /* 패딩을 title에만 적용 */
-    font-size: 1.1rem;
-    color: var(--dark);
-}
-
-.mini-calendar-card,
-.widget-container,
-.empty-cell {
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
-}
-  
-/* ==========================================================================
+ }
+ 
+ /* ==========================================================================
    Animations
    ========================================================================== */
-@keyframes spin {
+ @keyframes spin {
     100% { transform: rotate(360deg); }
-}
-  
-.refresh-indicator {
+ }
+ 
+ @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+ }
+ 
+ .refresh-indicator {
     color: var(--primary);
     font-size: 16px;
     margin-right: var(--spacing-2);
     animation: spin 1s linear infinite;
-}
-  
-/* ==========================================================================
+ }
+ 
+ /* ==========================================================================
+   Loading
+   ========================================================================== */
+ .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: var(--primary);
+    animation: fadeIn 0.3s ease;
+ }
+ 
+ .loading::after {
+    content: '';
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--light);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+ }
+ 
+ /* ==========================================================================
    Responsive
    ========================================================================== */
-@media (max-width: 1200px) {
+ @media (max-width: 1200px) {
     .dashboard-grid {
         grid-template-columns: 300px 1fr;
     }
-
+ 
     .grid-layout {
-        grid-template-columns: 250px 1fr; /* 화면이 작아질 때 왼쪽 영역 너비 축소 */
+        grid-template-columns: 250px 1fr;
     }
-}
+ }
   
-@media (max-width: 992px) {
+ @media (max-width: 992px) {
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
-
+ 
     .status-grid-container {
         grid-template-columns: repeat(2, 1fr);
     }
-
+ 
     .grid-layout {
         grid-template-columns: 1fr;
         grid-template-areas: 
             "main"
             "sub1"
             "sub2";
+        height: auto;
     }
-}
+ 
+    .grid-cell:nth-child(n) {
+        height: 325px;
+    }
+ }
   
-@media (max-width: 768px) {
+ @media (max-width: 768px) {
     .dashboard-content {
         padding: var(--spacing-3);
-    }
-  
-    .grid-layout {
-        grid-template-columns: 1fr;
-        grid-template-areas: 
-            "main"
-            "sub1"
-            "sub2"
-            "sub3";
-    }
-  
-    .empty-cell {
-        height: 100%;
-        min-height: unset;
     }
   
     .activity-item {
@@ -761,12 +765,12 @@
     .messenger-widget-container {
         height: 300px;
     }
-
+ 
     .messenger-widget-container .chat-list {
         width: 240px;
         min-width: 240px;
     }
-
+ 
     .messenger-widget-container .messages-container {
         height: calc(100% - 50px);
         padding: var(--spacing-2);
@@ -776,9 +780,9 @@
         flex-direction: column;
         gap: var(--spacing-4);
     }
-}
+ }
   
-@media (max-width: 576px) {
+ @media (max-width: 576px) {
     .dashboard-content {
         padding: var(--spacing-2);
     }
@@ -790,69 +794,72 @@
     .map-widget {
         height: 250px;
     }
-
+ 
     .status-grid-container {
         grid-template-columns: 1fr;
     }
-
+ 
     .messenger-widget-container .chat-list {
         width: 200px;
         min-width: 200px;
     }
-}
-
-.attendance-stats {
+ }
+ 
+ /* ==========================================================================
+   Additional Styles
+   ========================================================================== */
+ .attendance-stats {
     width: 100%;
     margin-top: var(--spacing-3);
     padding-top: var(--spacing-3);
     border-top: 1px solid var(--light);
     transition: all 0.3s ease;
-}
-
-.stat-progress-container {
+ }
+ 
+ .stat-progress-container {
     margin-bottom: var(--spacing-2);
-}
-
-.stat-progress-label {
+ }
+ 
+ .stat-progress-label {
     display: flex;
     justify-content: space-between;
     font-size: 0.75rem;
     color: var(--gray);
     margin-bottom: 0.25rem;
-}
-
-.stat-progress-bar {
+ }
+ 
+ .stat-progress-bar {
     width: 100%;
     height: 4px;
     background-color: var(--light);
     border-radius: 2px;
     overflow: hidden;
-}
-
-.stat-progress-fill {
+ }
+ 
+ .stat-progress-fill {
     height: 100%;
     border-radius: 2px;
     transition: width 0.3s ease;
-}
-
-/* Profile Edit Styles */
-.edit-input {
+ }
+ 
+ /* Profile Edit Styles */
+ .edit-input {
     width: 100%;
     padding: var(--spacing-1);
     border: 1px solid var(--light);
     border-radius: var(--border-radius);
     font-size: 0.875rem;
     transition: all 0.2s;
-}
-
-.edit-input:focus {
+ }
+ 
+ .edit-input:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
-}
-
-.edit-button,
-.save-button {
+ }
+ 
+ .edit-button,
+ .save-button {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -861,12 +868,38 @@
     transition: color 0.2s;
     display: flex;
     align-items: center;
-}
-
-.edit-button:hover {
+ }
+ 
+ .edit-button:hover {
     color: var(--primary);
+ }
+ 
+ .save-button:hover {
+    color: var(--success);
+ }
+
+.mini-calendar-card {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: 400px;
+    display: flex;
+    flex-direction: column;
 }
 
-.save-button:hover {
-    color: var(--success);
+.mini-calendar-card .card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-3);
+    border-bottom: 1px solid var(--light);
+    height: 60px; /* 헤더 높이 고정 */
+    flex-shrink: 0; /* 높이 고정 */
+}
+
+.mini-calendar-card .calendar-container {
+    flex: 1;
+    padding: var(--spacing-2);
+    height: calc(100% - 60px); /* 헤더 높이를 제외한 나머지 공간 */
+    overflow: hidden; /* 스크롤 방지 */
 }

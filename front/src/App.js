@@ -21,9 +21,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <Suspense fallback={
-                <div className="loading">
-                    <div className="loading-spinner"></div>
-                </div>
+                <div className="loading"/>
             }>
                 <AppRoutes />
                 <ChatWidget />

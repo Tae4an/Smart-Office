@@ -4,6 +4,7 @@ import Sidebar from './Sidebar';
 import BottomNav from './BottomNav';
 import Footer from './Footer';
 import { useEffect, useState } from 'react';
+import backgroundImage from '../../assets/backgroundImage.jpg';
 import '../../styles/layout.css';
 
 const Layout = () => {
