@@ -1,142 +1,89 @@
-// components/chat/UserSearch.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// ChatRoomList.jsx
+import React from 'react';
 import { useChat } from './ChatContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import '../../styles/chat.css';
 
-const UserSearch = ({ onClose, onSelect, selectedUsers = [], embedded = false, standalone = false }) => {
-    const [keyword, setKeyword] = useState('');
-    const [users, setUsers] = useState([]);
-    const [isSearching, setIsSearching] = useState(false);
-    const { createIndividualChat } = useChat();
+const ChatRoomList = () => {
+    const { rooms, currentRoom, enterRoom } = useChat();
 
-    const handleSearch = async () => {
-        if (!keyword.trim()) {
-            setUsers([]);
-            return;
-        }
+    const getTimeString = (timestamp) => {
+        if (!timestamp) return '';
+        const date = new Date(timestamp);
+        const now = new Date();
+        const isToday = date.toDateString() === now.toDateString();
 
-        setIsSearching(true);
-        try {
-            const response = await axios.get('/api/users/search', {
-                params: { keyword }
-            });
-            setUsers(response.data);
-        } catch (error) {
-            console.error('Failed to search users:', error);
-        } finally {
-            setIsSearching(false);
-        }
+        return isToday
+            ? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : date.toLocaleDateString([], { month: 'short', day: 'numeric' });
     };
-
-    const handleUserSelect = async (user) => {
-        if (embedded) {
-            onSelect(user);
-        } else if (standalone) {
-            try {
-                await createIndividualChat(user.employeeId);
-                onClose();
-            } catch (error) {
-                console.error('Failed to create chat:', error);
-            }
-        }
-    };
-
-    const isUserSelected = (user) => {
-        return selectedUsers.some(selectedUser => selectedUser.employeeId === user.employeeId);
-    };
-
-    useEffect(() => {
-        const debounceTimer = setTimeout(() => {
-            if (keyword.length >= 2) {
-                handleSearch();
-            }
-        }, 300);
-
-        return () => clearTimeout(debounceTimer);
-    }, [keyword]);
 
     return (
-        <div className="user-search-container p-4">
-            <div className="relative mb-4">
-                <div className="absolute inset-y-0 left-3 flex items-center text-gray-400">
+        <div className="w-80 border-r flex flex-col bg-white">
+            <div className="p-4 bg-gradient-to-r from-primary to-secondary">
+                <h2 className="text-white font-bold text-lg flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                              d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
                     </svg>
-                </div>
-                <input
-                    type="text"
-                    value={keyword}
-                    onChange={(e) => setKeyword(e.target.value)}
-                    placeholder="이름 또는 부서로 검색..."
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-                />
-                {isSearching && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                        <div className="typing-indicator">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </div>
-                )}
+                    채팅방 목록
+                </h2>
             </div>
-
-            <motion.div
-                className="max-h-96 overflow-y-auto messages-container rounded-xl"
-                initial={false}
-            >
+            <div className="flex-1 overflow-y-auto messages-container">
                 <AnimatePresence>
-                    {users.length > 0 ? (
-                        users.map((user, index) => (
-                            <motion.div
-                                key={user.employeeId}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.2, delay: index * 0.05 }}
-                                onClick={() => !isUserSelected(user) && handleUserSelect(user)}
-                                className={`user-item ${isUserSelected(user) ? 'selected' : ''}`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-medium shadow-md">
-                                        {user.name.charAt(0)}
-                                    </div>
-                                    <div>
-                                        <div className="font-semibold text-gray-800">{user.name}</div>
-                                        <div className="text-sm text-gray-500">
-                                            {user.department} · {user.position}
-                                        </div>
+                    {rooms.map((room, index) => (
+                        <motion.div
+                            key={room.id}
+                            initial={{ x: -20, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -20, opacity: 0 }}
+                            transition={{ duration: 0.2, delay: index * 0.05 }}
+                            className={`chat-room p-3 cursor-pointer ${currentRoom?.id === room.id ? 'active' : ''}`}
+                            onClick={() => enterRoom(room.id)}
+                        >
+                            <div className="flex gap-3">
+                                <div className="flex-shrink-0">
+                                    <div className={`w-12 h-12 ${room.type === 'GROUP' ? 'rounded-xl' : 'rounded-full'} 
+                                        bg-gradient-to-r from-primary to-secondary flex items-center justify-center 
+                                        text-white font-medium shadow-md`}>
+                                        {room.roomName.charAt(0)}
                                     </div>
                                 </div>
-                                {isUserSelected(user) && (
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <h3 className="font-semibold text-gray-800 truncate pr-2">
+                                            {room.roomName}
+                                            {room.type === 'GROUP' && (
+                                                <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                                                    그룹
+                                                </span>
+                                            )}
+                                        </h3>
+                                        <span className="text-xs text-gray-400 whitespace-nowrap">
+                                            {getTimeString(room.lastMessage?.timestamp)}
+                                        </span>
+                                    </div>
+                                    <p className="text-sm text-gray-500 truncate">
+                                        {room.lastMessage?.content || '새로운 채팅방'}
+                                    </p>
+                                </div>
+                                {room.unreadCount > 0 && (
                                     <motion.div
                                         initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
-                                        className="text-primary font-medium flex items-center gap-1"
+                                        className="flex-shrink-0"
                                     >
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        선택됨
+                                        <span className="unread-count">
+                                            {room.unreadCount}
+                                        </span>
                                     </motion.div>
                                 )}
-                            </motion.div>
-                        ))
-                    ) : keyword.length >= 2 && !isSearching && (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="text-center py-8 text-gray-500"
-                        >
-                            검색 결과가 없습니다
+                            </div>
                         </motion.div>
-                    )}
+                    ))}
                 </AnimatePresence>
-            </motion.div>
+            </div>
         </div>
     );
 };
 
-export default UserSearch;
+export default ChatRoomList;

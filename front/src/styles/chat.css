@@ -102,14 +102,15 @@
 
 /* 메시지 버블 스타일 */
 .message-bubble {
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    position: relative;
     max-width: 70%;
     word-wrap: break-word;
     margin-bottom: 10px;
-    padding: 12px 16px;
-    line-height: 1.5;
-    border-radius: 1rem;
-    position: relative;
+    writing-mode: horizontal-tb;    /* 가로 방향 텍스트 */
 }
+
 
 .message-bubble.sent {
     background: linear-gradient(135deg, rgba(79, 70, 229, 1), rgba(124, 58, 237, 1));
@@ -295,20 +296,15 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* 메시지 콘텐츠 */
 .message-content {
     max-width: 70%;
+    writing-mode: horizontal-tb;    /* 가로 방향 텍스트 */
 }
 
 .message-content.no-avatar {
     margin-left: 3.25rem;
 }
 
-.message-text {
-    line-height: 1.5;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
 
 .message-time {
     font-size: 0.75rem;
@@ -368,4 +364,20 @@
 
 .typing-status {
     font-style: italic;
+}
+
+.message-text {
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    writing-mode: horizontal-tb;    /* 가로 방향 텍스트 */
+    text-orientation: mixed;        /* 기본 텍스트 방향 */
+}
+
+
+
+.message-content p,
+.message-bubble p {
+    writing-mode: horizontal-tb;    /* 가로 방향 텍스트 */
+    text-orientation: mixed;        /* 기본 텍스트 방향 */
 }
