@@ -1,46 +1,30 @@
-/* Commen Page Styles */
+/* Common Page Styles */
 .page {
   min-height: calc(100vh - var(--header-height) - var(--footer-height));
   animation: fadeIn 0.3s ease-in;
 }
 
 .container {
-  max-width: 1200px;
-  margin: 3rem auto;
-  padding: 0 1rem;
-}
-
-.cta-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-}
-
-.section-spacing {
-  height: 3rem;
+  max-width: var(--container-max-width);
+  margin: var(--spacing-12) auto;
+  padding: 0 var(--spacing-4);
 }
 
 /* page */
-.resume-page,
-.projects-page,
 .calendar-page,
 .msg-page,
-.ai-page,
-.hub-page,
 .home-page,
-.contact-page,
 .meeting-page,
-.emp-page,
-.doc-page,
 .map-page,
-.settings-page {
+.hub-page {  /* hub-page 추가 */
   background-color: var(--light);
 }
 
 /* Container */
 .calendar-container,
 .meeting-container,
-.map-container {
+.map-container,
+.hub-container {  /* hub-container 추가 */
   max-width: 1200px;
   margin: 3rem auto;
   padding: 0 1rem;
@@ -54,39 +38,6 @@
   min-height: 600px;
 }
 
-/* Projects Page Sepcific */
-.projects-cta {
-  background: var(--gradient);
-  color: white;
-  padding: var(--page-padding) 0;
-  text-align: center;
-  margin-top: auto;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-}
-
-/* Home Page Specific */
-
-/* Resume Page Specific */
-
-/* Contact Page Specific */
-.contact-page {
-  border-radius: var(--border-radius);
-  padding: 3rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* Calendar Page Specific */
-
-/* Chat Page Specific */
-
-/* Ai Page Specific */
-
-/* Hub Page Specific */
-
 /* Animation */
 @keyframes fadeIn {
   from {
@@ -95,7 +46,7 @@
   }
   to {
     opacity: 1;
-    transfomr: translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -114,12 +65,12 @@
 /* Button Styles */
 .btn {
   display: inline-block;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--text-base);
   font-weight: 600;
   text-decoration: none;
-  border-radius: 0.375rem;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-md);
+  transition: var(--transition-all);
   cursor: pointer;
 }
 
@@ -138,10 +89,6 @@
 @media (max-width: 992px) {
   .page-title {
     font-size: 2.5rem;
-  }
-
-  .projects-cta .cta-title {
-    font-size: 2rem;
   }
 }
 
@@ -169,6 +116,7 @@
     padding: 0;
   }
 }
+
 /* Modern Meeting Page Styles */
 :root {
   --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -194,7 +142,6 @@
   overflow: hidden;
 }
 
-
 @keyframes rotateBg {
   from {
     transform: rotate(0deg);
@@ -206,8 +153,8 @@
 
 /* Modern Container Styles */
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: var(--container-max-width);
+  margin: var(--spacing-12) auto;
   padding: 2rem;
 }
 
@@ -289,7 +236,8 @@
 .glass-card {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   position: relative;
   z-index: 2;
 }

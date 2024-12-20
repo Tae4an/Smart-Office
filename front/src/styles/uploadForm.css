@@ -1,0 +1,59 @@
+.hub-container {
+    padding: 1.5rem;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.tab-navigation {
+    margin-bottom: 1.5rem;
+}
+
+.tab-navigation nav {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-colors);
+    border-bottom: 2px solid transparent;
+    font-weight: 500;
+}
+
+.tab-button.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.tab-button-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.hub-form {
+    position: relative;
+}
+
+.tab-content {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tab-content.active {
+    opacity: 1;
+}
+
+.upload-section {
+    margin-top: 1.5rem;
+}
+
+.file-section {
+    margin-top: 2rem;
+}

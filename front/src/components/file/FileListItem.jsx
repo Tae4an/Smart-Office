@@ -1,5 +1,6 @@
 import React from 'react';
 import { Download, Trash2 } from 'lucide-react';
+import '../../styles/fileList.css';
 
 const FileListItem = ({ file, onDownload, onDelete }) => {
     const formatFileSize = (bytes) => {

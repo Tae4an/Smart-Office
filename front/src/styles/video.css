@@ -8,12 +8,12 @@
 
 .video-wrapper {
     position: relative;
-    border-radius: 16px;
+    border-radius: var(--radius-xl);
     overflow: hidden;
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border);
+    transition: var(--transition-all);
 }
 
 .video-wrapper:hover {
@@ -56,10 +56,10 @@
 .participant-name {
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-full);
     font-weight: 500;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -67,11 +67,11 @@
 
 .local-indicator {
     background: var(--primary);
-    color: white;
-    font-size: 0.75rem;
-    padding: 2px 8px;
-    border-radius: 12px;
-    margin-left: 0.5rem;
+    color: var(--surface);
+    font-size: var(--text-xs);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-lg);
+    margin-left: var(--spacing-2);
 }
 
 /* Grid Layout Variations */

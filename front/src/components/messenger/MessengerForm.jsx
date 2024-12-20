@@ -1,24 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, MessageCircle, Mail, Paperclip, Send, Plus, Tag, Edit3, Star, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Mail, Paperclip, Send, Plus, Tag, Edit3, Star, AlertCircle } from 'lucide-react';
 import '../../styles/messenger.css';
 
-const MessengerForm = ({ isWidget }) => {
-  const [chats] = useState([
-    {
-      id: 1,
-      name: "홍길동",
-      lastMessage: "알겠습니다. 오후에 회의 준비 잘 부탁드립니다.",
-      time: "1시간 전",
-      avatar: "/assets/profile2.png"
-    },
-    {
-      id: 2,
-      name: "김철수",
-      lastMessage: "새로운 위젯 추가했는데 한번 봐주실 수 있나요?",
-      time: "2시간 전",
-      avatar: "/assets/profile3.png"
-    }
-  ]);
+const EmailForm = ({ isWidget }) => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState(null);
+  const [mailboxTab, setMailboxTab] = useState('inbox');
+  const [isComposing, setIsComposing] = useState(false);
+  const [emailForm, setEmailForm] = useState({
+    subject: '',
+    recipients: '',
+    cc: '',
+    content: '',
+    attachments: [],
+    priority: 'normal',
+    labels: []
+  });
 
   const mockEmails = {
     inbox: [
@@ -168,93 +165,7 @@ const MessengerForm = ({ isWidget }) => {
     ]
   };
 
-  const mockMessages = {
-    1: [
-      {
-        id: 1,
-        text: "홍 팀장님, 오후 3시 프로젝트 중간 보고 회의 자료 검토 부탁드립니다.",
-        sender: "user",
-        timestamp: "2024-12-06T09:00:00"
-      },
-      {
-        id: 2,
-        text: "네, 지금 확인해보겠습니다. 특별히 중점적으로 봐야할 부분이 있을까요?",
-        sender: "received",
-        timestamp: "2024-12-06T09:02:00"
-      },
-      {
-        id: 3,
-        text: "3페이지 실적 분석 부분과 마지막 페이지 향후 계획 부분입니다.",
-        sender: "user",
-        timestamp: "2024-12-06T09:05:00"
-      },
-      {
-        id: 4,
-        text: "알겠습니다. 점심 식사 후 바로 검토해서 피드백 드리도록 하겠습니다.",
-        sender: "received",
-        timestamp: "2024-12-06T09:07:00"
-      },
-      {
-        id: 5,
-        text: "알겠습니다. 오후에 회의 준비 잘 부탁드립니다.",
-        sender: "user",
-        timestamp: "2024-12-06T09:10:00"
-      }
-    ],
-    2: [
-      {
-        id: 1,
-        text: "새로운 위젯 추가했는데 한번 봐주실 수 있나요? 근태 현황이랑 지도 위젯 연동해서 재택근무 시 위치 기반으로 출근 체크되게 했어요.",
-        sender: "received",
-        timestamp: "2024-12-06T10:00:00"
-      },
-      {
-        id: 2,
-        text: "오, 정말 좋은 아이디어네요! 제가 테스트해보고 피드백 드릴게요. 혹시 지도 위젯에 회사 근처 식당 정보도 같이 표시되나요?",
-        sender: "user",
-        timestamp: "2024-12-06T10:02:00"
-      },
-      {
-        id: 3,
-        text: "네, 점심시간에 맞춰서 주변 맛집 정보랑 크라우드 혼잡도까지 표시되도록 업데이트했습니다!",
-        sender: "received",
-        timestamp: "2024-12-06T10:05:00"
-      }
-    ]
-  };
-
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [activeTab, setActiveTab] = useState('chat');
-  const [selectedEmail, setSelectedEmail] = useState(null);
-  const [mailboxTab, setMailboxTab] = useState('inbox');
-  const [isComposing, setIsComposing] = useState(false);
-  const [emailForm, setEmailForm] = useState({
-    subject: '',
-    recipients: '',
-    cc: '',
-    content: '',
-    attachments: [],
-    priority: 'normal',
-    labels: []
-  });
-
-  const messagesContainerRef = useRef(null);
-  const messagesEndRef = useRef(null);
-  const [emails,setEmails] = useState(mockEmails);
-
-  const scrollToBottom = () => {
-    if (messagesContainerRef.current && messagesEndRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-    }
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  const [emails, setEmails] = useState(mockEmails);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -265,35 +176,6 @@ const MessengerForm = ({ isWidget }) => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-
-  useEffect(() => {
-    if (selectedChat) {
-      setLoading(true);
-      setTimeout(() => {
-        setMessages(mockMessages[selectedChat.id]);
-        setLoading(false);
-      }, 500);
-    }
-  }, [selectedChat]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !selectedChat) return;
-    
-    const messageData = {
-      id: Date.now(),
-      text: newMessage,
-      sender: 'user',
-      timestamp: new Date().toISOString()
-    };
-
-    setMessages(prev => [...prev, messageData]);
-    setNewMessage('');
-  };
-
-  const handleBack = () => {
-    setSelectedChat(null);
-  };
 
   const handleComposeEmail = () => {
     setIsComposing(true);
@@ -488,6 +370,11 @@ const MessengerForm = ({ isWidget }) => {
   const renderEmailList = () => (
     <div className="email-list">
       <div className="email-list-header">
+        {!isWidget && (
+          <div className="email-list-actions">
+            {/* 기존 헤더 내용 */}
+          </div>
+        )}
       </div>
       <div className="email-items">
         {emails[mailboxTab].map(email => (
@@ -497,29 +384,22 @@ const MessengerForm = ({ isWidget }) => {
             onClick={() => setSelectedEmail(email)}
           >
             <div className="email-item-header">
-              <div className="email-item-sender">
-                {getPriorityIcon(email.priority)}
-                <span>{email.sender}</span>
-              </div>
-              <div className="email-item-time">
-                {new Date(email.timestamp).toLocaleDateString()}
-              </div>
+              {getPriorityIcon(email.priority)}
+              <span className="email-item-sender">{email.sender}</span>
+              <span className="email-item-time">
+                {isWidget 
+                  ? new Date(email.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                  : new Date(email.timestamp).toLocaleDateString()
+                }
+              </span>
             </div>
             <div className="email-item-subject">{email.subject}</div>
-            <div className="email-item-preview">
-              {email.content.substring(0, 100)}...
-            </div>
-            {email.attachments.length > 0 && (
-              <div className="email-item-attachments">
-                <Paperclip size={14} />
-                <span>{email.attachments.length}개의 첨부파일</span>
-              </div>
-            )}
-            {email.labels.length > 0 && (
-              <div className="email-item-labels">
-                {email.labels.map((label, index) => (
-                  <span key={index} className="email-label-small">{label}</span>
-                ))}
+            {!isWidget && email.attachments.length > 0 && (
+              <div className="email-item-footer">
+                <div className="email-item-attachments">
+                  <Paperclip size={14} />
+                  <span>{email.attachments.length}개의 첨부파일</span>
+                </div>
               </div>
             )}
           </div>
@@ -529,324 +409,133 @@ const MessengerForm = ({ isWidget }) => {
   );
 
   const renderDesktopUI = () => (
-    <div className={`messenger-container ${(isWidget && (selectedChat || selectedEmail || isComposing)) ? 'widget-fullscreen' : ''}`}>
-      {(!isWidget || (!selectedChat && !selectedEmail && !isComposing)) && (
-        <div className="chat-list">
-          <div className="messenger-tabs">
+    <div className={`messenger-container ${(isWidget && (selectedEmail || isComposing)) ? 'widget-fullscreen' : ''}`}>
+      {(!isWidget || (!selectedEmail && !isComposing)) && (
+        <div className="mail-menu">
+          <button onClick={handleComposeEmail} className="compose-button">
+            <Plus size={18} />
+            <span>메일쓰기</span>
+          </button>
+          <div className="mailbox-list">
             <button
-              onClick={() => setActiveTab('chat')}
-              className={`messenger-tab ${activeTab === 'chat' ? 'active' : ''}`}
+              className={`mailbox-item ${mailboxTab === 'inbox' ? 'active' : ''}`}
+              onClick={() => setMailboxTab('inbox')}
             >
-              <MessageCircle size={20} />
-              <span>채팅</span>
+              <Mail size={18} />
+              <span>받은메일함</span>
+              {emails.inbox.filter(email => !email.isRead).length > 0 && (
+                <span className="unread-count">
+                  {emails.inbox.filter(email => !email.isRead).length}
+                </span>
+              )}
             </button>
             <button
-              onClick={() => setActiveTab('mail')}
-              className={`messenger-tab ${activeTab === 'mail' ? 'active' : ''}`}
+              className={`mailbox-item ${mailboxTab === 'sent' ? 'active' : ''}`}
+              onClick={() => setMailboxTab('sent')}
             >
-              <Mail size={20} />
-              <span>메일</span>
+              <Send size={18} />
+              <span>보낸메일함</span>
+            </button>
+            <button
+              className={`mailbox-item ${mailboxTab === 'drafts' ? 'active' : ''}`}
+              onClick={() => setMailboxTab('drafts')}
+            >
+              <Edit3 size={18} />
+              <span>임시보관함</span>
+              {emails.drafts.length > 0 && (
+                <span className="draft-count">{emails.drafts.length}</span>
+              )}
             </button>
           </div>
-
-          {activeTab === 'chat' ? (
-            <div className="chat-list-content">
-              {chats.map(chat => (
-                <div
-                  key={chat.id}
-                  className={`chat-list-item ${selectedChat?.id === chat.id ? 'active' : ''}`}
-                  onClick={() => setSelectedChat(chat)}
-                >
-                  <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
-                  <div className="chat-info">
-                    <div className="chat-name">{chat.name}</div>
-                    <div className="chat-last-message">{chat.lastMessage}</div>
-                  </div>
-                  <div className="chat-time">{chat.time}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="mail-menu">
-              <button onClick={handleComposeEmail} className="compose-button">
-                <Plus size={18} />
-                <span>메일쓰기</span>
-              </button>
-              <div className="mailbox-list">
-                <button
-                  className={`mailbox-item ${mailboxTab === 'inbox' ? 'active' : ''}`}
-                  onClick={() => setMailboxTab('inbox')}
-                >
-                  <Mail size={18} />
-                  <span>받은메일함</span>
-                  {emails.inbox.filter(email => !email.isRead).length > 0 && (
-                    <span className="unread-count">
-                      {emails.inbox.filter(email => !email.isRead).length}
-                    </span>
-                  )}
-                </button>
-                <button
-                  className={`mailbox-item ${mailboxTab === 'sent' ? 'active' : ''}`}
-                  onClick={() => setMailboxTab('sent')}
-                >
-                  <Send size={18} />
-                  <span>보낸메일함</span>
-                </button>
-                <button
-                  className={`mailbox-item ${mailboxTab === 'drafts' ? 'active' : ''}`}
-                  onClick={() => setMailboxTab('drafts')}
-                >
-                  <Edit3 size={18} />
-                  <span>임시보관함</span>
-                  {emails.drafts.length > 0 && (
-                    <span className="draft-count">{emails.drafts.length}</span>
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
       <div className="content-container">
-        {activeTab === 'chat' ? (
-          selectedChat ? (
+        <div className="mail-content">
+          {isComposing ? (
             <>
-              <div className="chat-header">
-                <div className="chat-header-content">
-                  {isWidget && (
-                    <button onClick={handleBack} className="back-button">
-                      <ArrowLeft size={24} />
-                    </button>
-                  )}
-                  <h2>{selectedChat.name}</h2>
-                </div>
-              </div>
-
-              <div className="messages-container" ref={messagesContainerRef}>
-                {loading ? (
-                  <div className="loading-message">메시지를 불러오는 중...</div>
-                ) : (
-                  <>
-                    {messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`message-wrapper ${message.sender === 'user' ? 'sent' : 'received'}`}
-                      >
-                        <div className={`message-bubble ${message.sender === 'user' ? 'sent' : 'received'}`}>
-                          <p>{message.text}</p>
-                          <div className="message-time">
-                            {new Date(message.timestamp).toLocaleTimeString()}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    <div ref={messagesEndRef} />
-                  </>
-                )}
-              </div>
-
-              <div className="input-container">
-                <form onSubmit={handleSubmit} className="message-form">
-                  <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    className="message-input"
-                    placeholder="메시지를 입력하세요..."
-                  />
-                  <button type="submit" className="send-button">
-                    <Send size={20} />
-                  </button>
-                </form>
-              </div>
+              {isWidget && (
+                <button onClick={() => setIsComposing(false)} className="back-button">
+                  <ArrowLeft size={24} />
+                </button>
+              )}
+              {renderEmailComposer()}
+            </>
+          ) : selectedEmail ? (
+            <>
+              {isWidget && (
+                <button onClick={() => setSelectedEmail(null)} className="back-button">
+                  <ArrowLeft size={24} />
+                </button>
+              )}
+              {renderEmailDetail(selectedEmail)}
             </>
           ) : (
-            <div className="empty-state">
-              채팅을 선택해주세요
-            </div>
-          )
-        ) : (
-          <div className="mail-content">
-            {isComposing ? (
-              <>
-                {isWidget && (
-                  <button onClick={() => setIsComposing(false)} className="back-button">
-                    <ArrowLeft size={24} />
-                  </button>
-                )}
-                {renderEmailComposer()}
-              </>
-            ) : selectedEmail ? (
-              <>
-                {isWidget && (
-                  <button onClick={() => setSelectedEmail(null)} className="back-button">
-                    <ArrowLeft size={24} />
-                  </button>
-                )}
-                {renderEmailDetail(selectedEmail)}
-              </>
-            ) : (
-              renderEmailList()
-            )}
-          </div>
-        )}
+            renderEmailList()
+          )}
+        </div>
       </div>
     </div>
   );
 
   const renderMobileUI = () => (
     <div className="messenger-container mobile">
-      {selectedChat ? (
-        <div className="mobile-chat-container">
-          <div className="mobile-chat-header">
-            <button onClick={handleBack} className="back-button">
-              <ArrowLeft size={24} />
-            </button>
-            <div className="chat-header-info">
-              <img src={selectedChat.avatar} alt={selectedChat.name} className="chat-avatar-small" />
-              <h2>{selectedChat.name}</h2>
-            </div>
-          </div>
-
-          <div className="messages-container" ref={messagesContainerRef}>
-            {loading ? (
-              <div className="loading-message">메시지를 불러오는 중...</div>
-            ) : (
-              <>
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`message-wrapper ${message.sender === 'user' ? 'sent' : 'received'}`}
-                  >
-                    <div className={`message-bubble ${message.sender === 'user' ? 'sent' : 'received'}`}>
-                      <p>{message.text}</p>
-                      <div className="message-time">
-                        {new Date(message.timestamp).toLocaleTimeString()}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </>
-            )}
-          </div>
-
-          <div className="input-container">
-            <form onSubmit={handleSubmit} className="message-form">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                className="message-input"
-                placeholder="메시지를 입력하세요..."
-              />
-              <button type="submit" className="send-button">
-                <Send size={20} />
-              </button>
-            </form>
-          </div>
-        </div>
+      {isComposing ? (
+        renderEmailComposer()
+      ) : selectedEmail ? (
+        renderEmailDetail(selectedEmail)
       ) : (
-        <div className="chat-list full-width">
-          <div className="mobile-header">
-            <div className="messenger-tabs">
-              <button
-                onClick={() => setActiveTab('chat')}
-                className={`messenger-tab ${activeTab === 'chat' ? 'active' : ''}`}
-              >
-                <MessageCircle size={20} />
-                <span>채팅</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('mail')}
-                className={`messenger-tab ${activeTab === 'mail' ? 'active' : ''}`}
-              >
-                <Mail size={20} />
-                <span>메일</span>
-              </button>
-            </div>
+        <div className="mobile-mail-container">
+          <div className="mobile-mail-tabs">
+            <select
+              value={mailboxTab}
+              onChange={(e) => setMailboxTab(e.target.value)}
+              className="mobile-mailbox-select"
+            >
+              <option value="inbox">받은메일함</option>
+              <option value="sent">보낸메일함</option>
+              <option value="drafts">임시보관함</option>
+            </select>
+            <button onClick={handleComposeEmail} className="mobile-compose-button">
+              <Plus size={18} />
+            </button>
           </div>
-          
-          {activeTab === 'chat' ? (
-            <div className="chat-list-content">
-              {chats.map(chat => (
-                <div
-                  key={chat.id}
-                  className="chat-list-item"
-                  onClick={() => setSelectedChat(chat)}
-                >
-                  <img src={chat.avatar} alt={chat.name} className="chat-avatar" />
-                  <div className="chat-info">
-                    <div className="chat-name">{chat.name}</div>
-                    <div className="chat-last-message">{chat.lastMessage}</div>
-                  </div>
-                  <div className="chat-time">{chat.time}</div>
+          <div className="mobile-email-items">
+            {emails[mailboxTab].map(email => (
+              <div
+                key={email.id}
+                className={`mobile-email-item ${!email.isRead ? 'unread' : ''}`}
+                onClick={() => setSelectedEmail(email)}
+              >
+                <div className="mobile-email-header">
+                  {getPriorityIcon(email.priority)}
+                  <span className="mobile-email-sender">{email.sender}</span>
+                  <span className="mobile-email-time">
+                    {new Date(email.timestamp).toLocaleDateString()}
+                  </span>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="mobile-mail-container">
-              {isComposing ? (
-                renderEmailComposer()
-              ) : selectedEmail ? (
-                renderEmailDetail(selectedEmail)
-              ) : (
-                <div className="mobile-mail-list">
-                  <div className="mobile-mail-tabs">
-                    <select
-                      value={mailboxTab}
-                      onChange={(e) => setMailboxTab(e.target.value)}
-                      className="mobile-mailbox-select"
-                    >
-                      <option value="inbox">받은메일함</option>
-                      <option value="sent">보낸메일함</option>
-                      <option value="drafts">임시보관함</option>
-                    </select>
-                    <button onClick={handleComposeEmail} className="mobile-compose-button">
-                      <Plus size={18} />
-                    </button>
-                  </div>
-                  <div className="mobile-email-items">
-                    {emails[mailboxTab].map(email => (
-                      <div
-                        key={email.id}
-                        className={`mobile-email-item ${!email.isRead ? 'unread' : ''}`}
-                        onClick={() => setSelectedEmail(email)}
-                      >
-                        <div className="mobile-email-header">
-                          {getPriorityIcon(email.priority)}
-                          <span className="mobile-email-sender">{email.sender}</span>
-                          <span className="mobile-email-time">
-                            {new Date(email.timestamp).toLocaleDateString()}
-                          </span>
-                        </div>
-                        <div className="mobile-email-subject">{email.subject}</div>
-                        <div className="mobile-email-preview">
-                          {email.content.substring(0, 60)}...
-                        </div>
-                        {(email.attachments.length > 0 || email.labels.length > 0) && (
-                          <div className="mobile-email-footer">
-                            {email.attachments.length > 0 && (
-                              <span className="mobile-attachment-indicator">
-                                <Paperclip size={14} />
-                                {email.attachments.length}
-                              </span>
-                            )}
-                            {email.labels.map((label, index) => (
-                              <span key={index} className="mobile-email-label">
-                                {label}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                <div className="mobile-email-subject">{email.subject}</div>
+                <div className="mobile-email-preview">
+                  {email.content.substring(0, 60)}...
+                </div>
+                {(email.attachments.length > 0 || email.labels.length > 0) && (
+                  <div className="mobile-email-footer">
+                    {email.attachments.length > 0 && (
+                      <span className="mobile-attachment-indicator">
+                        <Paperclip size={14} />
+                        {email.attachments.length}
+                      </span>
+                    )}
+                    {email.labels.map((label, index) => (
+                      <span key={index} className="mobile-email-label">
+                        {label}
+                      </span>
                     ))}
                   </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
@@ -859,4 +548,4 @@ const MessengerForm = ({ isWidget }) => {
   );
 };
 
-export default MessengerForm;
+export default EmailForm;

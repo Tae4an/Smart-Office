@@ -1,15 +1,10 @@
+import asyncio
+from typing import Optional, List, Tuple
 import cv2
 import numpy as np
-from typing import Optional, List, Tuple
 from .base import BaseRedisHandler
 from app.core.logging.logger import logger
-import pdf2image
-from PIL import Image
-import io
-from PyPDF2 import PdfWriter, PdfReader
-import hashlib
-import asyncio
-import gc
+from app.utils.image.pdf_handler import PDFHandler
 
 class RedisCacheHandler(BaseRedisHandler):
     """
@@ -43,12 +38,13 @@ class RedisCacheHandler(BaseRedisHandler):
             _lock_ttl (int): 분산 락 유효 기간 (초)
         """
         super().__init__()
-        self.default_ttl = 300  # 5분
+        self.default_ttl = 300
         self._lock_ttl = 30
+        self.pdf_handler = PDFHandler()
 
     def _generate_key(self, key: str) -> str:
-        """캐시 키 생성 (충돌 방지)"""
-        return f"file:{hashlib.md5(key.encode()).hexdigest()}"
+        """캐시 키 생성"""
+        return key
 
     def _get_lock_key(self, key: str) -> str:
         """락 키 생성"""
@@ -58,14 +54,24 @@ class RedisCacheHandler(BaseRedisHandler):
         """분산 락 획득"""
         lock_key = self._get_lock_key(key)
         for _ in range(retry):
-            if self.redis_client.set(lock_key, '1', nx=True, ex=self._lock_ttl):
+            acquired = await asyncio.to_thread(
+                self.redis_client.set,
+                lock_key,
+                '1',
+                nx=True,
+                ex=self._lock_ttl
+            )
+            if acquired:
                 return True
             await asyncio.sleep(0.1)
         return False
 
     async def release_lock(self, key: str):
         """분산 락 해제"""
-        self.redis_client.delete(self._get_lock_key(key))
+        await asyncio.to_thread(
+            self.redis_client.delete,
+            self._get_lock_key(key)
+        )
 
     def save_file(self, key: str, file_data: bytes, ttl: int = None) -> bool:
         """
@@ -77,32 +83,80 @@ class RedisCacheHandler(BaseRedisHandler):
             ttl: 캐시 유지 시간 (초)
         """
         try:
-            cache_key = self._generate_key(key)
+            # 키 변환 없이 직접 사용
             self.redis_client.setex(
-                name=cache_key,
+                name=key,
                 time=ttl or self.default_ttl,
                 value=file_data
             )
+            logger.info(f"Redis 저장 성공 - key: {key}")
             return True
         except Exception as e:
             logger.error(f"Redis 파일 저장 실패 - key: {key}, error: {str(e)}")
             return False
 
-    def get_file(self, key: str) -> Optional[bytes]:
-        """저장된 파일 데이터 조회"""
+    def get_file_sync(self, key: str) -> Optional[bytes]:
+        """동기 방식의 파일 조회"""
         try:
-            data = self.redis_client.get(f"file:{key}")
-            if data:
-                return data  # 바이너리 데이터 그대로 반환
-            logger.info(f"Redis 캐시 미스 - key: {key}")
-            return None
+            if not self.redis_client:
+                logger.error("Redis 클라이언트가 초기화되지 않음")
+                return None
+
+            data = self.redis_client.get(key)
+            
+            if not data:
+                logger.info(f"Redis 캐시 미스 - key: {key}")
+                return None
+            
+            if isinstance(data, str):
+                data = data.encode('latin1')
+                
+            return data
+            
         except Exception as e:
-            logger.error(f"Redis 파일 조회 실패 - key: {key}, error: {str(e)}")
+            logger.error(f"Redis 파일 조회 중 오류 발생: {str(e)}")
             return None
 
-    def delete_file(self, key: str) -> bool:
-        """파일 캐시 삭제"""
-        return bool(self.redis_client.delete(f"file:{key}"))
+    async def get_file(self, key: str) -> Optional[bytes]:
+        """비동기 방식의 파일 조회"""
+        try:
+            if not self.redis_client:
+                logger.error("Redis 클라이언트가 초기화되지 않음")
+                return None
+                
+            data = await asyncio.to_thread(self.redis_client.get, key)
+            
+            if not data:
+                logger.info(f"Redis 캐시 미스 - key: {key}")
+                return None
+            
+            if isinstance(data, str):
+                data = data.encode('latin1')
+                
+            logger.info(f"Redis 캐시 히트 - key: {key}, size: {len(data)} bytes")
+            return data
+            
+        except Exception as e:
+            logger.error(f"Redis 파일 조회 중 오류 발생: {str(e)}")
+            return None
+
+    def delete_file_sync(self, key: str) -> bool:
+        """동기 방식의 파일 삭제"""
+        try:
+            result = self.redis_client.delete(key)
+            return bool(result)
+        except Exception as e:
+            logger.error(f"Redis 삭제 실패: {str(e)}")
+            return False
+
+    async def delete_file(self, key: str) -> bool:
+        """비동기 방식의 파일 삭제"""
+        try:
+            result = await asyncio.to_thread(self.redis_client.delete, key)
+            return bool(result)
+        except Exception as e:
+            logger.error(f"Redis 삭제 실패: {str(e)}")
+            return False
 
     def bytes_to_cv2(self, img_bytes: bytes) -> np.ndarray:
         """바이트 데이터를 OpenCV 이미지로 변환"""
@@ -123,75 +177,9 @@ class RedisCacheHandler(BaseRedisHandler):
         return cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 95])[1].tobytes()
 
     def convert_pdf_to_images(self, pdf_bytes: bytes) -> Tuple[List[bytes], int]:
-        """
-        PDF 파일을 개별 이미지로 변환합니다.
-        
-        Args:
-            pdf_bytes (bytes): PDF 파일 바이너리 데이터
-            
-        Returns:
-            Tuple[List[bytes], int]: (이미지 바이너리 리스트, 총 페이지 수)
-            
-        Note:
-            변환된 이미지는 JPEG 형식으로 저장됩니다.
-        """
-        try:
-            images = pdf2image.convert_from_bytes(pdf_bytes)
-            return ([
-                cv2.imencode('.jpg', cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR))[1].tobytes()
-                for img in images
-            ], len(images))
-        except Exception as e:
-            logger.error(f"PDF 변환 실패: {str(e)}")
-            return [], 0
+        """PDF -> 이미지 변환 (PDFHandler로 위임)"""
+        return self.pdf_handler.convert_to_images(pdf_bytes)
 
     def merge_images_to_pdf(self, image_list: List[bytes]) -> Optional[bytes]:
-        """
-        여러 이미지를 하나의 PDF 파일로 병합합니다.
-        
-        Args:
-            image_list (List[bytes]): 병합할 이미지 바이너리 데이터 리스트
-            
-        Returns:
-            Optional[bytes]: 병합된 PDF 파일 바이너리 데이터
-            
-        Note:
-            모든 이미지는 RGB 형식으로 변환됩니다.
-        """
-        try:
-            if not image_list:
-                return None
-
-            # 메모리 사용량 최적화를 위한 청크 처리
-            pdf_writer = PdfWriter()
-            chunk_size = 10  # 한 번에 처리할 이미지 수
-            
-            for i in range(0, len(image_list), chunk_size):
-                chunk = image_list[i:i + chunk_size]
-                for img_bytes in chunk:
-                    # 이미지 바이트를 PIL Image로 변환
-                    img = Image.open(io.BytesIO(img_bytes))
-                    
-                    # RGB로 변환 (RGBA 이미지 처리를 위해)
-                    if img.mode != 'RGB':
-                        img = img.convert('RGB')
-                    
-                    # 이미지를 임시 PDF로 변환
-                    img_buf = io.BytesIO()
-                    img.save(img_buf, format='PDF')
-                    img_buf.seek(0)
-                    
-                    # PDF 페이지 추가
-                    pdf_reader = PdfReader(img_buf)
-                    pdf_writer.add_page(pdf_reader.pages[0])
-                    gc.collect()  # 명시적 메모리 정리
-
-            # 최종 PDF를 바이트로 변환
-            output_buf = io.BytesIO()
-            pdf_writer.write(output_buf)
-            output_buf.seek(0)
-            return output_buf.getvalue()
-
-        except Exception as e:
-            logger.error(f"PDF 병합 실패: {str(e)}")
-            return None
+        """이미지 -> PDF 병합 (PDFHandler로 위임)"""
+        return self.pdf_handler.merge_images(image_list)

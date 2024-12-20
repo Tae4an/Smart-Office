@@ -1,45 +1,54 @@
-/* File Page Styles */
-:root {
-    /* Colors from global.css */
-    --primary: #9aa5ff;
-    --secondary: #e21e80;
-    --success: #198754;
-    --info: #0dcaf0;
-    --warning: #ffc107;
-    --danger: #dc3545;
-    --light: #f8f9fa;
-    --dark: #212529;
-    --gray: #6c757d;
-    --text: var(--dark);
-    --text-secondary: var(--gray);
-    --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+/* File Page Specific Styles */
+.file-header {  /* 헤더 스타일 추가 */
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
 }
 
+.file-title {  /* 제목 스타일 추가 */
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* hub-container 스타일 수정 */
 .hub-container {
+    width: 100%;               /* 추가 */
+    max-width: 1200px;         /* 추가 */
+    margin: 2rem auto;         /* 수정 */
     padding: 2rem;
-    background-color: var(--light);
-    border-radius: var(--border-radius);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+}
+
+/* hub-page 내부 레이아웃 조정 */
+.hub-page {
+    display: flex;             /* 추가 */
+    justify-content: center;   /* 추가 */
+    align-items: flex-start;   /* 추가 */
+    padding: 0 1rem;          /* 추가 */
 }
 
 .hub-form {
     margin-bottom: 2rem;
 }
 
+/* 파일 업로드 관련 스타일 */
 .upload-section {
-    background: white;
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    margin-bottom: 2rem;
+    background: var(--surface-color);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-8);
+    margin-bottom: var(--spacing-8);
 }
 
 .upload-dropzone {
     border: 2px dashed var(--primary);
-    border-radius: var(--border-radius);
-    padding: 3rem;
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-12);
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition-all);
 }
 
 .upload-dropzone:hover,
@@ -245,4 +254,39 @@
 .tab-content.active {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* 새로운 Glass Morphism 스타일 적용 */
+.file-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-md);
+    transition: var(--transition);
+}
+
+.file-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* 반응형 스타일 수정 */
+@media (max-width: 1200px) {
+    .hub-container {
+        margin: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hub-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hub-container {
+        margin: 0.5rem;
+        padding: 1rem;
+    }
 }

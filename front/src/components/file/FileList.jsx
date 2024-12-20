@@ -1,6 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Download, Trash2, File, FileText, Image, Archive } from 'lucide-react';
 import { getUserFileList, downloadFile, deleteFile } from '../../utils/gcsApi';
+import '../../styles/fileList.css';
 
 const FileList = forwardRef((props, ref) => {
     const [files, setFiles] = useState([]);

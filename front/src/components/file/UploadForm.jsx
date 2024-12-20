@@ -3,6 +3,7 @@ import FileUpload from './FileUpload';
 import OCRUpload from './OCRUpload';
 import FileList from './FileList';
 import { Code, FileText } from 'lucide-react';
+import '../../styles/uploadForm.css';  // 추가된 CSS import
 
 const UploadForm = () => {
     const [activeTab, setActiveTab] = useState('files');

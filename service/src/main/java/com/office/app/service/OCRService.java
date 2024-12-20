@@ -62,26 +62,42 @@ public class OCRService {
 
             // HTTP 엔티티 생성
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
-
             OCRResponse ocrResponse = restTemplate.postForObject(
                     url,
                     requestEntity,
                     OCRResponse.class
             );
 
+            // NULL 체크 강화
             if (ocrResponse == null) {
                 throw new OCRProcessingException("OCR response is null");
             }
 
+            log.debug("Raw OCR Response: {}", ocrResponse); // 전체 응답 로깅 추가
+
+            // 상태 체크
             if (!"success".equals(ocrResponse.getStatus())) {
                 throw new OCRProcessingException("OCR processing failed: " + ocrResponse.getStatus());
+            }
+
+            // getData() null 체크
+            if (ocrResponse.getData() == null) {
+                throw new OCRProcessingException("OCR response data is null");
+            }
+
+            // getText() null 체크
+            if (ocrResponse.getData().getText() == null) {
+                throw new OCRProcessingException("OCR extracted text is null");
             }
 
             log.info("Successfully received OCR response for file: {}", filename);
             log.debug("OCR Response data: {}", ocrResponse.getData());
 
-            // LLaMA를 통한 문서 분석 수행
+            // LLaMA 분석 전에 텍스트가 비어있지 않은지 확인
             String extractedText = ocrResponse.getData().getText();
+            if (extractedText.trim().isEmpty()) {
+                throw new OCRProcessingException("OCR extracted text is empty");
+            }            // LLaMA를 통한 문서 분석 수행
             LlamaChatResponse analysis = analyzeDocument(extractedText);
 
             // 분석 결과를 OCR 응답에 추가

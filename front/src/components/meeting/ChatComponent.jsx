@@ -17,7 +17,7 @@ import {
     Close as CloseIcon,
     Chat as ChatIcon
 } from '@mui/icons-material';
-import '../../styles/chat.css';
+import '../../styles/meetingChat.css';
 
 // 메시지 컴포넌트 분리 및 메모이제이션
 const ChatMessage = memo(({ message, isMine }) => (

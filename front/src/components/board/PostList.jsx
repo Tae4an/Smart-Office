@@ -197,7 +197,7 @@ const PostList = () => {
                         />
                     </form>
                     <Button
-                        className="create-button"
+                        className="write-button"
                         variant="contained"
                         startIcon={<AddIcon />}
                         onClick={handleCreatePost}

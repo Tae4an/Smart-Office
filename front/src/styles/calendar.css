@@ -227,3 +227,39 @@
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+/* 로딩 컨테이너 스타일 추가 */
+.calendar-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+    width: 8rem;
+    height: 8rem;
+    border: 0.125rem solid transparent;
+    border-bottom-color: var(--dark);
+    border-radius: 50%;
+}
+
+/* 버튼 컨테이너 스타일 추가 */
+.calendar-controls {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.reset-button {
+    padding: 0.5rem 1rem;
+    background-color: var(--danger);
+    color: white;
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s;
+}
+
+.reset-button:hover {
+    background-color: var(--danger-dark);
+}

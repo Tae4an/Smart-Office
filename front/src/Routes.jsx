@@ -18,6 +18,7 @@ const Settings = lazy(() => import('./components/settings/Settings'));
 const PostList = lazy(()=>import('./components/board/PostList'));
 const PostDetail = lazy(() => import('./components/board/PostDetail'));
 const PostForm = lazy(() => import('./components/board/PostForm'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
 
 const AppRoutes = () => {
     return (
@@ -41,6 +42,7 @@ const AppRoutes = () => {
                 <Route path="/boards/:boardId/posts/:postId" element={<PostDetail />} />
                 <Route path="/boards/:boardId/posts/new" element={<PostForm />} />
                 <Route path="/boards/:boardId/posts/:postId/edit" element={<PostForm />} />
+                <Route path="/chat" element={<ChatPage/>}/>
 
             </Route>
 

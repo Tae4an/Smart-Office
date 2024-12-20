@@ -12,7 +12,7 @@ import redis
 
 class TestImagePaths:
     BASE_DIR = 'tmp/img/deepface/emp'
-    TEST_EMP_ID = "00003"
+    TEST_EMP_ID = "DEV003"
     VALID_IMAGE = os.path.join(BASE_DIR, f"{TEST_EMP_ID}.jpg")
     DIFFERENT_PERSON = os.path.join(BASE_DIR, "00006.jpg")
 

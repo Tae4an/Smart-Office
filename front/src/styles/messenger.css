@@ -1,339 +1,41 @@
-/* 기본 컨테이너 스타일 */
+/* 기본 컨테이너 스타일 수정 */
 .messenger-app {
     height: calc(100vh - var(--header-height) - var(--spacing-4) * 2 - var(--footer-height));
     display: flex;
     flex-direction: column;
-    background: white;
-    border-radius: var(--border-radius-lg);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-    overflow-y: hidden;
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden; /* overflow-y에서 변경 */
+    padding: 0; /* 패딩 제거 */
+}
+
+/* 메일 목록과 내용 영역 너비 조정 */
+.mail-menu {
+    width: 280px;
+    min-width: 280px;
+    border-right: 1px solid var(--gray-100);
+    background: var(--gray-50);
+    padding: var(--spacing-4);
+    height: 100%; /* 높이 100% 추가 */
+}
+
+.content-container {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    height: 100%; /* 높이 100% 추가 */
 }
 
 .messenger-container {
+    width: 100%; /* 너비 100% 추가 */
+    height: 100%; /* 높이 100% 추가 */
     display: flex;
-    flex: 1;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-}
-
-.messenger-container.widget-fullscreen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 100;
-    background: white;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--border-radius-lg);
-    overflow: hidden;
-}
-
-/* 채팅 목록 스타일 */
-.chat-list {
-    width: 300px;
-    border-right: 1px solid var(--light);
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-}
-
-.chat-list.full-width {
-    width: 100%;
-}
-
-.chat-list-header {
-    padding: var(--spacing-3);
-    border-bottom: 1px solid var(--light);
-}
-
-.chat-list-content {
-    flex: 1;
-    overflow-y: auto;
-}
-
-.chat-list-item {
-    display: flex;
-    align-items: center;
-    padding: var(--spacing-3);
-    cursor: pointer;
-    border-bottom: 1px solid var(--light);
-    transition: background-color 0.2s ease;
-}
-
-.chat-list-item:hover {
-    background-color: var(--light);
-}
-
-.chat-list-item.active {
-    background-color: rgba(30, 48, 243, 0.05);
-}
-
-.chat-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    margin-right: var(--spacing-3);
-}
-
-.chat-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.chat-name {
-    font-weight: 600;
-    margin-bottom: var(--spacing-1);
-}
-
-.chat-last-message {
-    color: var(--gray);
-    font-size: 0.875rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.chat-time {
-    color: var(--gray);
-    font-size: 0.75rem;
-    white-space: nowrap;
-}
-
-/* 채팅 헤더 스타일 */
-.chat-header {
-    padding: var(--spacing-3);
-    background-color: white;
-    border-bottom: 1px solid var(--light);
-    display: flex;
-    align-items: center;
-}
-
-.widget-fullscreen .chat-header {
-    background-color: white;
-    border-bottom: 1px solid var(--light);
-    padding: var(--spacing-3);
-}
-
-.widget-fullscreen .chat-header .back-button {
-    margin-right: var(--spacing-3);
-}
-
-.chat-header h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0;
-    color: var(--dark);
-}
-
-/* 기본 back-button 스타일 */
-.back-button {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    color: var(--gray);
-    cursor: pointer;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    z-index: 1; /* z-index 값을 낮춤 */
-}
-
-.back-button:hover {
-    background-color: var(--light);
-    color: var(--primary);
-}
-
-/* 위젯이 아닐 때 */
-.email-detail:not(.widget-fullscreen) .email-detail-header {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-3);
-    padding: var(--spacing-3);
-    border-bottom: 1px solid var(--light);
-}
-
-.email-detail:not(.widget-fullscreen) .back-button {
-    margin-right: 0;
-    background-color: transparent;
-}
-
-.email-detail:not(.widget-fullscreen) .subject-line {
-    flex: 1;
-    min-width: 0;
-}
-
-.email-detail:not(.widget-fullscreen) h2 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* 위젯일 때 */
-.widget-fullscreen .back-button {
-    position: absolute;
-    top: var(--spacing-3);
-    left: var(--spacing-3);
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-}
-
-.widget-fullscreen .back-button:hover {
-    background-color: var(--light);
-    color: var(--primary);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.chat-header-info {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-}
-
-.chat-header-content {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-3);
-}
-
-.close-button {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    color: var(--gray);
-    cursor: pointer;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-}
-
-.close-button:hover {
-    background-color: var(--light);
-    color: var(--primary);
-}
-
-/* 메시지 영역 스타일 */
-.content-container {
-    display: flex;
-    flex-direction: column;
+    margin: 0; /* 마진 제거 */
+    border-radius: inherit; /* 부모의 border-radius 상속 */
     flex: 1;
     min-height: 0;
     overflow: hidden;
-}
-
-.messages-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--spacing-3);
-}
-
-.widget-fullscreen .messages-container {
-    height: calc(100% - 120px);
-}
-
-.message-wrapper {
-    margin-bottom: var(--spacing-3);
-    display: flex;
-    flex-direction: column;
-}
-
-.message-wrapper.sent {
-    align-items: flex-end;
-}
-
-.message-wrapper.received {
-    align-items: flex-start;
-}
-
-.message-bubble {
-    max-width: 70%;
-    padding: var(--spacing-2) var(--spacing-3);
-    border-radius: var(--border-radius-lg);
-    position: relative;
-}
-
-.message-bubble.sent {
-    background: var(--gradient);
-    color: white;
-    border-bottom-right-radius: var(--spacing-1);
-}
-
-.message-bubble.received {
-    background-color: var(--light);
-    color: var(--dark);
-    border-bottom-left-radius: var(--spacing-1);
-}
-
-.message-time {
-    font-size: 0.75rem;
-    color: var(--gray);
-    margin-top: var(--spacing-1);
-}
-
-.timestamp {
-    color: var(--gray);
-    font-size: 0.875rem;
-    margin-top: var(--spacing-2);
-}
-
-/* 입력 영역 */
-.input-container {
-    padding: var(--spacing-3);
-    border-top: 1px solid var(--light);
-    background: white;
-    position: sticky;
-    bottom: 0;
-    width: 100%;
-    z-index: 10;
-}
-
-.widget-fullscreen .input-container {
-    padding: var(--spacing-4);
-    height: 80px;
-}
-
-.message-form {
-    display: flex;
-    gap: var(--spacing-2);
-    width: 100%;
-    align-items: center;
-}
-
-.message-input {
-    flex: 1;
-    padding: var(--spacing-2) var(--spacing-3);
-    border: 1px solid var(--light);
-    border-radius: var(--border-radius-xl);
-    font-size: 0.9375rem;
-    min-height: 40px;
-    max-height: 40px;
-}
-
-.send-button {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    border-radius: 50%;
-    background: var(--gradient);
-    color: white;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
 }
 
 /* 메일 컨텐츠 영역 */
@@ -341,12 +43,11 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    background-color: white;
+    background-color: var(--surface);
     min-height: 0;
     overflow: auto;
     position: relative;
-    max-height: 100%; /* 추가 */
-    height: 100%; /* 추가 */
+    height: 100%; /* 높이 100% 추가 */
 }
 
 .mail-content .back-button {
@@ -372,6 +73,7 @@
     color: var(--primary);
 }
 
+/* 풀스크린 위젯 스타일 */
 .widget-fullscreen .mail-content {
     height: 100%;
     padding: var(--spacing-3);
@@ -380,10 +82,10 @@
 .widget-fullscreen .email-composer,
 .widget-fullscreen .email-detail,
 .widget-fullscreen .email-list {
-    margin-top: 0; /* 수정: 상단 여백 제거 */
-    height: 100%; /* 추가 */
-    max-height: calc(100vh - 60px); /* 추가: 헤더 높이를 고려한 최대 높이 */
-    overflow: auto; /* 추가 */
+    margin-top: 0;
+    height: 100%;
+    max-height: calc(100vh - 60px);
+    overflow: auto;
 }
 
 .widget-fullscreen .email-detail-title .back-button {
@@ -470,77 +172,157 @@
     align-items: center;
 }
 
-.mail-item {
-    display: grid;
-    grid-template-columns: 200px 1fr 120px;
-    padding: var(--spacing-3) var(--spacing-4);
-    border-bottom: 1px solid var(--light);
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.mail-item:hover {
-    background-color: var(--light);
-}
-
-.mail-item.unread {
-    background-color: #f0f7ff;
-    font-weight: 600;
-}
-
-/* 이메일 상세보기 오버레이 */
-.email-content.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: white;
-    z-index: 10;
+/* 이메일 아이템 스타일 */
+.email-item {
     display: flex;
     flex-direction: column;
-    animation: slideIn 0.3s ease;
-    border-radius: var(--border-radius-lg);
-    margin: var(--spacing-3);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    gap: var(--spacing-1);
+    padding: var(--spacing-2) var(--spacing-4);
+    border-bottom: 1px solid var(--gray-100);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-height: 48px; /* 높이 줄임 */
 }
 
-.email-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: var(--spacing-3);
-    white-space: pre-wrap;
-    line-height: 1.6;
-    height: auto; /* 수정 */
-    min-height: 300px; /* 추가 */
+.email-item:hover {
+    background-color: var(--gray-50);
 }
 
-.widget-fullscreen .email-content {
-    height: calc(100% - 200px); /* 수정: 헤더와 첨부파일 영역을 고려한 높이 계산 */
-    max-height: none; /* 추가 */
-    overflow-y: auto; /* 추가 */
+.email-item.unread {
+    background-color: rgba(var(--primary-rgb), 0.05);
 }
 
-/* 이메일 상세 보기 스타일 */
+.email-item-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-bottom: 0;
+}
+
+.email-item-sender {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--text-lg);
+    color: var(--gray-900);
+}
+
+.email-item-time {
+    margin-left: auto;
+    color: var(--gray);
+    font-size: 0.875rem;
+}
+
+.email-item-subject {
+    font-weight: 600;
+    font-size: var(--text-sm); /* 폰트 크기 줄임 */
+    color: var(--gray-800);
+    line-height: 1.2; /* 줄 높이 줄임 */
+}
+
+/* 미리보기 관련 스타일 제거 */
+.email-item-preview {
+    display: none;
+}
+
+.email-item-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1); /* gap 줄임 */
+}
+
+.email-item-attachments {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    color: var(--gray);
+    font-size: 0.875rem;
+}
+
+.email-item-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+}
+
+/* 이메일 라벨 스타일 수정 */
+.email-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    background-color: rgba(var(--primary-rgb), 0.1);
+    padding: var(--spacing-1) var(--spacing-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--primary);
+    white-space: nowrap;
+    margin-right: var(--spacing-2);
+}
+
+.email-label svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.email-label-small {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    background-color: var(--gray-100);
+    padding: 2px var(--spacing-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    color: var(--gray-700);
+    white-space: nowrap;
+}
+
+/* 이메일 상세보기의 라벨 컨테이너 수정 */
+.email-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+}
+
+/* 위젯에서의 라벨 스타일 */
+.widget-container .email-label {
+    font-size: var(--text-xs);
+    padding: 1px var(--spacing-2);
+}
+
+/* 이메일 상세보기 */
+/* 이메일 상세보기 */
 .email-detail {
     display: flex;
     flex-direction: column;
     flex: 1;
     overflow: auto;
-    padding: var(--spacing-3);
+    padding: var(--spacing-6);
     height: 100%;
+    width: 100%; /* 너비 100% 추가 */
+    max-width: none; /* max-width 제거 */
+    margin: 0; /* 마진 제거 */
+    background: var(--surface);
 }
 
 .email-detail-header {
+    width: 100%; /* max-width 제거, 너비 100%로 설정 */
+    margin: 0 0 var(--spacing-6) 0; /* 좌우 마진 제거 */
     position: relative;
     padding-bottom: var(--spacing-4);
-    margin-bottom: var(--spacing-4);
-    width: 100%; /* 너비 100% 추가 */
 }
 
 .email-detail-info {
+    width: 100%; /* max-width 제거, 너비 100%로 설정 */
+    margin: 0 0 var(--spacing-6) 0; /* 좌우 마진 제거 */
     position: relative;
     padding-bottom: var(--spacing-4);
+    font-size: var(--text-base);
+    color: var(--gray-700);
+    line-height: 1.6;
 }
 
 .email-detail-header::after,
@@ -562,8 +344,14 @@
     min-width: 0;
 }
 
+.subject-line h2 {
+    font-size: var(--text-2xl);
+    color: var(--gray-900);
+    margin-bottom: var(--spacing-4);
+}
+
 .email-detail-title {
-    width: 100%; /* 너비 100% 추가 */
+    width: 100%;
     display: flex;
     align-items: center;
     gap: var(--spacing-3);
@@ -571,7 +359,7 @@
 }
 
 .email-detail-title .back-button {
-    position: static; /* absolute 대신 static으로 변경 */
+    position: static;
     width: 36px;
     height: 36px;
     display: flex;
@@ -583,23 +371,17 @@
     cursor: pointer;
     border-radius: 50%;
     transition: all 0.2s ease;
-    flex-shrink: 0; /* 추가: 버튼 크기 유지 */
-}
-
-/* 이메일 라벨 */
-.email-labels {
-    display: flex;
-    gap: var(--spacing-2);
-    flex-wrap: wrap;
     flex-shrink: 0;
 }
 
+/* 이메일 라벨 */
 .email-label, .email-label-small {
-    background-color: var(--light);
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    color: var(--gray);
+    background-color: var(--primary-light);
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--primary-dark);
 }
 
 /* 이메일 정보 */
@@ -613,11 +395,12 @@
 
 /* 첨부파일 섹션 */
 .attachments-section {
+    width: 100%; /* max-width 제거, 너비 100%로 설정 */
+    margin: var(--spacing-6) 0; /* 좌우 마진 제거 */
     position: relative;
-    margin: var(--spacing-4) 0;
-    padding: var(--spacing-3);
-    background-color: var(--light);
-    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+    background-color: var(--gray-50);
+    border-radius: var(--radius-lg);
 }
 
 .attachments-section::after {
@@ -641,10 +424,16 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-2);
-    padding: var(--spacing-2) var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
     background-color: white;
-    border-radius: var(--border-radius-lg);
-    border: 1px solid var(--light);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+    transition: all 0.2s ease;
+}
+
+.attachment-item:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
 }
 
 .file-size {
@@ -655,10 +444,9 @@
 /* 메일 작성 */
 .email-composer {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: white;
-    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .email-composer-header {
@@ -673,7 +461,24 @@
     padding: var(--spacing-3);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-3);
+    gap: var(--spacing-4);
+}
+
+.email-form input,
+.email-form textarea {
+    width: 100%;
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    transition: all 0.2s ease;
+}
+
+.email-form input:focus,
+.email-form textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+    outline: none;
 }
 
 .email-recipients-input,
@@ -688,38 +493,41 @@
 }
 
 .email-content-input {
-    min-height: 200px;
+    min-height: 300px;
     resize: vertical;
+    line-height: 1.6;
 }
 
-/* 메일박스 메뉴 스타일 */
+/* 메일박스 메뉴 */
 .mailbox-list {
     padding: var(--spacing-3) 0;
 }
 
 .mailbox-item {
     width: 100%;
-    padding: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
     display: flex;
     align-items: center;
-    gap: var(--spacing-2);
+    gap: var(--spacing-3);
     border: none;
     background: none;
-    color: var(--gray);
+    color: var(--gray-700);
     cursor: pointer;
     transition: all 0.2s ease;
     text-align: left;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
 }
 
 .mailbox-item:hover {
-    background-color: var(--light);
-    color: var(--primary);
+    background-color: var(--gray-50);
+    color: var (--primary);
 }
 
 .mailbox-item.active {
-    color: var(--primary);
+    color: var(--primary-dark);
     font-weight: 600;
-    background-color: rgba(30, 48, 243, 0.05);
+    background-color: var(--primary-light);
 }
 
 .unread-count, .draft-count {
@@ -733,25 +541,27 @@
 
 /* 작성 버튼 */
 .compose-button {
-    width: calc(100% - var(--spacing-3));
-    margin: var(--spacing-3) var(--spacing-2);
-    padding: var(--spacing-3);
+    width: 100%;
+    margin-bottom: var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-4);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-2);
-    background: var(--gradient);
+    background: var(--primary);
     color: white;
     border: none;
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--radius-lg);
     font-weight: 600;
+    font-size: var(--text-base);
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
 }
 
 .compose-button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-md);
 }
 
 /* 모바일 스타일 */
@@ -760,31 +570,8 @@
         flex-direction: column;
     }
 
-    .chat-list {
-        width: 100%;
-        border-right: none;
-    }
-
     .mail-sidebar {
         width: 100%;
-    }
-
-    .mobile-chat-container {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .mobile-chat-header {
-        padding: var(--spacing-3);
-        border-bottom: 1px solid var(--light);
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-3);
-    }
-
-    .mobile-header {
-        border-bottom: 1px solid var(--light);
     }
 
     .mobile-mail-container {
@@ -812,7 +599,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: var(--gradient);
+        background: var(--primary);
         color: white;
         border: none;
         display: flex;
@@ -856,7 +643,7 @@
         margin-top: var(--spacing-2);
         display: flex;
         align-items: center;
-        gap: var(--spacing-2);
+        gap: var (--spacing-2);
     }
 
     .mobile-attachment-indicator {
@@ -873,6 +660,20 @@
         border-radius: 10px;
         font-size: 0.75rem;
         color: var(--gray);
+    }
+
+    .mail-menu {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--light);
+    }
+
+    .email-detail {
+        padding: var(--spacing-4);
+    }
+
+    .email-item {
+        padding: var(--spacing-3);
     }
 }
 
@@ -898,82 +699,70 @@
     color: var(--gray);
 }
 
-/* 이메일 아이템 스타일 */
-.email-items {
+/* 이메일 컨텐츠 */
+.email-content {
+    width: 100%; /* max-width 제거, 너비 100%로 설정 */
+    margin: 0; /* 마진 제거 */
+    padding: var(--spacing-4) 0;
+    flex: 1;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    line-height: 1.8;
+    height: auto;
+    min-height: 300px;
+}
+
+.widget-fullscreen .email-content {
+    height: calc(100% - 200px);
+    max-height: none;
     overflow-y: auto;
 }
 
-.email-item {
-    padding: var(--spacing-3);
-    border-bottom: 1px solid var(--light);
-    cursor: pointer;
-    transition: all 0.2s ease;
+/* 위젯 모드 스타일 추가 */
+.widget-container .email-list {
+    max-height: 300px;  /* 위젯 높이 제한 */
+    overflow-y: auto;
 }
 
-.email-item:hover {
-    background-color: var(--light);
-}
-
-.email-item.unread {
-    background-color: #f0f7ff;
-}
-
-.email-item-header {
+.widget-container .email-item {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-    margin-bottom: var(--spacing-2);
-}
-
-.email-item-sender {
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-}
-
-.email-item-time {
-    margin-left: auto;
-    color: var(--gray);
-    font-size: 0.875rem;
-}
-
-.email-item-subject {
-    font-weight: 600;
-    margin-bottom: var(--spacing-2);
-}
-
-.email-item-preview {
-    color: var(--gray);
-    font-size: 0.875rem;
-    margin-bottom: var(--spacing-2);
-}
-
-.email-item-footer {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2);
-}
-
-.email-item-attachments {
-    display: flex;
-    align-items: center;
+    flex-direction: column;
+    padding: var(--spacing-2);
     gap: var(--spacing-1);
-    color: var(--gray);
-    font-size: 0.875rem;
+    min-height: auto;
 }
 
-/* 이메일 아이템 라벨 */
-.email-item-labels {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-2);
+.widget-container .email-item-header {
+    margin-bottom: 0;
 }
 
-.email-label-small {
-    background-color: var(--light);
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    color: var(--gray);
+.widget-container .email-item-sender {
+    font-size: var(--text-sm);
+}
+
+.widget-container .email-item-subject {
+    font-size: var(--text-sm);
+    margin-bottom: 0;
+}
+
+.widget-container .email-item-preview,
+.widget-container .email-item-footer,
+.widget-container .email-item-attachments,
+.widget-container .email-item-labels {
+    display: none;  /* 위젯에서는 숨김 */
+}
+
+.widget-container .mail-menu {
+    width: 200px;  /* 위젯에서는 메뉴 폭 줄임 */
+    padding: var(--spacing-2);
+}
+
+.widget-container .compose-button {
+    padding: var(--spacing-2);
+    margin-bottom: var(--spacing-2);
+}
+
+.widget-container .mailbox-item {
+    padding: var(--spacing-2);
+    font-size: var(--text-sm);
 }

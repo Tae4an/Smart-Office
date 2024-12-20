@@ -1,0 +1,155 @@
+/* 파일 업로드 컨테이너 */
+.upload-dropzone {
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-8);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-all);
+    background-color: var(--gray-50);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.upload-dropzone.active {
+    border-color: var(--primary);
+    background-color: var(--gray-100);
+}
+
+.upload-icon {
+    color: var(--gray-500);
+    margin-bottom: var(--spacing-4);
+}
+
+.upload-hint {
+    color: var(--gray-500);
+    margin-top: var(--spacing-2);
+    font-size: var(--text-sm);
+}
+
+/* 선택된 파일 영역 */
+.selected-file {
+    margin-bottom: var(--spacing-4);
+    padding: var(--spacing-4);
+    background: var(--gray-50);
+    border-radius: var(--radius-lg);
+}
+
+.file-preview {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: var(--spacing-4);
+    min-height: 200px;
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 50vh;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--text-sm);
+}
+
+.file-name {
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.file-size {
+    color: var(--gray-500);
+}
+
+/* 버튼 스타일 */
+.file-actions {
+    display: flex;
+    gap: var(--spacing-4);
+    margin-top: var(--spacing-4);
+}
+
+.upload-btn, 
+.cancel-btn {
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition-colors);
+}
+
+.upload-btn {
+    background-color: var(--primary);
+    color: white;
+}
+
+.upload-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.upload-btn:disabled {
+    background-color: var(--gray-400);
+    cursor: not-allowed;
+}
+
+.cancel-btn {
+    background-color: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.cancel-btn:hover {
+    background-color: var(--gray-300);
+}
+
+/* 프로그레스 바 */
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--gray-200);
+    border-radius: var(--radius-full);
+    margin-top: var(--spacing-4);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary);
+    transition: width 0.3s ease;
+}
+
+/* 에러 메시지 */
+.error-message {
+    color: var(--danger);
+    background-color: var(--gray-50);
+    padding: var(--spacing-3);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-4);
+    border: 1px solid var(--danger);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .upload-dropzone {
+        padding: var(--spacing-4);
+        min-height: 150px;
+    }
+
+    .file-actions {
+        flex-direction: column;
+    }
+
+    .upload-btn,
+    .cancel-btn {
+        width: 100%;
+    }
+}

@@ -4,13 +4,13 @@ import '../styles/filePage.css';
 
 const File = () => {
     return (
-        <div className="min-h-screen">
-            <div className="border-b border-gray-200">
-                <div className="px-4 py-4">
-                    <h1 className="text-xl font-semibold text-gray-900">Hub</h1>
+        <div className="page hub-page">
+            <div className="hub-container">
+                <div className="file-header">
+                    <h1 className="file-title">Hub</h1>
                 </div>
+                <UploadForm />
             </div>
-            <UploadForm />
         </div>
     );
 };

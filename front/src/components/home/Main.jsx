@@ -1,4 +1,3 @@
-// 실제 데이터
 import defaultProfileImage from '../../assets/profile1.png';
 import backgroundImage from '../../assets/backgroundImage.jpg';
 import React, { useState, useEffect, useRef } from 'react';
@@ -129,7 +128,6 @@ const Widget = ({ widgetId, data, onRemove, getAvailableWidgets, handleAddWidget
                 }}
                 availableWidgets={[
                     ...getAvailableWidgets(widgetId),
-                    // 현재 위젯도 선택 가능하도록 포함
                     WIDGET_CONFIG[widgetId]
                 ]}
             />
@@ -195,6 +193,11 @@ const Main = () => {
                 window.location.href = '/';
             }
         };
+
+        const savedWidgets = localStorage.getItem('gridWidgets');
+        if (savedWidgets) {
+            setGridCells(JSON.parse(savedWidgets));
+        }
 
         const getWeather = async (position) => {
             try {
@@ -271,18 +274,15 @@ const Main = () => {
                     backgroundSize: 'cover',
                     backgroundPosition: 'top',
                     backgroundRepeat: 'no-repeat',
-                    opacity: 0.15,
-                    filter: 'blur(1px)',
+                    opacity: 0.5,
                     zIndex: 0
                 }}
             />
-            <div className="dashboard-wrapper relative min-h-screen px-6">
+            <div className="dashboard-wrapper relative min-h-screen">
                 <div className="dashboard-content container">
                     <div className="dashboard-grid">
                         <div className="dashboard-column">
-                            <div className="profile-card">
-                                <ProfileSection user={user} stats={stats} />
-                            </div>
+                            <ProfileSection user={user} stats={stats} />
                             <div className="mini-calendar-card">
                                 <div className="card-title flex items-center justify-between mb-0" 
                                     style={{ paddingLeft: '16px', paddingRight: '16px' }}>
@@ -296,7 +296,7 @@ const Main = () => {
                                         </span>
                                     )}
                                 </div>
-                                <div style={{ height: '280px', padding: '0 var(--spacing-2) var(--spacing-2)' }}>
+                                <div style={{ height: '450px', padding: '0 var(--spacing-2) var(--spacing-2)' }}>
                                     <CalendarForm 
                                         height="100%"
                                         minimode={true} 
@@ -344,4 +344,3 @@ const Main = () => {
 };
 
 export default Main;
-// 실제 데이터

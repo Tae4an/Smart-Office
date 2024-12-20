@@ -1,16 +1,16 @@
 .settings-container {
-    max-width: 1200px;
-    margin: 3rem auto;
-    padding: 0 1rem;
+    max-width: var(--container-max-width);
+    margin: var(--spacing-12) auto;
+    padding: 0 var(--spacing-4);
 }
 
 .settings-content {
     display: flex;
     gap: 2rem;
     margin-top: 2rem;
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .settings-sidebar {
@@ -25,9 +25,9 @@
     text-align: left;
     background: none;
     border: none;
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--transition-all);
 }
 
 .settings-tab:hover {
@@ -36,7 +36,7 @@
 
 .settings-tab.active {
     background-color: var(--primary);
-    color: white;
+    color: var(--surface);
 }
 
 .settings-main {

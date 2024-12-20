@@ -41,10 +41,10 @@ const ChatWidget = () => {
 
     // 메인 메뉴 옵션
     const mainMenuOptions = [
-        {id: 'calendar', icon: Calendar, label: '일정 관리', color: 'bg-indigo-500'},
-        {id: 'post', icon: FileText, label: '게시글 관리', color: 'bg-emerald-500'},
-        {id: 'file', icon: Download, label: '파일 관리', color: 'bg-amber-500'},
-        {id: 'ocr', icon: Camera, label: 'OCR', color: 'bg-rose-500'}
+        {id: 'calendar', icon: Calendar, label: '일정 관리', color: 'bg-indigo-500 hover:bg-indigo-700'},
+        {id: 'post', icon: FileText, label: '게시글 관리', color: 'bg-emerald-500 hover:bg-emerald-700'},
+        {id: 'file', icon: Download, label: '파일 관리', color: 'bg-amber-500 hover:bg-amber-700'},
+        {id: 'ocr', icon: Camera, label: 'OCR', color: 'bg-rose-500 hover:bg-rose-700'}
     ];
     // 서브 메뉴 옵션들
     const subMenuOptions = {
@@ -52,28 +52,28 @@ const ChatWidget = () => {
             {
                 id: 'view',
                 label: '일정 조회',
-                color: 'bg-indigo-500 hover:bg-indigo-600',
+                color: 'bg-indigo-500 hover:bg-indigo-700',
                 handler: () => calendarHandlers.view(),
                 icon: Search
             },
             {
                 id: 'create',
                 label: '일정 등록',
-                color: 'bg-emerald-500 hover:bg-emerald-600',
+                color: 'bg-emerald-500 hover:bg-emerald-700',
                 handler: () => calendarHandlers.create.start(),
                 icon: PlusCircle
             },
             {
                 id: 'update',
                 label: '일정 수정',
-                color: 'bg-amber-500 hover:bg-amber-600',
+                color: 'bg-amber-500 hover:bg-amber-700',
                 handler: () => calendarHandlers.view('update'),
                 icon: Edit
             },
             {
                 id: 'delete',
                 label: '일정 삭제',
-                color: 'bg-rose-500 hover:bg-rose-600',
+                color: 'bg-rose-500 hover:bg-rose-700',
                 handler: () => calendarHandlers.view('delete'),
                 icon: Trash2
             }
@@ -668,8 +668,7 @@ const ChatWidget = () => {
         <Button
             className={cn(
                 'flex items-center gap-2 p-3 w-full rounded-lg text-white transition-all duration-200',
-                color || 'bg-blue-600',
-                'hover:brightness-110 hover:saturate-110',
+                color || 'bg-blue-500 hover:bg-blue-700',
                 'active:scale-[0.98]',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
                 'shadow-sm hover:shadow-md'
@@ -707,14 +706,14 @@ const ChatWidget = () => {
                                 key={option.id}
                                 label={option.label}
                                 onClick={option.handler}
-                                color="bg-blue-500"
+                                color={option.color}
                             />
                         ))}
                         <ActionButton
                             icon={ArrowLeft}
                             label="뒤로 가기"
                             onClick={handleBack}
-                            color="bg-gray-500"
+                            color="bg-gray-500 hover:bg-gray-700"
                         />
                     </>
                 )}

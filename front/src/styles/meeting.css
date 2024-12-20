@@ -1,7 +1,7 @@
 /* src/styles/Meeting.css */
 .meeting-page {
     min-height: 100vh;
-    background-color: #f5f5f5;
+    background-color: var(--background);
 }
 
 .welcome-screen {
@@ -31,15 +31,15 @@
     padding: 12px 24px;
     border: none;
     border-radius: 4px;
-    background-color: #2196f3;
-    color: white;
+    background-color: var(--primary);
+    color: var(--surface);
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .actions button:hover {
-    background-color: #1976d2;
+    background-color: var(--primary-dark);
 }
 
 .join-room {

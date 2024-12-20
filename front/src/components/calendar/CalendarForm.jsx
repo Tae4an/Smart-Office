@@ -129,18 +129,20 @@ const CalendarForm = ({ height = 'calc(100vh - 2rem)', minimode = false }) => {
   }, []);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-full">
-      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-    </div>;
+    return (
+      <div className="calendar-loading">
+        <div className="loading-spinner"></div>
+      </div>
+    );
   }
 
   return (
       <div className={minimode ? "p-2" : "h-screen p-4"} style={{ height: height }}>
         {!minimode && (
-            <div className="mb-4 flex justify-end">
+            <div className="calendar-controls">
               <button
                   onClick={handleReset}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                  className="reset-button"
               >
                 모든 일정 초기화
               </button>

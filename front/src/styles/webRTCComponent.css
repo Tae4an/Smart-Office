@@ -1,7 +1,7 @@
 /* WebRTC Component Styles */
 .video-conference-container {
     min-height: calc(100vh - var(--header-height));
-    background: #0a0c1b;
+    background: var(--gray-900);
     position: relative;
     overflow: hidden;
     padding: 2rem 0;
@@ -45,10 +45,10 @@
 .header-button {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white;
-    border-radius: 12px;
-    padding: 8px;
-    transition: all 0.3s ease;
+    color: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-2);
+    transition: var(--transition-all);
 }
 
 .header-button:hover {
@@ -120,9 +120,9 @@
 /* Error State Styles */
 .error-container {
     background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 16px;
-    padding: 2rem;
+    border: 1px solid var(--danger);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-8);
     backdrop-filter: blur(10px);
     color: white;
     text-align: center;

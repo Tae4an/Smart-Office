@@ -1,6 +1,13 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from app.core.logging.logger import logger
 from app.services.face_service import FaceService, CustomHTTPException
+from app.exceptions import (
+    FaceException,
+    FaceDetectionError,
+    FaceVerificationError,
+    StoredImageNotFound,
+    VerificationTimeout
+)
 from app.core.handlers.cache import RedisCacheHandler
 from app.models.face_detection import FaceVerificationResponse
 import asyncio
@@ -17,7 +24,7 @@ Features:
 
 # 상수 정의
 CACHE_KEY_PREFIX = "face:verify:"
-CACHE_TIMEOUT = 5.0
+CACHE_TIMEOUT = 60
 LOCK_TIMEOUT = 30
 
 # 응답 예제
@@ -29,8 +36,7 @@ RESPONSE_EXAMPLE = {
     "similarity_score": 0.7884
 }
 
-router = APIRouter(prefix="", tags=["face"])
-face_service = FaceService()
+router = APIRouter()
 cache_handler = RedisCacheHandler()
 
 @router.post(
@@ -41,6 +47,7 @@ cache_handler = RedisCacheHandler()
             "description": "얼굴 검증 성공",
             "content": {"application/json": {"example": RESPONSE_EXAMPLE}}
         },
+        401: {"description": "얼굴 검증 실패"},
         404: {"description": "이미지를 찾을 수 없음"},
         409: {"description": "동시성 제어 충돌"},
         504: {"description": "시간 초과"}
@@ -74,41 +81,59 @@ async def verify_face(emp_id: str, background_tasks: BackgroundTasks) -> FaceVer
     """
     cache_key = f"{CACHE_KEY_PREFIX}{emp_id}"
     lock_acquired = False
+    face_service = FaceService()
     
     try:
-        # 락 획득 재시도 로직 추가
-        for attempt in range(3):
-            if await cache_handler.acquire_lock(cache_key):
-                lock_acquired = True
-                break
-            await asyncio.sleep(0.5)
-            
-        if not lock_acquired:
+        # 락 획득 로직
+        if not await cache_handler.acquire_lock(cache_key):
             raise HTTPException(409, "다른 검증 작업이 진행 중입니다.")
+        lock_acquired = True
 
+        # 캐시된 이미지 조회 및 데이터 정제
         try:
-            cached_image = await asyncio.wait_for(
-                cache_handler.get_file(cache_key),
-                timeout=CACHE_TIMEOUT
-            )
-        except asyncio.TimeoutError:
-            raise HTTPException(504, "캐시 조회 시간 초과")
-
-        if not cached_image:
-            raise HTTPException(404, "캐시된 이미지를 찾을 수 없습니다.")
-
-        result = await face_service.verify_faces(emp_id, cached_image)
-        
-        # 즉시 캐시 정리 시도 후 실패시 백그라운드로 재시도
-        try:
-            await asyncio.wait_for(
-                cache_handler.delete_file(cache_key),
-                timeout=1.0
-            )
-        except:
-            background_tasks.add_task(cache_handler.delete_file, cache_key)
+            cached_image = await cache_handler.get_file(cache_key)
+            logger.debug(f"캐시된 이미지 데이터 타입: {type(cached_image)}")
             
-        return result
+            if cached_image and isinstance(cached_image, bytes):
+                # 따옴표로 감싸진 데이터 처리
+                if cached_image.startswith(b'"') and cached_image.endswith(b'"'):
+                    cached_image = cached_image[1:-1]
+                logger.debug(f"이미지 데이터 크기: {len(cached_image)} bytes")
+            
+        except Exception as e:
+            logger.error(f"캐시 조회 중 예외 발생: {str(e)}")
+            raise HTTPException(500, "캐시 조회 중 오류가 발생했습니다.")
+
+        if cached_image is None:
+            raise HTTPException(404, "캐시된 이미지를 찾을 수 없습니다.")
+            
+        # 데이터 타입 검증 및 변환
+        if isinstance(cached_image, str):
+            try:
+                cached_image = cached_image.encode('latin1')
+            except Exception as e:
+                logger.error(f"이미지 데이터 변환 실패: {str(e)}")
+                raise HTTPException(500, "이미지 데이터 변환에 실패했습니다.")
+                
+        if not isinstance(cached_image, bytes):
+            logger.error(f"캐시된 이미지 타입 오류: {type(cached_image)}")
+            raise HTTPException(500, "캐시된 이미지 형식이 올바르지 않습니다.")
+        
+        # 얼굴 검증 수행
+        try:
+            result = await face_service.verify_faces(emp_id, cached_image)
+            if not result:
+                raise HTTPException(500, "얼굴 검증 결과 생성 실패")
+            
+            if not result.verified:
+                raise FaceVerificationError()
+                
+            # 검증 성공 시 캐시 삭제
+            background_tasks.add_task(cache_handler.delete_file, cache_key)
+            return result
+            
+        except FaceException as e:
+            raise HTTPException(status_code=e.status_code, detail=e.detail)
 
     except HTTPException:
         raise

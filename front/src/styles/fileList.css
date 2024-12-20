@@ -1,0 +1,68 @@
+.file-section {
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.file-section-header {
+    margin-bottom: 1rem;
+}
+
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.file-table th,
+.file-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.file-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.file-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.file-action-btn {
+    padding: 0.25rem;
+    border-radius: 4px;
+    border: 1px solid #e0e0e0;
+    background: white;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.file-action-btn:hover {
+    background: #f5f5f5;
+}
+
+.file-action-btn:hover svg {
+    color: #2196F3;
+}
+
+.file-action-btn.delete:hover {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+@media (max-width: 768px) {
+    .file-table {
+        font-size: 0.875rem;
+    }
+
+    .file-table th,
+    .file-table td {
+        padding: 0.5rem;
+    }
+}

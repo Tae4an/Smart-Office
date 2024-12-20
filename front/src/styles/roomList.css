@@ -27,7 +27,7 @@
 
 .content-wrapper {
     padding: var(--spacing-4);
-    background-color: var(--soft-bg);
+    background-color: var(--background);
     min-height: 100vh;
 }
 
@@ -41,7 +41,7 @@
     align-items: center;
     gap: var(--spacing-3);
     font-weight: 700;
-    background: var(--soft-gradient);
+    background: var(--gradient);
     -webkit-background-clip: text;
     color: transparent;
     margin-bottom: var(--spacing-3);
@@ -55,10 +55,10 @@
 }
 
 .create-room-form {
-    background: white;
-    border-radius: var(--radius-xl);
+    background: var(--surface);
+    border-radius: var(--radius-2xl);
     padding: var(--spacing-5);
-    box-shadow: var(--card-shadow);
+    box-shadow: var(--shadow-md);
     max-width: 600px;
     margin: 0 auto;
     border: 1px solid rgba(199, 210, 254, 0.3);

@@ -1,6 +1,6 @@
 /* PostForm.css */
 .post-form-page {
-    background-color: var(--light);
+    background-color: var(--background);
     min-height: calc(100vh - var(--header-height) - var(--footer-height));
     animation: fadeIn 0.3s ease-in;
     padding: 1.5rem;
@@ -10,9 +10,9 @@
     width: 95%;
     margin: 0 auto;
     min-height: calc(100vh - var(--header-height) - var(--footer-height) - 3rem);
-    background: white;
-    border-radius: var(--border-radius-lg);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
     animation: slideUp 0.5s ease-out;
 }
 

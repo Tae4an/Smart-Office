@@ -1,12 +1,4 @@
 /* RoomList.css */
-:root {
-    --soft-primary: #6366f1;
-    --soft-secondary: #ec4899;
-    --soft-gradient: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
-    --soft-bg: #f8fafc;
-    --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --hover-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
 
 .content-wrapper {
     padding: var(--spacing-4);
