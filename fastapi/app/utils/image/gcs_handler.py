@@ -1,3 +1,4 @@
+import asyncio
 from google.cloud import storage
 from typing import List, Optional, Tuple
 from app.core.config import settings
@@ -29,6 +30,41 @@ class GCSHandler:
         self.upload_path = settings.GCS_UPLOAD_PATH
         self.cache_handler = RedisCacheHandler()
 
+    async def download_as_bytes(self, filename: str) -> Tuple[bool, Optional[bytes]]:
+        """
+        GCS의 파일을 바이트 데이터로 비동기 다운로드
+        
+        Args:
+            filename (str): 다운로드할 파일명
+            
+        Returns:
+            Tuple[bool, Optional[bytes]]: (성공 여부, 파일 데이터)
+                - 성공: (True, bytes)
+                - 실패: (False, None)
+        """
+        try:
+            if not filename:
+                logger.error("파일명이 비어있음")
+                return False, None
+
+            gcs_source_path = self.gcs_download_path + filename
+            logger.debug(f"GCS 다운로드 시도: {gcs_source_path}")
+            
+            blob = self.bucket.blob(gcs_source_path)
+            if not blob.exists():
+                logger.error(f"파일이 존재하지 않음: {gcs_source_path}")
+                return False, None
+                
+            data = await asyncio.to_thread(blob.download_as_bytes)
+            if not data:
+                return False, None
+                
+            return True, data
+            
+        except Exception as e:
+            logger.error(f"GCS 다운로드 실패: {str(e)}")
+            return False, None
+
     def upload_bytes(self, file_bytes: bytes, destination_filename: str) -> bool:
         """
         바이트 데이터를 GCS에 업로드합니다.
@@ -48,42 +84,6 @@ class GCSHandler:
         except Exception as e:
             logger.error(f"바이트 데이터 업로드 실패: {str(e)}")
             return False
-
-    def download_as_bytes(self, filename: str) -> Tuple[bool, Optional[bytes]]:
-        """
-        GCS의 파일을 바이트 데이터로 다운로드
-        
-        Args:
-            filename (str): 다운로드할 파일명
-            
-        Returns:
-            Tuple[bool, Optional[bytes]]: (성공 여부, 파일 데이터)
-        """
-        try:
-            # 캐시에서 먼저 확인
-            cached_data = self.cache_handler.get_file(filename)
-            if cached_data:
-                return True, cached_data
-
-            # GCS에서 다운로드
-            gcs_source_path = self.gcs_download_path + filename
-            
-            logger.debug(f"GCS 다운로드 시도: {gcs_source_path}")
-            
-            blob = self.bucket.blob(gcs_source_path)
-            if not blob.exists():
-                logger.error(f"파일이 존재하지 않음: {gcs_source_path}")
-                return False, None
-                
-            data = blob.download_as_bytes()
-            
-            # 캐시에 저장
-            self.cache_handler.save_file(filename, data)
-            return True, data
-            
-        except Exception as e:
-            logger.error(f"바이트 데이터 다운로드 실패: {str(e)}, 파일명: {filename}")
-            return False, None
 
     def delete_file(self, filename: str, is_upload_path: bool = False) -> bool:
         """

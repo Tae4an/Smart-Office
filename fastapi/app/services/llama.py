@@ -7,6 +7,14 @@ import asyncio
 from datetime import datetime, timedelta
 from contextlib import AsyncExitStack
 from typing import List, Optional
+from app.exceptions.llama import (
+    ModelNotFoundError,
+    ModelLoadError,
+    CompletionError,
+    ContextLengthExceededError,
+    ServiceUnavailableError
+)
+from app.exceptions.security import RateLimitExceededError
 
 class RateLimiter:
     """
@@ -49,16 +57,18 @@ class RateLimiter:
 
 class LlamaClient:
     """
-    Llama 모델과의 통신을 관리하는 클라이언트
-
-    비동기 HTTP 통신, 속도 제한, 재시도 로직을 포함
-
-    Attributes:
-        _client (Optional[httpx.AsyncClient]): 비동기 HTTP 클라이언트 인스턴스
-        _exit_stack (AsyncExitStack): 비동기 컨텍스트 관리자
-        _semaphore (asyncio.Semaphore): 동시 요청 수 제한을 위한 세마포어
-        _rate_limiter (RateLimiter): API 요청 속도 제한 관리자
-        _lock (asyncio.Lock): 클라이언트 초기화를 위한 동기화 락
+    Llama 모델과 통신하는 클라이언트
+    
+    주요 기능:
+    - 비동기 HTTP 통신
+    - 자동 재시도
+    - 요청 속도 제한
+    - 리소스 자동 정리
+    
+    속성:
+        _client (httpx.AsyncClient): 비동기 HTTP 클라이언트
+        _semaphore (asyncio.Semaphore): 동시 요청 제어
+        _rate_limiter (RateLimiter): API 요청 속도 제한
     """
 
     def __init__(self):
@@ -112,32 +122,27 @@ class LlamaClient:
 
     async def get_completion(self, request: ChatRequest) -> str:
         """
-        Llama 모델에 채팅 요청을 보내고 응답을 받음
-
+        Llama 모델에 채팅 요청을 전송하고 응답을 받습니다.
+        
+        처리 단계:
+        1. 요청 속도 제한 확인
+        2. 메시지 포맷팅
+        3. API 요청 전송
+        4. 응답 처리 및 검증
+        
         Args:
-            request (ChatRequest): 채팅 요청 정보
-                - prompt: 사용자 입력 텍스트
-                - system_prompt: 시스템 프롬프트 (선택사항)
-
+            request (ChatRequest): 채팅 요청 객체
+            
         Returns:
-            str: 모델이 생성한 응답 텍스트
-
+            str: 모델의 응답 텍스트
+            
         Raises:
-            HTTPException: 다음 상황에서 발생
-                - 429: 요청 속도 제한 초과
-                - 502: 서버 응답 파싱 실패
-                - 504: 요청 타임아웃
-
-        Note:
-            - 재시도 로직 포함 (settings.MAX_RETRIES 횟수만큼)
-            - 지수 백오프 방식의 재시도 대기 시간
-            - 요청 속도 제한 및 동시성 제어 적용
+            ModelNotFoundError: 모델을 찾을 수 없음
+            CompletionError: 응답 생성 실패
+            ServiceUnavailableError: 서비스 사용 불가
         """
         if not await self._rate_limiter.acquire():
-            raise HTTPException(
-                status_code=429,
-                detail="너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요."
-            )
+            raise RateLimitExceededError(settings.REQUESTS_PER_MINUTE, "분")
 
         async with self._semaphore:
             messages = []
@@ -165,6 +170,14 @@ class LlamaClient:
                         json=llama_request,
                         timeout=settings.TIMEOUT
                     )
+                    
+                    if response.status_code == 404:
+                        raise ModelNotFoundError(settings.MODEL_NAME)
+                    elif response.status_code == 413:
+                        raise ContextLengthExceededError(settings.MAX_TOKENS)
+                    elif response.status_code == 503:
+                        raise ServiceUnavailableError()
+                    
                     response.raise_for_status()
 
                     data = response.json()
@@ -183,18 +196,12 @@ class LlamaClient:
                     retries += 1
                     if retries > settings.MAX_RETRIES:
                         logger.error("최대 재시도 횟수 초과 (timeout)")
-                        raise HTTPException(
-                            status_code=504,
-                            detail="서버 응답 시간 초과"
-                        )
+                        raise ServiceUnavailableError()
                     await asyncio.sleep(1 * retries)
 
                 except Exception as e:
                     retries += 1
                     if retries > settings.MAX_RETRIES:
                         logger.error(f"요청 처리 중 오류 발생: {str(e)}")
-                        raise HTTPException(
-                            status_code=502,
-                            detail="Llama 서버와 통신 중 오류 발생"
-                        )
+                        raise CompletionError(str(e))
                     await asyncio.sleep(1 * retries)
