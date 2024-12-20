@@ -199,8 +199,6 @@ const Main = () => {
             setGridCells(JSON.parse(savedWidgets));
         }
 
-        fetchUserData();
-
         const getWeather = async (position) => {
             try {
                 const { latitude, longitude } = position.coords;

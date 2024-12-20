@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import UserSearch from "./UserSearch";
 import { useChat } from './ChatContext';
+import { motion } from 'framer-motion';
+import '../../styles/chat.css';
 
 const CreateChatRoom = () => {
     const { fetchRooms, enterRoom } = useChat();
@@ -20,8 +22,8 @@ const CreateChatRoom = () => {
                 members: selectedUsers.map(user => user.employeeId)
             });
 
-            await fetchRooms(); // 채팅방 목록 갱신
-            await enterRoom(response.data.id); // 생성된 채팅방으로 바로 입장
+            await fetchRooms();
+            await enterRoom(response.data.id);
             setIsOpen(false);
         } catch (error) {
             console.error('그룹 채팅방 생성 실패:', error);
@@ -30,7 +32,6 @@ const CreateChatRoom = () => {
 
     const handleUserSelect = (user) => {
         setSelectedUsers(prev => {
-            // 이미 선택된 사용자인지 확인
             if (prev.some(u => u.employeeId === user.employeeId)) {
                 return prev;
             }
@@ -42,14 +43,20 @@ const CreateChatRoom = () => {
         setSelectedUsers(prev => prev.filter(user => user.employeeId !== employeeId));
     };
 
+    const CreateChatButton = ({ onClick }) => (
+        <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={onClick}
+            className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+        >
+            새 채팅
+        </motion.button>
+    );
+
     return (
         <>
-            <button
-                onClick={() => setIsOpen(true)}
-                className="w-full bg-primary text-white py-2 rounded-lg"
-            >
-                새 채팅
-            </button>
+            <CreateChatButton onClick={() => setIsOpen(true)} />
 
             {isOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -91,7 +98,9 @@ const CreateChatRoom = () => {
                                         <h3 className="font-semibold mb-2">선택된 멤버</h3>
                                         <div className="flex flex-wrap gap-2">
                                             {selectedUsers.map(user => (
-                                                <div
+                                                <motion.div
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
                                                     key={user.employeeId}
                                                     className="bg-gray-100 px-3 py-1 rounded-full flex items-center gap-2"
                                                 >
@@ -103,7 +112,7 @@ const CreateChatRoom = () => {
                                                     >
                                                         ×
                                                     </button>
-                                                </div>
+                                                </motion.div>
                                             ))}
                                         </div>
                                     </div>
@@ -114,31 +123,37 @@ const CreateChatRoom = () => {
                                         embedded={true}
                                     />
 
-                                    <button
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
                                         type="submit"
                                         disabled={selectedUsers.length < 2 || !groupName}
-                                        className="w-full bg-primary text-white py-2 rounded-lg mt-4 disabled:bg-gray-300"
+                                        className="w-full bg-primary text-white py-2 rounded-lg mt-4 disabled:bg-gray-300 transition-all duration-200"
                                     >
                                         그룹 채팅방 만들기
-                                    </button>
+                                    </motion.button>
                                 </form>
                             </div>
                         ) : showUserSearch ? (
                             <UserSearch onClose={() => setIsOpen(false)} standalone={true} />
                         ) : (
-                            <div className="p-4">
-                                <button
+                            <div className="p-4 space-y-3">
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={() => setShowUserSearch(true)}
                                     className="w-full bg-primary text-white py-2 rounded-lg mb-2"
                                 >
                                     1:1 채팅
-                                </button>
-                                <button
+                                </motion.button>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                     onClick={() => setShowGroupCreate(true)}
                                     className="w-full bg-secondary text-white py-2 rounded-lg"
                                 >
                                     그룹 채팅
-                                </button>
+                                </motion.button>
                             </div>
                         )}
                     </div>
@@ -147,4 +162,5 @@ const CreateChatRoom = () => {
         </>
     );
 };
+
 export default CreateChatRoom;

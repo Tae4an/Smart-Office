@@ -1,12 +1,12 @@
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import PropTypes from 'prop-types';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import {useState, useEffect, useCallback, useMemo} from 'react';
 import axios from 'axios';
-import { fetchWeatherData } from '../../utils/WeatherUtils';
+import {fetchWeatherData} from '../../utils/WeatherUtils';
 import VerifyModal from '../ai/VerifyModal';
 import '../../styles/layout.css';
 
-const Header = ({ setIsMenuOpen }) => {
+const Header = ({setIsMenuOpen}) => {
     const navigate = useNavigate();
     const [showNotifications, setShowNotifications] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -18,15 +18,15 @@ const Header = ({ setIsMenuOpen }) => {
 
     // 프로필 모달 상태 추가
     const [selectedEmployee, setSelectedEmployee] = useState(null);
-    const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+    const [modalPosition, setModalPosition] = useState({x: 0, y: 0});
 
     // notifications 상태를 const로 변경 (setNotifications 사용하지 않음)
     const notifications = [
-        { id: 1, message: "새로운 공지사항이 등록되었습니다.", date: "2024-12-09" },
-        { id: 2, message: "12월 정기 회의 일정이 변경되었습니다.", date: "2024-12-08" },
-        { id: 3, message: "연말 워크샵 참석 여부를 확인해주세요.", date: "2024-12-07" },
-        { id: 4, message: "새로운 프로젝트 킥오프 미팅이 예정되어 있습니다.", date: "2024-12-06" },
-        { id: 5, message: "보안 교육 이수 기간이 7일 남았습니다.", date: "2024-12-05" }
+        {id: 1, message: "새로운 공지사항이 등록되었습니다.", date: "2024-12-09"},
+        {id: 2, message: "12월 정기 회의 일정이 변경되었습니다.", date: "2024-12-08"},
+        {id: 3, message: "연말 워크샵 참석 여부를 확인해주세요.", date: "2024-12-07"},
+        {id: 4, message: "새로운 프로젝트 킥오프 미팅이 예정되어 있습니다.", date: "2024-12-06"},
+        {id: 5, message: "보안 교육 이수 기간이 7일 남았습니다.", date: "2024-12-05"}
     ];
 
     // JSON 서버에서 데이터 가져오기 부분을 하드코딩된 데이터로 변경
@@ -474,8 +474,8 @@ const Header = ({ setIsMenuOpen }) => {
         // 모달이 화면 오른쪽을 벗어나지 않도록 위치 조정
         const x = rect.right + 10 > window.innerWidth ? window.innerWidth - 320 : rect.right + 10;
         const y = rect.top;
-        
-        setModalPosition({ x, y });
+
+        setModalPosition({x, y});
         setSelectedEmployee(employee);
     };
 
@@ -487,8 +487,8 @@ const Header = ({ setIsMenuOpen }) => {
     // handleSearch를 useCallback으로 감싸서 의존성 문제 해결
     const handleSearch = useCallback((e) => {
         e.preventDefault();
-        
-        
+
+
         let results = userData.filter(item => {
             return (
                 item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -498,7 +498,7 @@ const Header = ({ setIsMenuOpen }) => {
         });
 
         console.log(`검색어 "${searchTerm}"에 대한 검색 결과: ${results.length}건`);
-        
+
         setSearchResults(results);
         setDisplayedResults(results.slice(0, itemsPerPage));
         setPage(1);
@@ -513,7 +513,7 @@ const Header = ({ setIsMenuOpen }) => {
         setTimeout(() => {
             const nextIndex = page * itemsPerPage;
             const newResults = searchResults.slice(nextIndex, nextIndex + itemsPerPage);
-            
+
             setDisplayedResults(prev => [...prev, ...newResults]);
             setPage(prev => prev + 1);
             setIsLoading(false);
@@ -523,7 +523,10 @@ const Header = ({ setIsMenuOpen }) => {
     // 검색어 변경 시 검색 실행
     useEffect(() => {
         if (searchTerm) {
-            handleSearch({ preventDefault: () => {} });
+            handleSearch({
+                preventDefault: () => {
+                }
+            });
         }
     }, [searchTerm, handleSearch]);
 
@@ -532,7 +535,7 @@ const Header = ({ setIsMenuOpen }) => {
         if (!searchTerm) return;
 
         const handleScroll = (e) => {
-            const { scrollTop, scrollHeight, clientHeight } = e.target;
+            const {scrollTop, scrollHeight, clientHeight} = e.target;
             if (scrollHeight - (scrollTop + clientHeight) < 50 && !isLoading) {
                 loadMore();
             }
@@ -556,7 +559,7 @@ const Header = ({ setIsMenuOpen }) => {
     useEffect(() => {
         const getWeather = async (position) => {
             try {
-                const { latitude, longitude } = position.coords;
+                const {latitude, longitude} = position.coords;
                 const weatherData = await fetchWeatherData(latitude, longitude);
                 setWeather(weatherData);
                 setWeatherLoading(false);
@@ -575,15 +578,14 @@ const Header = ({ setIsMenuOpen }) => {
 
     const handleVerifyClick = () => {
         setIsVerifyModalOpen(true);
-
+    }
     const clearSearch = () => {
         setSearchTerm('');
         setSearchResults([]);
         setDisplayedResults([]);
         setPage(1);
     };
-
-    return(
+    return (
         <header className="header">
             <div className="header-container">
                 <div className="search-container">
@@ -597,7 +599,7 @@ const Header = ({ setIsMenuOpen }) => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
                         />
-                        <button 
+                        <button
                             className={`clear-search ${searchTerm ? 'visible' : ''}`}
                             onClick={clearSearch}
                             type="button"
@@ -613,8 +615,8 @@ const Header = ({ setIsMenuOpen }) => {
                                         <>
                                             <ul className="results-list">
                                                 {displayedResults.map((employee) => (
-                                                    <li 
-                                                        key={employee.id} 
+                                                    <li
+                                                        key={employee.id}
                                                         className="result-item"
                                                         onMouseEnter={(e) => handleEmployeeHover(employee, e)}
                                                         onMouseLeave={handleEmployeeLeave}
@@ -728,7 +730,7 @@ const Header = ({ setIsMenuOpen }) => {
                 </div>
             </div>
             {selectedEmployee && (
-                <div 
+                <div
                     className={`search-profile-modal ${selectedEmployee ? 'visible' : 'hidden'}`}
                     style={{
                         top: `${modalPosition.y}px`,
@@ -760,7 +762,7 @@ const Header = ({ setIsMenuOpen }) => {
                     </div>
                 </div>
             )}
-            <VerifyModal 
+            <VerifyModal
                 open={isVerifyModalOpen}
                 onClose={() => setIsVerifyModalOpen(false)}
             />
