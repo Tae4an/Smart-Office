@@ -1,4 +1,4 @@
-[![Build Status](http://211.188.62.189:8080/buildStatus/icon?job=SmartOffice&style=flat-square&subject=CI/CD)](http://211.188.62.189:8080/job/SmartOffice)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)](http://211.188.62.189:8080/job/SmartOffice)
 
 # 🚀 Smart Office Solution
 
