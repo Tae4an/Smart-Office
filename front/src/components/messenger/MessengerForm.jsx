@@ -185,37 +185,39 @@ const EmailForm = ({ isWidget }) => {
   const handleSendEmail = (e) => {
     e.preventDefault();
     
-    // Add new email to sent box
-    const newEmail = {
-      id: Date.now(),
-      subject: emailForm.subject,
-      sender: 'me@company.com',
-      recipients: emailForm.recipients.split(',').map(r => r.trim()),
-      cc: emailForm.cc.split(',').map(r => r.trim()),
-      content: emailForm.content,
-      timestamp: new Date().toISOString(),
-      isRead: true,
-      priority: emailForm.priority,
-      attachments: emailForm.attachments,
-      labels: emailForm.labels
-    };
+    if (window.confirm('메일을 보내시겠습니까?')) {
+        // Add new email to sent box
+        const newEmail = {
+            id: Date.now(),
+            subject: emailForm.subject,
+            sender: 'me@company.com',
+            recipients: emailForm.recipients.split(',').map(r => r.trim()),
+            cc: emailForm.cc.split(',').map(r => r.trim()),
+            content: emailForm.content,
+            timestamp: new Date().toISOString(),
+            isRead: true,
+            priority: emailForm.priority,
+            attachments: emailForm.attachments,
+            labels: emailForm.labels
+        };
 
-    setEmails(prev => ({
-      ...prev,
-      sent: [newEmail, ...prev.sent]
-    }));
+        setEmails(prev => ({
+            ...prev,
+            sent: [newEmail, ...prev.sent]
+        }));
 
-    setIsComposing(false);
-    setEmailForm({
-      subject: '',
-      recipients: '',
-      cc: '',
-      content: '',
-      attachments: [],
-      priority: 'normal',
-      labels: []
-    });
-  };
+        setIsComposing(false);
+        setEmailForm({
+            subject: '',
+            recipients: '',
+            cc: '',
+            content: '',
+            attachments: [],
+            priority: 'normal',
+            labels: []
+        });
+    }
+};
 
   const getPriorityIcon = (priority) => {
     switch (priority) {

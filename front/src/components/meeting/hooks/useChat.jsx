@@ -7,19 +7,21 @@ export const useChat = () => {
     const [chatMessages, setChatMessages] = useState([]);
 
     const handleChatMessage = useCallback((message) => {
-        if (!isChatOpen && message.data) {
+        // JOIN, LEAVE 타입의 메시지는 무시
+        if (!message.data || message.data.type === 'JOIN' || message.data.type === 'LEAVE') {
+            return;
+        }
+
+        if (!isChatOpen) {
             const userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
-            const isSystemMessage = message.data.type === 'JOIN' || message.data.type === 'LEAVE';
             const isMyMessage = message.data.senderId === userInfo?.employeeId;
 
-            if (!isSystemMessage && !isMyMessage) {
+            if (!isMyMessage) {
                 setUnreadMessages(prev => prev + 1);
             }
         }
 
-        if (message.data) {
-            setChatMessages(prev => [...prev, message.data]);
-        }
+        setChatMessages(prev => [...prev, message.data]);
     }, [isChatOpen]);
 
     const handleChatToggle = useCallback(() => {

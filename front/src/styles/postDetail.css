@@ -8,16 +8,19 @@
 
 .post-detail-container {
     width: 95%;
+    max-width: 1200px;  /* 최대 너비 제한 추가 */
     margin: 0 auto;
     min-height: calc(100vh - var(--header-height) - var(--footer-height) - 3rem);
     background: var(--surface);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-3xl);
     box-shadow: var(--shadow-md);
     animation: slideUp 0.5s ease-out;
+    display: flex;                /* 플렉스 컨테이너로 변경 */
+    flex-direction: column;       /* 세로 방향 정렬 */
 }
 
 .post-header {
-    padding: 1.5rem;
+    padding: 1.5rem;            /* 2rem에서 1.5rem으로 감소 */
     border-bottom: 2px solid var(--light);
     background: linear-gradient(to right, var(--light), white);
     border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
@@ -67,10 +70,11 @@
 }
 
 .post-info {
-    padding: 1rem 1.5rem;
+    padding: 1rem 1.5rem;       /* 상하 패딩 감소 */
     background-color: var(--light);
-    border-radius: var(--border-radius);
-    margin: 0 1.5rem;
+    border-radius: 0;            /* 모서리 제거 */
+    margin: 0;                   /* 마진 제거 */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .info-text {
@@ -79,18 +83,24 @@
 }
 
 .post-content {
-    padding: 2rem 1.5rem;
+    flex: 1;                     /* 남은 공간 차지 */
+    padding: 1.5rem;            /* 2.5rem에서 1.5rem으로 감소 */
     line-height: 1.8;
     font-size: 1.1rem;
     color: var(--dark);
     min-height: 300px;
+    background: white;           /* 배경색 추가 */
+    white-space: pre-wrap;
+    overflow-wrap: break-word;   /* 긴 텍스트 줄바꿈 */
+    word-break: break-word;      /* 단어 단위 줄바꿈 */
 }
 
 .comment-section {
-    padding: 1.5rem;
+    padding: 1.5rem;            /* 2rem에서 1.5rem으로 감소 */
     background-color: var(--light);
-    margin: 0 1.5rem 1.5rem;
-    border-radius: var(--border-radius);
+    margin: 0;                   /* 마진 제거 */
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .comment-header {
@@ -104,10 +114,10 @@
 }
 
 .comment-count {
-    background: var(--gradient);
-    color: white;
+    background: none;
+    color: black;
     padding: 0.2rem 0.8rem;
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-sm);
     font-size: 0.9rem;
 }
 
@@ -163,14 +173,22 @@
 
     .post-detail-container {
         width: 100%;
+        border-radius: 0;
     }
 
     .post-header {
-        padding: 1rem;
+        padding: 1.5rem;
     }
 
     .post-title {
-        font-size: 1.5rem !important;
+        font-size: 1.3rem !important;
+    }
+
+    .post-info,
+    .post-content,
+    .comment-section,
+    .attachments-section {
+        padding: 1.5rem;
     }
 
     .post-info {
@@ -192,14 +210,16 @@
 
     .action-buttons {
         flex-direction: column;
+        margin-left: auto !important;  /* 버튼을 오른쪽으로 정렬 */
     }
 }
 /* Attachments Section */
 .attachments-section {
-    padding: 1.5rem;
+    padding: 1rem 1.5rem;       /* 패딩 감소 */
     background-color: var(--light);
-    margin: 1.5rem;
-    border-radius: var(--border-radius);
+    margin: 0;                   /* 마진 제거 */
+    border-radius: 0;            /* 모서리 제거 */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.3s ease-in;
 }
 

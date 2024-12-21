@@ -104,22 +104,6 @@ const MeetingRoom = () => {
     return (
         <Fade in={true}>
             <div className="meeting-room-container">
-                <Box className="meeting-header">
-                    <Container maxWidth="xl">
-                        <Box display="flex" justifyContent="space-between" alignItems="center">
-                            <Typography variant="h4" className="room-title">
-                                {state?.roomName || '회의방'}
-                            </Typography>
-                            <Button
-                                className="control-button leave"
-                                onClick={() => setShowLeaveDialog(true)}
-                            >
-                                회의 나가기
-                            </Button>
-                        </Box>
-                    </Container>
-                </Box>
-
                 <Box className="meeting-room">
                     <Container maxWidth="xl">
                         {roomAccess && (

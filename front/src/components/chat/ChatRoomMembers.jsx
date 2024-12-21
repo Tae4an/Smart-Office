@@ -46,10 +46,10 @@ const ChatRoomMembers = ({ roomId }) => {
                 className="p-4 border-b bg-gradient-to-r from-primary to-secondary"
             >
                 <div className="flex justify-between items-center">
-                    <h3 className="font-bold text-white">채팅방 멤버 ({members.length})</h3>
+                    <h3 className="font-bold text-black">채팅방 멤버 ({members.length})</h3>
                     <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="text-white hover:bg-white/20 rounded-full p-1 transition-all duration-200"
+                        className="text-black hover:bg-white/20 rounded-full p-1 transition-all duration-200"
                     >
                         <svg
                             className={`w-5 h-5 transform transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
@@ -77,15 +77,15 @@ const ChatRoomMembers = ({ roomId }) => {
                             className="group py-2 px-3 flex items-center gap-3 rounded-lg hover:bg-gray-50 transition-all duration-200"
                         >
                             <div className="relative">
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white shadow-md">
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-black shadow-md">
                                     {member.name.charAt(0)}
                                 </div>
                                 <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500 border-2 border-white shadow-sm" />
                             </div>
                             <div className="flex-1">
                                 <p className="font-medium text-gray-800">{member.name}</p>
-                                <p className="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                    접속 중
+                                <p className="text-xs text-gray-600">
+                                    참여자
                                 </p>
                             </div>
                         </motion.li>

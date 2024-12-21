@@ -445,8 +445,7 @@
 .email-composer {
     flex: 1;
     padding: var(--spacing-4);
-    max-width: 1000px;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .email-composer-header {
@@ -496,6 +495,48 @@
     min-height: 300px;
     resize: vertical;
     line-height: 1.6;
+}
+
+/* 이메일 폼 푸터 */
+.email-form-footer {
+    display: flex;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) 0;
+}
+
+.attach-button, .send-email-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-4);
+    border-radius: var(--radius-lg);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.attach-button {
+    background-color: var(--gray-50);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+}
+
+.attach-button:hover {
+    background-color: var(--gray-100);
+    border-color: var(--gray-300);
+}
+
+.send-email-button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    margin-left: auto;
+}
+
+.send-email-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
 }
 
 /* 메일박스 메뉴 */

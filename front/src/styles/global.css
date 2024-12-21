@@ -4,6 +4,7 @@
     --primary: #9aa5ff;
     --primary-light: #bdc2ff;
     --primary-dark: #7885ff;
+    --primary-rgb: 154, 165, 255;   /* #9aa5ff의 RGB 값 */
     --secondary: #6c59ff;
     --secondary-light: #ff4da6;
     --secondary-dark: #b31865;
@@ -40,6 +41,7 @@
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
     --radius-2xl: 1rem;
+    --radius-3xl: 1.5rem;
     --radius-full: 9999px;
 
     /* Header & Footer Heights */
@@ -141,7 +143,7 @@
     cursor: pointer;
     user-select: none;
     border: 1px solid transparent;
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-sm);
     transition: all 0.3s ease;
   }
   

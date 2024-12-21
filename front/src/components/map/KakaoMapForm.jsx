@@ -95,8 +95,10 @@ const KakaoMapForm = () => {
                     const infowindow = new window.kakao.maps.InfoWindow({
                         content: `
                             <div class="info-window">
-                                <div>${markerData.memo}</div>
-                                <button onclick="window.deleteMarker('${markerData.id}')">삭제</button>
+                                <div class="info-window-content">${markerData.memo}</div>
+                                <button class="info-window-delete" onclick="window.deleteMarker('${markerData.id}')">
+                                    삭제
+                                </button>
                             </div>
                         `,
                         removable: true
@@ -291,8 +293,10 @@ const KakaoMapForm = () => {
         const infowindow = new window.kakao.maps.InfoWindow({
             content: `
                 <div class="info-window">
-                    <div>${memo}</div>
-                    <button onclick="window.deleteMarker('${newMarkerId}')">삭제</button>
+                    <div class="info-window-content">${memo}</div>
+                    <button class="info-window-delete" onclick="window.deleteMarker('${newMarkerId}')">
+                        삭제
+                    </button>
                 </div>
             `,
             removable: true
@@ -390,59 +394,71 @@ const KakaoMapForm = () => {
     };
 
     return (
-        <div style={{ position: 'relative' }}>
-            <div className="map-search-container">
-                <form onSubmit={handleSearch}>
-                    <input
-                        type="text"
-                        name="search"
-                        className="map-search-input"
-                        placeholder="위치 검색..."
-                    />
-                    <button type="submit">검색</button>
-                    <button type="button" onClick={handleClearSearch}>초기화</button>
-                    <button 
-                        type="button" 
-                        onClick={getCurrentLocation}
-                        className="location-button"
-                        title="현재 위치로 이동"
-                    >
-                        📍
-                    </button>
-                </form>
-            </div>
-            
-            {searchResults.length > 0 && (
-                <div className="search-results-container">
-                    {searchResults.map((place) => (
-                        <div
-                            key={place.id}
-                            className="search-result-item"
-                            onClick={() => handlePlaceClick(place)}
-                        >
-                            <div><strong>{place.place_name}</strong></div>
-                            <div>{place.address_name}</div>
-                        </div>
-                    ))}
+        <div className="map-layout">
+            <div className="map-sidebar">
+                <h2 className="sidebar-title">위치 검색</h2>
+                <div className="map-search-container">
+                    <form onSubmit={handleSearch}>
+                        <input
+                            type="text"
+                            name="search"
+                            className="map-search-input"
+                            placeholder="위치 검색..."
+                        />
+                        <button type="submit">검색</button>
+                        <button type="button" onClick={handleClearSearch}>초기화</button>
+                    </form>
                 </div>
-            )}
+                
+                {searchResults.length > 0 && (
+                    <div className="search-results-container">
+                        {searchResults.map((place) => (
+                            <div
+                                key={place.id}
+                                className="search-result-item"
+                                onClick={() => handlePlaceClick(place)}
+                            >
+                                <div><strong>{place.place_name}</strong></div>
+                                <div>{place.address_name}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
 
-            <form 
-                className={`memo-form ${showMemoForm ? 'active' : ''}`}
-                onSubmit={handleMemoSubmit}
-            >
-                <textarea
-                    name="memo"
-                    className="memo-input"
-                    placeholder="메모를 입력하세요..."
-                    rows="3"
-                ></textarea>
-                <button type="submit">저장</button>
-                <button type="button" onClick={() => setShowMemoForm(false)}>취소</button>
-            </form>
+            <div className="map-main">
+                <button 
+                    type="button" 
+                    onClick={getCurrentLocation}
+                    className="location-button"
+                    style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        zIndex: 2
+                    }}
+                    title="현재 위치로 이동"
+                >
+                    📍
+                </button>
 
-            <div ref={mapContainerRef}>
-                <div id="map"></div>
+                <form 
+                    className={`memo-form ${showMemoForm ? 'active' : ''}`}
+                    onSubmit={handleMemoSubmit}
+                >
+                    <textarea
+                        name="memo"
+                        className="memo-input"
+                        placeholder="메모를 입력하세요..."
+                        rows="3"
+                    ></textarea>
+                    <button type="submit">저장</button>
+                    <button type="button" onClick={() => setShowMemoForm(false)}>취소</button>
+                </form>
+
+                <div ref={mapContainerRef}>
+                    <div id="map"></div>
+                </div>
             </div>
         </div>
     );

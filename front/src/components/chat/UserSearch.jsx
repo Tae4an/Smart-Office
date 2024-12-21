@@ -100,7 +100,7 @@ const UserSearch = ({ onClose, onSelect, selectedUsers = [], embedded = false, s
                                 className={`user-item ${isUserSelected(user) ? 'selected' : ''}`}
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-medium shadow-md">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-black font-medium shadow-md">
                                         {user.name.charAt(0)}
                                     </div>
                                     <div>

@@ -48,7 +48,7 @@ const CreateChatRoom = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={onClick}
-            className="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+            className="w-full custom-button"
         >
             새 채팅
         </motion.button>
@@ -128,7 +128,7 @@ const CreateChatRoom = () => {
                                         whileTap={{ scale: 0.98 }}
                                         type="submit"
                                         disabled={selectedUsers.length < 2 || !groupName}
-                                        className="w-full bg-primary text-white py-2 rounded-lg mt-4 disabled:bg-gray-300 transition-all duration-200"
+                                        className="w-full custom-button disabled:bg-gray-300"
                                     >
                                         그룹 채팅방 만들기
                                     </motion.button>
@@ -142,7 +142,7 @@ const CreateChatRoom = () => {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => setShowUserSearch(true)}
-                                    className="w-full bg-primary text-white py-2 rounded-lg mb-2"
+                                    className="w-full custom-button mb-2"
                                 >
                                     1:1 채팅
                                 </motion.button>
@@ -150,7 +150,7 @@ const CreateChatRoom = () => {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => setShowGroupCreate(true)}
-                                    className="w-full bg-secondary text-white py-2 rounded-lg"
+                                    className="w-full custom-button"
                                 >
                                     그룹 채팅
                                 </motion.button>

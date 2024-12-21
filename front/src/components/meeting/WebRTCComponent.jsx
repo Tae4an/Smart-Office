@@ -21,7 +21,7 @@ import {checkWebRTCSupport} from '../../utils/webrtc';
 import {meetingApi} from "../../utils/meetingApi";
 import '../../styles/webRTCComponent.css';
 
-const WebRTCComponent = ({roomId}) => {
+const WebRTCComponent = ({roomId, roomName}) => {
     const navigate = useNavigate();
     const [initError, setInitError] = useState(null);
     const handleWebSocketMessageType = useRef(null);
@@ -334,17 +334,9 @@ const WebRTCComponent = ({roomId}) => {
                             justifyContent: 'space-between',
                             alignItems: 'center'
                         }}>
-                            <Box>
-                                <Typography variant="h5" className="room-title">
-                                    화상 회의
-                                </Typography>
-                                <Typography
-                                    variant="subtitle2"
-                                    sx={{color: 'rgba(255, 255, 255, 0.6)', mt: 0.5}}
-                                >
-                                    Room ID: {roomId}
-                                </Typography>
-                            </Box>
+                            <Typography variant="h5" className="room-title">
+                                {roomName || '회의방'}
+                            </Typography>
 
                             <Box className="header-controls">
                                 <Tooltip title="참가자 목록">
@@ -362,13 +354,13 @@ const WebRTCComponent = ({roomId}) => {
                                                 }
                                             }}
                                         >
-                                            <PeopleIcon/>
+                                            <PeopleIcon sx={{ color: '#ffffff' }}/>
                                         </Badge>
                                     </IconButton>
                                 </Tooltip>
                                 <Tooltip title="설정">
                                     <IconButton className="header-button">
-                                        <SettingsIcon/>
+                                        <SettingsIcon sx={{ color: '#ffffff' }}/>
                                     </IconButton>
                                 </Tooltip>
                             </Box>
@@ -427,7 +419,8 @@ const WebRTCComponent = ({roomId}) => {
 
 
 WebRTCComponent.propTypes = {
-    roomId: PropTypes.string.isRequired
+    roomId: PropTypes.string.isRequired,
+    roomName: PropTypes.string.isRequired
 };
 
 export default WebRTCComponent;

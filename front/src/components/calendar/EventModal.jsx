@@ -8,7 +8,7 @@ import {
   Button
 } from '@mui/material';
 
-const EventModal = ({ event, open, onClose, onUpdate, onDelete }) => {
+const EventModal = ({ event, open, onClose, onUpdate, onDelete, isNewEvent }) => {
   const [title, setTitle] = useState('');
   const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState('');
@@ -53,7 +53,7 @@ const EventModal = ({ event, open, onClose, onUpdate, onDelete }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
-        <DialogTitle>일정 상세</DialogTitle>
+        <DialogTitle>{isNewEvent ? '새 일정 만들기' : '일정 상세'}</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -113,14 +113,16 @@ const EventModal = ({ event, open, onClose, onUpdate, onDelete }) => {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDelete} color="error">
-            삭제
-          </Button>
+          {!isNewEvent && (
+            <Button onClick={handleDelete} color="error">
+              삭제
+            </Button>
+          )}
           <Button onClick={onClose}>
             취소
           </Button>
           <Button type="submit" variant="contained" color="primary">
-            저장
+            {isNewEvent ? '생성' : '저장'}
           </Button>
         </DialogActions>
       </form>
