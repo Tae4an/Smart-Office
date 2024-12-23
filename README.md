@@ -95,6 +95,9 @@
 
 ## 📋 개발 일정
 
+<details>
+<summary>프로젝트 개발 일정 간트 차트</summary>
+    
 ```mermaid
 gantt
     title 스마트 오피스 솔루션 개발 마스터 일정
@@ -139,6 +142,7 @@ gantt
     성능 최적화: crit, optimization, 2024-12-16, 5d
     최종 배포: milestone, deploy, after optimization, 1d
 ```
+</details>
 
 ## 👥 Target Users
 
