@@ -4,10 +4,10 @@ import '../../styles/dashboard.css';
 
 const ActivityCard = ({ activities }) => {
     return (
-        <div className="activity-card p-4 rounded-lg shadow-sm">
+        <div className="activity-card">
             <div className="activity-list">
                 {activities.map((activity) => (
-                    <div key={activity.id} className="activity-item p-3 mb-2 rounded">
+                    <div key={activity.id} className="activity-item p-3 rounded">
                         <div className="flex justify-between items-start">
                             <div>
                                 <h4 className="font-medium">{activity.title}</h4>

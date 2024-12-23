@@ -1,6 +1,6 @@
 import defaultProfileImage from '../../assets/profile1.png';
 import backgroundImage from '../../assets/backgroundImage.jpg';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ProfileSection from './ProfileSection';
 import StatusGrid from './StatusGrid';
 import ActivityCard from './ActivityCard';
@@ -37,7 +37,7 @@ const WIDGET_CONFIG = {
     },
     message: {
         id: 'message',
-        title: '메시지',
+        title: '메일',
         description: '팀원들과의 메시지를 주고받을 수 있습니다.',
         component: MsgWidget,
         props: () => ({})
@@ -151,10 +151,15 @@ const Main = () => {
     const [gridCells, setGridCells] = useState(Array(3).fill(null));
     const [currentDate, setCurrentDate] = useState(new Date());
     const [weather, setWeather] = useState(null);
+    const [calendarKey, setCalendarKey] = useState(0); // 새로운 상태 추가
 
     const handleNavigate = (date) => {
         setCurrentDate(date);
     };
+
+    const handleCalendarChange = useCallback(() => {
+        setCalendarKey(prev => prev + 1); // 캘린더 컴포넌트 강제 리렌더링
+    }, []);
 
     useEffect(() => {
         const getUserFromSession = async () => {
@@ -298,9 +303,11 @@ const Main = () => {
                                 </div>
                                 <div style={{ height: '450px', padding: '0 var(--spacing-2) var(--spacing-2)' }}>
                                     <CalendarForm 
+                                        key={calendarKey}
                                         height="100%"
                                         minimode={true} 
                                         onNavigate={handleNavigate}
+                                        onEventChange={handleCalendarChange}
                                     />
                                 </div>
                             </div>

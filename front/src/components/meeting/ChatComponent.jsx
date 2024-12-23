@@ -20,34 +20,41 @@ import {
 import '../../styles/meetingChat.css';
 
 // 메시지 컴포넌트 분리 및 메모이제이션
-const ChatMessage = memo(({ message, isMine }) => (
-    <ListItem
-        sx={{
-            flexDirection: 'column',
-            alignItems: isMine ? 'flex-end' : 'flex-start',
-            p: 0,
-            mb: 2
-        }}
-    >
-        <Typography
-            variant="caption"
+const ChatMessage = memo(({ message, isMine }) => {
+    const formatTime = (dateString) => {
+        const date = new Date(dateString);
+        return !isNaN(date) ? date.toLocaleTimeString() : '';
+    };
+
+    return (
+        <ListItem
             sx={{
-                color: 'text.secondary',
-                mb: 0.5,
-                px: 1
+                flexDirection: 'column',
+                alignItems: isMine ? 'flex-end' : 'flex-start',
+                p: 0,
+                mb: 2
             }}
         >
-            {message.senderName} • {new Date(message.createdAt).toLocaleTimeString()}
-        </Typography>
-        <Box
-            className={`message-bubble ${isMine ? 'mine' : 'others'}`}
-        >
-            <Typography variant="body2">
-                {message.content}
+            <Typography
+                variant="caption"
+                sx={{
+                    color: 'text.secondary',
+                    mb: 0.5,
+                    px: 1
+                }}
+            >
+                {message.senderName} • {formatTime(message.createdAt)}
             </Typography>
-        </Box>
-    </ListItem>
-));
+            <Box
+                className={`message-bubble ${isMine ? 'mine' : 'others'}`}
+            >
+                <Typography variant="body2">
+                    {message.content}
+                </Typography>
+            </Box>
+        </ListItem>
+    );
+});
 
 ChatMessage.propTypes = {
     message: PropTypes.shape({
@@ -55,7 +62,8 @@ ChatMessage.propTypes = {
         content: PropTypes.string.isRequired,
         senderName: PropTypes.string.isRequired,
         createdAt: PropTypes.string.isRequired,
-        senderId: PropTypes.string.isRequired
+        senderId: PropTypes.string.isRequired,
+        type: PropTypes.string
     }).isRequired,
     isMine: PropTypes.bool.isRequired
 };
@@ -172,18 +180,26 @@ const ChatComponent = ({ roomId, websocket, isOpen, onClose, messages }) => {
                         </Box>
                     )}
 
-                    {messages.map((message) => {
-                        const isMine = message.senderId === userInfo.current?.employeeId;
-                        const messageKey = message.id || `${message.senderId}-${message.createdAt}-${message.content}`;
+                    {messages
+                        .filter(message => 
+                            message.content && 
+                            message.senderName && 
+                            message.senderName !== '.' &&
+                            message.type !== 'JOIN' && 
+                            message.type !== 'LEAVE'
+                        )
+                        .map((message) => {
+                            const isMine = message.senderId === userInfo.current?.employeeId;
+                            const messageKey = message.id || `${message.senderId}-${message.createdAt}-${message.content}`;
 
-                        return (
-                            <ChatMessage
-                                key={messageKey}
-                                message={message}
-                                isMine={isMine}
-                            />
-                        );
-                    })}
+                            return (
+                                <ChatMessage
+                                    key={messageKey}
+                                    message={message}
+                                    isMine={isMine}
+                                />
+                            );
+                        })}
                     <div ref={messagesEndRef} />
                 </List>
 

@@ -144,6 +144,19 @@ const OCRUpload = ({ onUploadSuccess }) => {
                 </div>
             ) : (
                 <div className="upload-section">
+                    {isLoading && (
+                        <>
+                            <div className="modal-backdrop" />
+                            <div className="loading-modal">
+                                <div className="loading-spinner"></div>
+                                <div className="loading-text">OCR 분석 중...</div>
+                                <div style={{fontSize: '0.9rem', color: '#666', marginTop: '0.5rem'}}>
+                                    잠시만 기다려주세요
+                                </div>
+                            </div>
+                        </>
+                    )}
+                    
                     <div className="selected-file">
                         {previewUrl && (
                             <div className="file-preview">

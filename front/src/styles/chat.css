@@ -105,7 +105,7 @@
     padding: 0.75rem 1rem;
     border-radius: 1rem;
     position: relative;
-    max-width: 70%;
+    max-width: 100%;  /* 70%에서 85%로 증가 */
     word-wrap: break-word;
     margin-bottom: 10px;
     writing-mode: horizontal-tb;    /* 가로 방향 텍스트 */
@@ -184,6 +184,29 @@
 
 .send-button:hover:not(:disabled) {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 커스텀 버튼 스타일 */
+.custom-button {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-button:hover:not(:disabled) {
+    background: var(--primary-dark, #3730a3); /* primary 색상보다 어두운 색상 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.custom-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #ccc;
 }
 
 /* 읽지 않은 메시지 카운트 */
@@ -297,7 +320,7 @@
 }
 
 .message-content {
-    max-width: 70%;
+    max-width: 100%;  /* 70%에서 85%로 증가 */
     writing-mode: horizontal-tb;    /* 가로 방향 텍스트 */
 }
 

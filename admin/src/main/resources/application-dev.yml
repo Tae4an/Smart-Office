@@ -10,6 +10,7 @@ spring:
     view:
       prefix: /WEB-INF/views/
       suffix: .jsp
+    static-path-pattern: /static/**
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: ENC(o6oqvMIjx+qqudp/OxFhqUTWGcGlI0qkVaEMkaMgzPmSBMbbN9xnbJiRk1ey4EMROA9nwmW9MndJzu3Y2VfIg2ofBo4nlzPgOS0yZ29tlnbeX3mcvIh7PQ==)
@@ -21,11 +22,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
-#  security:
-#    user:
-#      name: admin
-#      password: ENC(initialAdminPassword)
-#      roles: ADMIN
+  web:
+    resources:
+      static-locations: classpath:/static/
+      add-mappings: true
 
 logging:
   level:

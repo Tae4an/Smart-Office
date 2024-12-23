@@ -1,54 +1,77 @@
 .card {
     border: none;
-    border-radius: 10px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    background: rgba(42, 58, 83, 0.98);  /* #2a3a53 with slight transparency */
 }
 
 .card-body {
-    padding: 2rem;
+    padding: 2.5rem;
 }
 
 .form-control {
-    padding: 0.75rem 1rem;
-    border-radius: 7px;
-    border: 1px solid #e0e0e0;
-}
-
-.form-control:focus {
-    border-color: #ff0000;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
-}
-
-.btn-primary {
-    padding: 0.75rem 1rem;
-    font-weight: 500;
-    border-radius: 7px;
-    background: linear-gradient(45deg, #2196F3, #1976D2);
-    border: none;
+    height: 60px;
+    padding: 0.875rem 1.25rem;
+    border-radius: 12px;
+    border: 2px solid #e0e0e0;
+    font-size: 1rem;
     transition: all 0.3s ease;
 }
 
-.btn-primary:hover {
-    background: linear-gradient(45deg, #1976D2, #1565C0);
+.form-control:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(33,150,243,0.3);
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+}
+
+.form-control:focus::placeholder {
+    color: #cbd5e1;
+}
+
+.btn-primary {
+    padding: 0.875rem 1.25rem;
+    font-weight: 600;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #4A90E2, #357ABD);
+    border: none;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #357ABD, #2B6298);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
 }
 
 .alert {
-    border-radius: 7px;
-    font-size: 0.9rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    padding: 1rem;
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
 }
 
 .bg-gradient {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: #1e293b;  /* 단색 배경으로 변경 */
+    /* 또는 그라데이션을 유지하면서 색상 변경: */
+    /* background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); */
+    min-height: 100vh;
 }
 
-.logo-img {
-    width: 120px;
-    height: auto;
+/* 로고 관련 스타일 제거 */
+.logo-img,
+.logo {
+    display: none;
 }
 
 .animate-card {
-    animation: fadeIn 0.8s ease-in-out;
+    animation: fadeInUp 0.6s ease-out;
     transform: translateY(0);
     transition: transform 0.3s ease;
 }
@@ -57,18 +80,37 @@
     transform: translateY(-5px);
 }
 
-.shadow-lg {
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+.shadow-lg { 
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
 }
 
 .custom-input {
-    background-color: #f8f9fa;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
     transition: all 0.3s ease;
 }
 
 .custom-input:focus {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #4A90E2;
+    color: #ffffff;
     transform: translateY(-2px);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.text-primary {
+    color: #ffffff !important;
+    font-size: 1.8rem;  /* 제목 크기 조정 */
+}
+
+.text-muted {
+    color: #94a3b8 !important;
 }
 
 @keyframes fadeIn {
@@ -80,4 +122,66 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: white;
+    box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+    animation: pulseIcon 2s infinite;
+}
+
+@keyframes pulseIcon {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 12px 24px rgba(74, 144, 226, 0.4);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+    }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .col-md-4 {
+        padding: 0 1.5rem;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+}
+
+.form-label {
+    color: #ffffff;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.custom-input {
+    height: 48px;
+    padding: 0.5rem 1rem;
 }
