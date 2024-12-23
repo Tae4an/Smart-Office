@@ -97,19 +97,47 @@
 
 ```mermaid
 gantt
-    dateFormat  YYYY-MM-DD
-    title 프로젝트 개발 일정
-    
-    section 기획
-    기획 단계    :2024-10-22, 2024-11-01
-    
-    section 개발
-    1차 개발     :2024-11-04, 2024-11-17
-    2차 개발     :2024-11-18, 2024-11-27
-    
-    section 테스트/배포
-    테스트      :2024-11-28, 2024-12-04
-    배포        :2024-12-05, 2024-12-08
+    title 스마트 오피스 솔루션 개발 마스터 일정
+    dateFormat YYYY-MM-DD
+    axisFormat %m-%d
+    excludes weekends
+
+    section 프로젝트 초기화
+    프로젝트 킥오프: milestone, start, 2024-10-22, 1d
+    요구사항 분석: done, req, 2024-10-22, 4d
+    아키텍처 설계: done, arch, after req, 3d
+    개발 환경 구축: done, env, after arch, 3d
+
+    section 인프라 구축
+    컨테이너화 준비: done, docker, 2024-11-04, 4d
+    CI/CD 파이프라인: done, cicd, after docker, 3d
+    클라우드 인프라 설정: done, cloud, after cicd, 3d
+
+    section AI 기능 개발
+    얼굴 인식 모델: done, face, 2024-11-11, 5d
+    OCR 기능 개발: done, ocr, after face, 4d
+    AI 챗봇 통합: done, chatbot, after ocr, 5d
+
+    section 웹 애플리케이션
+    프론트엔드 개발: done, frontend, 2024-11-25, 5d
+    백엔드 개발: done, backend, 2024-11-25, 5d
+    WebRTC 통합: done, webrtc, after frontend, 4d
+    실시간 채팅 구현: done, chat, after webrtc, 3d
+
+    section 데이터베이스 및 로깅
+    Redis 데이터베이스: done, redis, 2024-12-09, 3d
+    ELK 스택 구축: done, elk, after redis, 3d
+    시스템 모니터링 설정: done, monitor, after elk, 2d
+
+    section 부가 기능
+    게시판 시스템: done, board, 2024-12-12, 3d
+    파일 관리 시스템: done, filemanage, after board, 2d
+    지도 서비스 연동: done, maps, after filemanage, 2d
+
+    section 최종 단계
+    통합 테스트: crit, integration, 2024-12-16, 3d
+    성능 최적화: crit, optimization, 2024-12-16, 5d
+    최종 배포: milestone, deploy, after optimization, 1d
 ```
 
 ## 👥 Target Users
