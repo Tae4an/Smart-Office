@@ -160,6 +160,14 @@
     height: 100%; /* 부모 컨테이너의 높이에 맞춤 */
     display: flex;
     align-items: flex-start; /* 수정: 위쪽 정렬 */
+    width: 100%; /* 추가: 전체 너비 사용 */
+    height: 100%; /* 추가: 전체 높이 사용 */
+    display: flex; /* 추가: flex 컨테이너로 설정 */
+}
+
+.grid-cell .widget-content > div {
+    width: 100%; /* 추가: 직계 자식 요소도 전체 너비 사용 */
+    height: 100%; /* 추가: 직계 자식 요소도 전체 높이 사용 */
 }
 
 /* 메일 위젯 관련 스타일 수정 */
@@ -248,6 +256,14 @@
     flex: 1;
     overflow: auto;
     padding: var(--spacing-3);
+    width: 100%; /* 추가: 전체 너비 사용 */
+    height: 100%; /* 추가: 전체 높이 사용 */
+    display: flex; /* 추가: flex 컨테이너로 설정 */
+}
+
+.widget-content > div {
+    width: 100%; /* 추가: 직계 자식 요소도 전체 너비 사용 */
+    height: 100%; /* 추가: 직계 자식 요소도 전체 높이 사용 */
 }
 
 /* ==========================================================================
@@ -413,10 +429,11 @@
   Activity Widget
   ========================================================================== */
 .activity-card {
-    background: white;
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-4);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 100%;  /* 추가: 전체 너비 사용 */
+    height: 100%; /* 추가: 전체 높이 사용 */
+    background: transparent; /* 수정: 배경색 제거 */
+    padding: 0; /* 수정: 패딩 제거 */
+    box-shadow: none; /* 수정: 그림자 제거 */
 }
 
 .activity-list {
@@ -425,6 +442,7 @@
     gap: var(--spacing-3);
     height: 100%;
     overflow-y: auto;
+    width: 100%;
 }
 
 .activity-item {
@@ -601,7 +619,8 @@
 .messenger-widget-container {
     position: relative;
     height: 100%;
-    max-height: calc(100vh - var(--spacing-4) * 2);
+    width: 100%; /* 추가: 전체 너비 사용 */
+    max-height: 100%; /* 수정: 최대 높이를 100%로 설정 */
     border-radius: var(--border-radius-lg);
     background: white;
     overflow: hidden;
@@ -610,29 +629,24 @@
 }
 
 .messenger-widget-container .widget-fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    margin: 0;
-    max-height: none;
-    border-radius: 0;
+    position: relative; /* fixed에서 변경 */
+    height: 100%;
+    width: 100%;
 }
 
 .messenger-widget-container .messenger-container {
     height: 100%;
+    width: 100%; /* 추가: 전체 너비 사용 */
     margin: 0;
     border-radius: 0;
     box-shadow: none;
-    width: 100%;
     display: flex;
     flex-direction: row;
 }
 
 .messenger-widget-container .chat-container {
     height: 100%;
+    width: 100%; /* 추가: 전체 너비 사용 */
     display: flex;
     flex-direction: column;
     flex: 1;

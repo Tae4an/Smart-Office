@@ -647,7 +647,7 @@ const Header = ({setIsMenuOpen}) => {
                             <input
                                 type="text"
                                 className="search-bar"
-                                placeholder="이름, 부서, 직급으로 직원 검색 (예: 홍길동, 인사팀, 과장)"
+                                placeholder="이름, 부서, 직급으로 검색"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}

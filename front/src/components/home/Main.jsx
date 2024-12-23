@@ -37,7 +37,7 @@ const WIDGET_CONFIG = {
     },
     message: {
         id: 'message',
-        title: '메시지',
+        title: '메일',
         description: '팀원들과의 메시지를 주고받을 수 있습니다.',
         component: MsgWidget,
         props: () => ({})
