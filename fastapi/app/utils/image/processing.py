@@ -1,6 +1,9 @@
 import cv2
 import numpy as np
 from app.core.logging.logger import logger
+from PIL import Image
+from typing import Tuple
+import os
 
 class ImageProcessor:
     """
@@ -159,3 +162,22 @@ class ImageProcessor:
         warped = cv2.warpPerspective(image, matrix, (max_width, max_height))
         
         return warped
+
+    @staticmethod
+    def load_image(image_path: str) -> np.ndarray:
+        """이미지를 로드하여 numpy 배열로 변환"""
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"이미지를 찾을 수 없습니다: {image_path}")
+        
+        image = Image.open(image_path)
+        return np.array(image)
+
+    @staticmethod
+    def validate_image(image_path: str) -> Tuple[bool, str]:
+        """이미지 파일 유효성 검사"""
+        try:
+            img = Image.open(image_path)
+            img.verify()
+            return True, "이미지가 유효합니다"
+        except Exception as e:
+            return False, str(e)

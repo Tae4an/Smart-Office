@@ -214,6 +214,157 @@ class OCRService:
                 await self._cleanup_resources(filename)
                 raise
 
+<<<<<<< Updated upstream
+=======
+    async def _process_pdf(self, file_bytes: bytes, filename: str):
+        """PDF 파일 처리"""
+        # PDF 파일 데이터 타입 검증
+        if not isinstance(file_bytes, bytes):
+            logger.error(f"잘못된 PDF 데이터 타입: {type(file_bytes)}")
+            raise Exception("잘못된 PDF 데이터 형식")
+
+        logger.debug(f"PDF 변환 시작 - 데이터 크기: {len(file_bytes)} bytes")
+        
+        # PDF 변환은 동기 메서드 사용
+        image_list, total_pages = self.redis_handler.convert_pdf_to_images(file_bytes)
+        if not image_list:
+            raise Exception("PDF 변환 실패")
+        
+        # 각 페이지 처리
+        ocr_results = []
+        processed_images = []
+        
+        for page_num, image_bytes in enumerate(image_list, 1):
+            # 이미지 전처리 - 비동기로 처리
+            processed_image = await self._process_single_image(image_bytes, page_num)
+            if processed_image:
+                processed_images.append(processed_image)
+                
+                # OCR 처리 및 결과 병합
+                ocr_result = await self._perform_ocr(processed_image, f"page_{page_num}.jpg")
+                if ocr_result:
+                    ocr_results.append(ocr_result)
+
+        # 결과 병합
+        merged_result = ocr_results[0] if ocr_results else {}  # 첫 페이지 결과를 기본으로 사용
+        if len(ocr_results) > 1:
+            # 여러 페이지의 텍스트 병합
+            merged_result['text'] = '\n'.join(result.get('text', '') for result in ocr_results)
+
+        # PDF 병합은 동기 메서드 사용
+        processed_pdf = self.redis_handler.merge_images_to_pdf(processed_images)
+        if processed_pdf:
+            upload_success = await asyncio.to_thread(
+                self.gcs_handler.upload_bytes,
+                processed_pdf,
+                filename
+            )
+            
+            if not upload_success:
+                logger.error(f"처리된 PDF 업로드 실패: {filename}")
+
+        return {
+            "status": "success",
+            "data": merged_result
+        }
+
+    async def _process_image(self, file_bytes: bytes, filename: str, ext: str):
+        """일반 이미지 파일 처리"""
+        # 이미지 전처리
+        image = await asyncio.to_thread(
+            cv2.imdecode, 
+            np.frombuffer(file_bytes, np.uint8), 
+            cv2.IMREAD_COLOR
+        )
+        processed_image = await asyncio.to_thread(
+            self.image_processor.preprocess_document, 
+            image
+        )
+
+        # 전처리된 이미지를 바이트로 변환
+        success, processed_bytes = await asyncio.to_thread(
+            cv2.imencode, 
+            ext, 
+            processed_image
+        )
+        if not success:
+            raise Exception("이미지 인코딩 실패")
+            
+        processed_bytes = processed_bytes.tobytes()
+
+        # GCS 업로드
+        upload_success = await asyncio.to_thread(
+            self.gcs_handler.upload_bytes,
+            processed_bytes,
+            filename
+        )
+        
+        if not upload_success:
+            logger.error(f"처리된 이미지 업로드 실패: {filename}")
+
+        # OCR API 호출 - mime_type 제거
+        ocr_result = await self._perform_ocr(
+            processed_bytes,
+            filename
+        )
+
+        return {
+            "status": "success",
+            "data": ocr_result
+        }
+
+    async def _process_single_image(self, image_bytes: bytes, page_num: int) -> Optional[bytes]:
+        """단일 이미지 전처리"""
+        try:
+            image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
+            if image is None:
+                logger.error(f"이미지 디코딩 실패 - 페이지 {page_num}")
+                return None
+                
+            processed_image = await asyncio.to_thread(
+                self.image_processor.preprocess_document,
+                image
+            )
+            
+            success, processed_bytes = cv2.imencode('.jpg', processed_image)
+            if not success:
+                logger.error(f"이미지 인코딩 실패 - 페이지 {page_num}")
+                return None
+                
+            return processed_bytes.tobytes()
+            
+        except Exception as e:
+            logger.error(f"이미지 처리 실패 - 페이지 {page_num}: {str(e)}")
+            return None
+
+    async def _perform_ocr(self, image_bytes: bytes, filename: str) -> Optional[dict]:
+        """OCR API 호출
+        
+        Args:
+            image_bytes (bytes): 이미지 바이트 데이터
+            filename (str): 파일명
+            
+        Returns:
+            Optional[dict]: OCR 결과
+        """
+        try:
+            headers = {"Authorization": f"Bearer {self.api_key}"}
+            async with aiohttp.ClientSession() as session:
+                data = aiohttp.FormData()
+                data.add_field('document', image_bytes,
+                            filename=filename,
+                            content_type='image/jpeg')  # 기본값으로 image/jpeg 사용
+                
+                async with session.post(self.ocr_url, headers=headers, data=data) as response:
+                    if response.status != 200:
+                        raise APIError("OCR", response.status, await response.text())
+                    return await response.json()
+                    
+        except Exception as e:
+            logger.error(f"OCR API 호출 실패: {str(e)}")
+            raise APIError("OCR", 500, str(e))
+
+>>>>>>> Stashed changes
     async def _cleanup_resources(self, filename: str):
         """리소스 정리"""
         try:
