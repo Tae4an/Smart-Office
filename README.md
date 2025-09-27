@@ -108,8 +108,6 @@ https://github.com/user-attachments/assets/a2bf35a5-a754-41b6-bd4a-df99ebebb98e
 
 <div align="center">
 
-**HaptiTalk** - *Revolutionizing Communication with AI and Haptic Technology*
-
 *Made with ❤️ by Sunmoon University SW Development Team*
 
 </div>
