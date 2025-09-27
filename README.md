@@ -2,7 +2,7 @@
 ![메인화면](https://github.com/user-attachments/assets/d020ad5c-1f89-4eea-b856-aec754380444)
 AI 기술과 클라우드 기반의 통합 업무 환경을 구축하여 기업의 업무 효율성을 향상시키는 스마트 오피스 솔루션입니다.
 
-### Team Members
+## Team Members
 - **프로젝트명**: 스마트 오피스 솔루션
 - **개발 기간**: 2024.10.24 - 2024.12.23
 
@@ -33,34 +33,34 @@ AI 기술과 클라우드 기반의 통합 업무 환경을 구축하여 기업�
 - **업무 챗봇**: LLaMA 3.2 기반 선택형 응답
 
 ---
-### 로그인
+## 로그인
 https://github.com/user-attachments/assets/96f432ac-ce8d-4f4e-9c96-52e2d747ec0a
 
-### DeepFace 얼굴 인식 출퇴근
+## DeepFace 얼굴 인식 출퇴근
 https://github.com/user-attachments/assets/285c270d-83b8-429f-9359-9d32f490f9ce
 
-### 부서별 게시판
+## 부서별 게시판
 https://github.com/user-attachments/assets/a31f08d9-6da0-4c97-8c8a-749bfc294e06
 
-### 캘린더
+## 캘린더
 https://github.com/user-attachments/assets/9ce0dd28-7d95-4b03-b015-c18d2f1d96ab
 
-### 실시간 채팅
+## 실시간 채팅
 https://github.com/user-attachments/assets/d7b3aee4-d91d-4b6b-b035-adf13e444b8a
 
-### 사내 메일
+## 사내 메일
 https://github.com/user-attachments/assets/56c31ac7-cf80-42f4-a154-44433f62833d
 
-### 파일 관리 & OCR 기반 문서 자동화
+## 파일 관리 & OCR 기반 문서 자동화
 https://github.com/user-attachments/assets/36b635d2-66ee-41e8-b86b-5d9a829afe48
 
-### 화상회의
+## 화상회의
 https://github.com/user-attachments/assets/b99a738c-32f5-427e-89cb-021610edb866
 
-### AI 업무 챗봇
+## AI 업무 챗봇
 https://github.com/user-attachments/assets/d6453b96-6523-485e-80c3-9930603b5463
 
-### 관리자
+## 관리자
 https://github.com/user-attachments/assets/a2bf35a5-a754-41b6-bd4a-df99ebebb98e
 
 
